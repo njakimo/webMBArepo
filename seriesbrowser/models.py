@@ -8,14 +8,14 @@ class Series(models.Model):
         	return self.name
 
 class Section(models.Model):
-    	FN_CHOICES = (
-        	(u'F', u'Fluorescence'),
-        	(u'N', u'Nissl'),
-    	)
+    	#FN_CHOICES = (
+        #	(u'F', u'Fluorescence'),
+        #	(u'N', u'Nissl'),
+    	#)
 
 	series = models.ForeignKey(Series)
 	name = models.CharField(max_length=200)	
-	imaging = models.CharField(max_length=2, choices = FN_CHOICES)
+	tracertype = models.CharField(max_length=200) #, choices = FN_CHOICES)
 	#atlas and injection fields	
 	
     	def __unicode__(self):
