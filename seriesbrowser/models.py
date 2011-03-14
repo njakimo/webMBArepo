@@ -1,7 +1,18 @@
 from django.db import models
 
+class Brain(models.Model):
+	name = models.CharField(max_length=200)
+
+	#atlas and injection fields	
+
+    	def __unicode__(self):
+        	return self.name
+
 class Series(models.Model):
-	name = models.CharField(max_length=200)	
+	brain = models.ForeignKey(Brain)
+	name = models.CharField(max_length=200)
+	labelmethod = models.CharField(max_length=200)
+	imagemethod = models.CharField(max_length=200)
 	#atlas and injection fields	
 
     	def __unicode__(self):
@@ -15,7 +26,7 @@ class Section(models.Model):
 
 	series = models.ForeignKey(Series)
 	name = models.CharField(max_length=200)	
-	tracertype = models.CharField(max_length=200) #, choices = FN_CHOICES)
+	#tracertype = models.CharField(max_length=200) #, choices = FN_CHOICES)
 	#atlas and injection fields	
 	
     	def __unicode__(self):
@@ -60,3 +71,10 @@ class SectionNote(models.Model):
 
     	def __unicode__(self):
     	    return self.comment
+
+class PedagogicalSection():
+	section = models.ForeignKey(Section)	
+    	url = models.CharField(max_length=200)
+
+    	def __unicode__(self):
+    	    return self.url

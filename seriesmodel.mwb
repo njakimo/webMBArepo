@@ -1,0 +1,50 @@
+BEGIN;
+CREATE TABLE `seriesbrowser_series` (
+    `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `name` varchar(200) NOT NULL
+)
+;
+CREATE TABLE `seriesbrowser_section` (
+    `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `series_id` integer NOT NULL,
+    `name` varchar(200) NOT NULL,
+    `tracertype` varchar(200) NOT NULL
+)
+;
+ALTER TABLE `seriesbrowser_section` ADD CONSTRAINT `series_id_refs_id_c1d15d6` FOREIGN KEY (`series_id`) REFERENCES `seriesbrowser_series` (`id`);
+CREATE TABLE `seriesbrowser_thumbnail` (
+    `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `section_id` integer NOT NULL,
+    `quality` varchar(2) NOT NULL,
+    `path` varchar(200) NOT NULL
+)
+;
+ALTER TABLE `seriesbrowser_thumbnail` ADD CONSTRAINT `section_id_refs_id_928d110` FOREIGN KEY (`section_id`) REFERENCES `seriesbrowser_section` (`id`);
+CREATE TABLE `seriesbrowser_updater` (
+    `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `name` varchar(200) NOT NULL
+)
+;
+CREATE TABLE `seriesbrowser_seriesnote` (
+    `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `series_id` integer NOT NULL,
+    `updater_id` integer NOT NULL,
+    `score` integer NOT NULL,
+    `comment` varchar(200) NOT NULL,
+    `write_date` datetime NOT NULL
+)
+;
+ALTER TABLE `seriesbrowser_seriesnote` ADD CONSTRAINT `series_id_refs_id_138d74c1` FOREIGN KEY (`series_id`) REFERENCES `seriesbrowser_series` (`id`);
+ALTER TABLE `seriesbrowser_seriesnote` ADD CONSTRAINT `updater_id_refs_id_459b8302` FOREIGN KEY (`updater_id`) REFERENCES `seriesbrowser_updater` (`id`);
+CREATE TABLE `seriesbrowser_sectionnote` (
+    `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `section_id` integer NOT NULL,
+    `updater_id` integer NOT NULL,
+    `score` integer NOT NULL,
+    `comment` varchar(200) NOT NULL,
+    `write_date` datetime NOT NULL
+)
+;
+ALTER TABLE `seriesbrowser_sectionnote` ADD CONSTRAINT `section_id_refs_id_6d179e29` FOREIGN KEY (`section_id`) REFERENCES `seriesbrowser_section` (`id`);
+ALTER TABLE `seriesbrowser_sectionnote` ADD CONSTRAINT `updater_id_refs_id_b1dda67b` FOREIGN KEY (`updater_id`) REFERENCES `seriesbrowser_updater` (`id`);
+COMMIT;
