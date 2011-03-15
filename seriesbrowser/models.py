@@ -13,6 +13,9 @@ class Series(models.Model):
 	name = models.CharField(max_length=200)
 	labelmethod = models.CharField(max_length=200)
 	imagemethod = models.CharField(max_length=200)
+        targetx = models.DecimalField(max_digits=3, decimal_places=2)
+        targety = models.DecimalField(max_digits=3, decimal_places=2)
+        targetz = models.DecimalField(max_digits=3, decimal_places=2)
 	#atlas and injection fields	
 
     	def __unicode__(self):
