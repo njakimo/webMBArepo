@@ -3,34 +3,33 @@ from django.db import models
 class Brain(models.Model):
 	name = models.CharField(max_length=200)
 
-	#atlas and injection fields	
-
     	def __unicode__(self):
         	return self.name
 
+class Target(models.Model):
+        region = models.CharField(max_length=200)
+        x = models.DecimalField(max_digits=3, decimal_places=2)
+        y = models.DecimalField(max_digits=3, decimal_places=2)
+        z = models.DecimalField(max_digits=3, decimal_places=2)
+	lab = models.CharField(max_length=200)
+	#atlas and injection fields	
+
+    	def __unicode__(self):
+        	return self.region
+
 class Series(models.Model):
 	brain = models.ForeignKey(Brain)
+        injection = models.ForeignKey(Target, blank=True)
 	name = models.CharField(max_length=200)
 	labelmethod = models.CharField(max_length=200)
 	imagemethod = models.CharField(max_length=200)
-        targetx = models.DecimalField(max_digits=3, decimal_places=2)
-        targety = models.DecimalField(max_digits=3, decimal_places=2)
-        targetz = models.DecimalField(max_digits=3, decimal_places=2)
-	#atlas and injection fields	
 
     	def __unicode__(self):
         	return self.name
 
 class Section(models.Model):
-    	#FN_CHOICES = (
-        #	(u'F', u'Fluorescence'),
-        #	(u'N', u'Nissl'),
-    	#)
-
 	series = models.ForeignKey(Series)
 	name = models.CharField(max_length=200)	
-	#tracertype = models.CharField(max_length=200) #, choices = FN_CHOICES)
-	#atlas and injection fields	
 	
     	def __unicode__(self):
         	return self.name
