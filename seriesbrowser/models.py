@@ -2,6 +2,7 @@ from django.db import models
 
 class Series(models.Model):
 	name = models.CharField(max_length=200)
+	lab = models.CharField(max_length=200, default = 'mitra')
 
     	def __unicode__(self):
         	return self.name
@@ -12,7 +13,6 @@ class Injection(models.Model):
         x = models.DecimalField(max_digits=3, decimal_places=2)
         y = models.DecimalField(max_digits=3, decimal_places=2)
         z = models.DecimalField(max_digits=3, decimal_places=2)
-	lab = models.CharField(max_length=200)
 	#atlas and injection fields	
 
     	def __unicode__(self):
