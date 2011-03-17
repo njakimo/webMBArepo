@@ -30,6 +30,7 @@ class Series(models.Model):
 class Section(models.Model):
 	series = models.ForeignKey(Series)
 	name = models.CharField(max_length=200)	
+    	num = models.IntegerField()
 	
     	def __unicode__(self):
         	return self.name
