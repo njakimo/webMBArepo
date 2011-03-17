@@ -1,12 +1,19 @@
 from django.db import models
 
-class Brain(models.Model):
+#class Brain(models.Model):
+#	name = models.CharField(max_length=200)
+#
+#    	def __unicode__(self):
+#        	return self.name
+
+class Series(models.Model):
+#	brain = models.ForeignKey(Brain)
 	name = models.CharField(max_length=200)
 
     	def __unicode__(self):
         	return self.name
 
-class Target(models.Model):
+class Injection(models.Model):
         region = models.CharField(max_length=200)
         x = models.DecimalField(max_digits=3, decimal_places=2)
         y = models.DecimalField(max_digits=3, decimal_places=2)
@@ -17,20 +24,12 @@ class Target(models.Model):
     	def __unicode__(self):
         	return self.region
 
-class Series(models.Model):
-	brain = models.ForeignKey(Brain)
-        injection = models.ForeignKey(Target, blank=True)
-	name = models.CharField(max_length=200)
-	labelmethod = models.CharField(max_length=200)
-	imagemethod = models.CharField(max_length=200)
-
-    	def __unicode__(self):
-        	return self.name
-
 class Section(models.Model):
 	series = models.ForeignKey(Series)
 	name = models.CharField(max_length=200)	
     	num = models.IntegerField()
+	labelmethod = models.CharField(max_length=200)
+	imagemethod = models.CharField(max_length=200)
 	
     	def __unicode__(self):
         	return self.name
