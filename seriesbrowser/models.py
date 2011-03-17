@@ -3,6 +3,7 @@ from django.db import models
 class Series(models.Model):
 	name = models.CharField(max_length=200)
 	lab = models.CharField(max_length=200, default = 'mitra')
+#      indicate sample section
 
     	def __unicode__(self):
         	return self.name
