@@ -1,13 +1,6 @@
 from django.db import models
 
-#class Brain(models.Model):
-#	name = models.CharField(max_length=200)
-#
-#    	def __unicode__(self):
-#        	return self.name
-
 class Series(models.Model):
-#	brain = models.ForeignKey(Brain)
 	name = models.CharField(max_length=200)
 
     	def __unicode__(self):
@@ -31,23 +24,11 @@ class Section(models.Model):
     	num = models.IntegerField()
 	labelmethod = models.CharField(max_length=200)
 	imagemethod = models.CharField(max_length=200)
+	pngpath = models.CharField(max_length=200)
+	jp2path = models.CharField(max_length=200)
 	
     	def __unicode__(self):
         	return self.name
-
-class Thumbnail(models.Model):
-    	QUALITY_CHOICES = (
-        	(u'L', u'Low'),
-        	(u'M', u'Medium'),
-        	(u'H', u'High'),
-    	)
-
-	section = models.ForeignKey(Section)
-	quality = models.CharField(max_length=2, choices = QUALITY_CHOICES)
-	path = models.CharField(max_length=200)
-
-    	def __unicode__(self):
-        	return self.path
 
 class Updater(models.Model):
 	name = models.CharField(max_length=200)
