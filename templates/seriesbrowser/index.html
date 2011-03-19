@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if series_list %}
+    <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <th>Series Name</th>
+        <th>Thumbnail</th>
+        <th>X</th>
+        <th>Y</th>
+        <th>Z</th>
+        <th>Image Type</th>
+    </tr>
+    {% for series in series_list %}
+        <tr>
+            <td>{{  series.name }}</td>
+            {% comment %}
+            <td>{{  series.sections[0].pngpathlow }}</td>
+            <td>{{  series.injection }}</td>
+            {% endcomment %}
+        </tr>
+        <li><a href="/seriesbrowser/{{ series.id }}/">{{ series.name }}</a></li>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No injection series are available.</p>
+{% endif %}
+{% endblock content %}

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls.defaults import *
 
 # Uncomment the next two lines to enable the admin:
@@ -5,6 +6,8 @@ from django.conf.urls.defaults import *
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+    (r'^seriesbrowser/$', 'seriesbrowser.views.index'),
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
     # Example:
     # (r'^webMBA/', include('webMBA.foo.urls')),
 

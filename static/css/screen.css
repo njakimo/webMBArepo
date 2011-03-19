@@ -1,0 +1,40 @@
+body {
+    background: #cfcbc2 url(/static/img/bg_body.png) 0 0 repeat-x;
+    font: 13px "Lucida Sans Unicode", "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+    color: #000;
+}
+
+#container {
+    width: 958px;
+    border: 1px solid #a6a298;
+    margin: 19px auto 0 auto;
+    overflow: auto;
+    position: relative;
+}
+#header {
+    height: 151px;
+    background: url(/static/img/bg_header.png) bottom left repeat-x;
+    overflow: hidden;
+}
+
+#header img {float: left;}
+#header ul {width: 900px; list-style: none; float: left; clear: left; margin: 0; padding: 0;}
+#header li {display: inline;}
+
+#content {
+    background: #FFFFFF;
+    width: 685px;
+    min-height: 400px;
+    float: left;
+    padding: 20px;
+}
+
+#footer {
+    background: #252a40;
+    clear: both;
+    line-height: 44px;
+    border-top: 1px solid #f1ece3;
+    padding: 0 20px;
+    color: #cdc6c3;
+    font-size: 11px;
+}

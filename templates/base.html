@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    {% block meta %}{% endblock meta %}
+    {% block title %}<title>{% if title %}{{ title }}{% else %}The Mouse Brain Architecture Project{% endif %}</title>{% endblock title %}
+    {% block head %}{% endblock head %}
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="/static/css/screen.css" />
+    {% block css %}{% endblock css %}
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.3.1/mootools-yui-compressed.js"></script>
+    {% block js %}{% endblock js %}
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <img src="/static/img/bg_hdr_new.jpg" alt="Brain Architecture Project" />
+            <ul>
+                <li>Link 1 |</li>
+                <li>Link 2 |</li>
+                <li>Link 3</li>
+            </ul>
+        </div>
+        <div id="content">
+            {% block content %}{% endblock content %}
+        </div>
+        <div id="footer">Copyright © 2011 by Mitra Lab | mitralab.org</div>
+    </div>
+</body>
+</html>
+
