@@ -23,7 +23,7 @@ body {
 
 #content {
     background: #FFFFFF;
-    width: 685px;
+    width: 900px;
     min-height: 400px;
     float: left;
     padding: 20px;
@@ -37,4 +37,8 @@ body {
     padding: 0 20px;
     color: #cdc6c3;
     font-size: 11px;
+}
+
+.pagination {
+    float: right;
 }

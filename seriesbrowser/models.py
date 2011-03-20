@@ -17,7 +17,7 @@ class Injection(models.Model):
     #other atlas and injection fields
 
     def __unicode__(self):
-        return self.region
+        return "x:%.3f y:%.3f z:%.3f" % (self.x, self.y, self.z)
 
 class Section(models.Model):
     series = models.ForeignKey(Series)

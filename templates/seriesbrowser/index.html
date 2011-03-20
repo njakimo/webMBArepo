@@ -1,27 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if series_list %}
+{% if series_page %}
+    <div class="pagination">
+    <span class="step-links">
+        {% if series_page.has_previous %}
+            <a href="?page={{ series_page.previous_page_number }}&sort={{ sort }}_{{ dir }}">prev</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ series_page.number }} of {{ series_page.paginator.num_pages }}
+        </span>
+
+        {% if series_page.has_next %}
+            <a href="?page={{ series_page.next_page_number }}&sort={{ sort }}_{{ dir }}">next</a>
+        {% endif %}
+    </span>
+    </div>
     <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
-        <th>Series Name</th>
-        <th>Thumbnail</th>
-        <th>X</th>
-        <th>Y</th>
-        <th>Z</th>
-        <th>Image Type</th>
+        <td><a href="?sort=name_{% if sort == 'name' and dir == 'asc'%}desc{% else %}asc{% endif %}">Series Name</a></td>
+        <td></td>
+        <td>Inj Region</td>
+        <td><a href="?sort=coord_{% if sort == 'coord' and dir == 'asc'%}desc{% else %}asc{% endif %}">Inj Coords</td>
+        <td>Tracer Type</td>
+        <td>Image Type</td>
+        <td>QC Sections</td>
     </tr>
-    {% for series in series_list %}
+    {% for series in series_page.object_list %}
         <tr>
-            <td>{{  series.name }}</td>
-            {% comment %}
-            <td>{{  series.sections[0].pngpathlow }}</td>
-            <td>{{  series.injection }}</td>
-            {% endcomment %}
+            <td>{{ series.0 }}</td>
+            <td>{{ 'thumb' }}</td>
+            <td>{{ series.1 }}</td>
+            <td>x:{{ series.2 }} y:{{ series.3 }} z:{{ series.4 }}</td>
+            <td>{{ 'tracer' }}</td>
+            <td>{{ 'fluoro/brightfield' }}</td>
+            <td>{{ '# qc sections' }}</td>
         </tr>
-        <li><a href="/seriesbrowser/{{ series.id }}/">{{ series.name }}</a></li>
     {% endfor %}
     </table>
+    <div class="pagination">
+    <span class="step-links">
+        {% if series_page.has_previous %}
+            <a href="?page={{ series_page.previous_page_number }}&sort={{ sort }}_{{ dir }}">prev</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ series_page.number }} of {{ series_page.paginator.num_pages }}
+        </span>
+
+        {% if series_page.has_next %}
+            <a href="?page={{ series_page.next_page_number }}&sort={{ sort }}_{{ dir }}">next</a>
+        {% endif %}
+    </span>
+    </div>
 {% else %}
     <p>No injection series are available.</p>
 {% endif %}
