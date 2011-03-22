@@ -1,7 +1,12 @@
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db import connection, transaction
 from django.shortcuts import render_to_response
-from seriesbrowser.models import Series
+from seriesbrowser.models import Series, Tracer
+
+from django import forms
+
+class FilterForm(forms.Form):
+    filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
 
 def index(request):
     sql = '''
@@ -10,23 +15,46 @@ def index(request):
         i.region,
         i.x,
         i.y,
-        i.z
+        i.z,
+        t.name
     FROM seriesbrowser_series s
     INNER JOIN seriesbrowser_injection_series si ON (s.id = si.series_id)
     INNER JOIN seriesbrowser_injection i ON (i.id = si.injection_id)
+    INNER JOIN seriesbrowser_tracer_series st ON (s.id = st.series_id)
+    INNER JOIN seriesbrowser_tracer t ON (t.id = st.tracer_id)
     '''
 
+    try:
+        filter = int(request.GET.get('filter','0'))
+    except ValueError:
+        filter = 0
+
     where = '1'
+    if filter > 0:
+        where = ' '.join(['t.id =',str(filter)])
 
     sort = request.GET.get('sort','name_asc')
     sort, dir = sort.split('_')
 
-    field = 's.name'
-    if sort == 'coord':
-        field = 'i.x'
     if dir != 'asc' and dir != 'desc':
         dir = 'asc'
-    order = ' '.join([field, dir])
+
+    field = 's.name'
+    extra = ''
+    if sort == 'coordx':
+        field = 'i.x'
+        extra = ' '.join([',i.y',dir,',i.z',dir])
+    elif sort == 'coordy':
+        field = 'i.y'
+        extra = ' '.join([',i.x',dir,',i.z',dir])
+    elif sort == 'coordz':
+        field = 'i.z'
+        extra = ' '.join([',i.x',dir,',i.y',dir])
+    elif sort == 'region':
+        field = 'i.region'
+    elif sort == 'tracer':
+        field = 't.name'
+    order = ' '.join([field, dir, extra])
 
     sql = ' '.join([sql,'WHERE',where,'ORDER BY',order])
 
@@ -46,4 +74,11 @@ def index(request):
     except (EmptyPage, InvalidPage):
         series_page = paginator.page(paginator.num_pages)
 
-    return render_to_response('seriesbrowser/index.html', {'series_page': series_page, 'sort' : sort, 'dir' : dir})
+    form = FilterForm()
+
+    return render_to_response('seriesbrowser/index.html', {
+        'series_page': series_page,
+        'sort'       : sort,
+        'dir'        : dir,
+        'filter'     : request.GET.get('filter',None),
+        'form'       : form})

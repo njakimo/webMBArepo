@@ -19,6 +19,13 @@ class Injection(models.Model):
     def __unicode__(self):
         return "x:%.3f y:%.3f z:%.3f" % (self.x, self.y, self.z)
 
+class Tracer(models.Model):
+    name = models.CharField(max_length=200)
+    series = models.ManyToManyField(Series)
+
+    def __unicode__(self):
+        return self.name
+
 class Section(models.Model):
     series = models.ForeignKey(Series)
     name = models.CharField(max_length=200)
