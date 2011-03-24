@@ -45,25 +45,25 @@ class Updater(models.Model):
     def __unicode__(self):
         return self.name
 
-class SeriesNote(models.Model):
-    series = models.ForeignKey(Series)
-    updater = models.ForeignKey(Updater)
-    score = models.IntegerField()
-    comment = models.CharField(max_length=200)
-    write_date = models.DateTimeField()
+#class SeriesNote(models.Model):
+#   series = models.ForeignKey(Series)
+#    updater = models.ForeignKey(Updater)
+#    score = models.IntegerField()
+#    comment = models.CharField(max_length=200)
+#    write_date = models.DateTimeField()
 
-    def __unicode__(self):
-        return self.comment
+#    def __unicode__(self):
+#        return self.comment
 
-class SectionNote(models.Model):
-    section = models.ForeignKey(Section)
-    updater = models.ForeignKey(Updater)
-    score = models.IntegerField()
-    comment = models.CharField(max_length=200)
-    write_date = models.DateTimeField()
+#class SectionNote(models.Model):
+#    section = models.ForeignKey(Section)
+#    updater = models.ForeignKey(Updater)
+#    score = models.IntegerField()
+#    comment = models.CharField(max_length=200)
+#    write_date = models.DateTimeField()
 
-    def __unicode__(self):
-        return self.comment
+#    def __unicode__(self):
+#        return self.comment
 
 class PedagogicalSection():
     section = models.ForeignKey(Section)
