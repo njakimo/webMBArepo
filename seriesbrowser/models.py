@@ -8,9 +8,18 @@ class Series(models.Model):
     def __unicode__(self):
         return self.name
 
+class Region(models.Model):
+    code = models.CharField(max_length=5)
+    desc = models.CharField(max_length=200)
+    parentid = models.IntegerField()
+    #other atlas and injection fields
+
+    def __unicode__(self):
+        return self.code
+
 class Injection(models.Model):
     series = models.ManyToManyField(Series)
-    region = models.CharField(max_length=200)
+    region = models.ForeignKey(Region)
     x = models.DecimalField(max_digits=3, decimal_places=2)
     y = models.DecimalField(max_digits=3, decimal_places=2)
     z = models.DecimalField(max_digits=3, decimal_places=2)
@@ -41,7 +50,6 @@ class Section(models.Model):
 
 class Updater(models.Model):
     name = models.CharField(max_length=200)
-
     def __unicode__(self):
         return self.name
 

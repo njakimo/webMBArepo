@@ -14,8 +14,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'dbMBA',                      # Or path to database file if using sqlite3.
         'USER': 'root',                      # Not used with sqlite3.
-        'PASSWORD': 'admin',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '3306',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -64,7 +64,7 @@ SECRET_KEY = '^myj(1f%d3urfelb+z)u#=v!se0!*k)z5qniy7ol8-k32)++0j'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -77,7 +77,10 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'webMBA.urls'
 
+#STATIC_DOC_ROOT = '/home/chronux/dada/mbaproject/webMBA/static'
+
 TEMPLATE_DIRS = (
+    #'/home/chronux/dada/mbaproject/webMBA/templates'
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -89,6 +92,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.admin',
     'seriesbrowser'
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
