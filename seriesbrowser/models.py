@@ -1,81 +1,136 @@
 from django.db import models
 
-class Series(models.Model):
+class Brain(models.Model):
     name = models.CharField(max_length=200)
-    lab = models.CharField(max_length=200, default = 'mitra')
-    #indicate sample section
 
     def __unicode__(self):
         return self.name
 
-class Region(models.Model):
-    code = models.CharField(max_length=5)
-    desc = models.CharField(max_length=200)
-    parentid = models.IntegerField()
-    #other atlas and injection fields
-
-    def __unicode__(self):
-        return self.code
-
-class Injection(models.Model):
-    series = models.ManyToManyField(Series)
-    region = models.ForeignKey(Region)
-    x = models.DecimalField(max_digits=3, decimal_places=2)
-    y = models.DecimalField(max_digits=3, decimal_places=2)
-    z = models.DecimalField(max_digits=3, decimal_places=2)
-    #other atlas and injection fields
-
-    def __unicode__(self):
-        return "x:%.3f y:%.3f z:%.3f" % (self.x, self.y, self.z)
-
-class Tracer(models.Model):
+class Laboratory(models.Model):
     name = models.CharField(max_length=200)
-    series = models.ManyToManyField(Series)
+    def __unicode__(self):
+        return self.name
 
+class PedagogicalUnit(models.Model):
+    url = models.CharField(max_length=200)
+    def __unicode__(self):
+        return self.url
+
+class BrainMethod(models.Model):
+    name = models.CharField(max_length=200)
+    class Meta:
+        abstract = True
+
+    def __unicode__(self):
+     return self.name
+
+class LabelMethod(BrainMethod):
+    labelMethodName = models.CharField(max_length=200)
+
+#    class Meta(BrainMethod.Meta):
+#        db_table = 'seriesbrowser_label_method'  
+
+    def __unicode__(self):
+        return self.labelMethodName
+
+class ImageMethod(BrainMethod):
+    imageMethodName = models.CharField(max_length=200)
+
+#    class Meta(BrainMethod.Meta):
+#        db_table = 'seriesbrowser_label_method'  
+
+    def __unicode__(self):
+        return self.imageMethodname
+
+class Series(models.Model):
+    desc = models.CharField('description', max_length=200)
+    brain = models.ForeignKey(Brain)
+    lab = models.ForeignKey(Laboratory)
+    isRestricted = models.BooleanField(default='false')
+    sectionThickness = models.IntegerField()
+    sectionThicknessUnit = models.CharField(max_length=2) 
+    sectioningPlane = models.CharField(max_length=200)
+    pedagogicalUnit = models.ManyToManyField(PedagogicalUnit)
+    #indicate sample section
     def __unicode__(self):
         return self.name
 
 class Section(models.Model):
     series = models.ForeignKey(Series)
     name = models.CharField(max_length=200)
-    num = models.IntegerField()
-    labelmethod = models.CharField(max_length=200)
-    imagemethod = models.CharField(max_length=200)
-    pngpathlow = models.CharField(max_length=200)
-    pngpathhigh = models.CharField(max_length=200)
-    jp2path = models.CharField(max_length=200)
+    sectionOrder = models.IntegerField()
+    labelMethod = models.ForeignKey(LabelMethod)
+    imageMethod = models.ForeignKey(ImageMethod)
+    pngPathLow = models.CharField(max_length=200)
+    pngPathHigh = models.CharField(max_length=200)
+#   jp2Path = models.CharField(max_length=200)
+    isSampleSection = models.BooleanField()
+    def __unicode__(self):
+        return self.name
+
+class Jp2ImagePath(models.Model):
+    url = models.URLField(verify_exists=False)
+    fileSize = models.IntegerField()
+    section = models.ForeignKey(Section)
+    bitDepth = models.IntegerField()
+    def __unicode__(self):
+        return self.url
+
+class Region(models.Model):
+    code = models.CharField(max_length=5)
+    desc = models.CharField('description', max_length=200)
+    parentId = models.IntegerField()
+    #other atlas and injection fields
+
+    def __unicode__(self):
+        return self.code
+
+class Injection(models.Model):
+    section = models.ForeignKey(Section)
+    region = models.ForeignKey(Region)
+    volume = models.DecimalField(max_digits=5, decimal_places=2)
+    volumeUnits = models.CharField(max_length=2)
+    x_coord = models.DecimalField(max_digits=3, decimal_places=2)
+    y_coord = models.DecimalField(max_digits=3, decimal_places=2)
+    z_coord = models.DecimalField(max_digits=3, decimal_places=2)
+    #other atlas and injection fields
+
+    def __unicode__(self):
+        return "x:%.3f y:%.3f z:%.3f" % (self.x_coord, self.y_coord, self.z_coord)
+
+class Tracer(models.Model):
+    name = models.CharField(max_length=200)
+    injection = models.ForeignKey(Injection)
 
     def __unicode__(self):
         return self.name
+
 
 class Updater(models.Model):
     name = models.CharField(max_length=200)
+    lastLoggedIn = models.DateField()
+    
     def __unicode__(self):
         return self.name
 
-#class SeriesNote(models.Model):
-#   series = models.ForeignKey(Series)
-#    updater = models.ForeignKey(Updater)
-#    score = models.IntegerField()
-#    comment = models.CharField(max_length=200)
-#    write_date = models.DateTimeField()
 
-#    def __unicode__(self):
-#        return self.comment
-
-#class SectionNote(models.Model):
-#    section = models.ForeignKey(Section)
-#    updater = models.ForeignKey(Updater)
-#    score = models.IntegerField()
-#    comment = models.CharField(max_length=200)
-#    write_date = models.DateTimeField()
-
-#    def __unicode__(self):
-#        return self.comment
-
-class PedagogicalSection():
-    section = models.ForeignKey(Section)
-    url = models.CharField(max_length=200)
+class SeriesNote(models.Model):
+    series = models.ForeignKey(Series)
+    updater = models.ForeignKey(Updater)
+    score = models.IntegerField()
+    comment = models.CharField(max_length=200)
+    write_date = models.DateTimeField()
 
     def __unicode__(self):
-        return self.url
+        return self.comment
+
+class SectionNote(models.Model):
+    section = models.ForeignKey(Section)
+    updater = models.ForeignKey(Updater)
+    score = models.IntegerField()
+    comment = models.CharField(max_length=200)
+    write_date = models.DateTimeField()
+
+    def __unicode__(self):
+        return self.comment
+
