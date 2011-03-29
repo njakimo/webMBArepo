@@ -7,6 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^seriesbrowser/$', 'seriesbrowser.views.index'),
+    (r'^seriesbrowser/tree/$', 'seriesbrowser.views.tree'),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
     # Example:
     # (r'^webMBA/', include('webMBA.foo.urls')),

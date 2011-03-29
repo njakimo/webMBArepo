@@ -1,12 +1,14 @@
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.db import connection, transaction
+from django.db import connection
 from django.shortcuts import render_to_response
-from seriesbrowser.models import Series, Tracer
-
 from django import forms
+from seriesbrowser.models import Tracer, Region
+
+import json
 
 class FilterForm(forms.Form):
-    filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
+    tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
+    region_filter = forms.ModelChoiceField(Region.objects.order_by('code').all())
 
 def index(request):
     sql = '''
@@ -14,29 +16,38 @@ def index(request):
     SELECT
         series.desc as seriesDesc,
         region.code as regionCode,
-        region.desc as regionDesc,
         injection.x_coord as xCoord,
         injection.y_coord as yCoord,
         injection.z_coord as zCoord,
-        injection.volume as volume,
-        injection.volumeUnits as volumeUnits,
-        tracer.name as tracerName
+        tracer.name as tracerName,
+        series.numQCSections as qcSections
     FROM seriesbrowser_series series
-    INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)
-    LEFT OUTER JOIN seriesbrowser_injection injection ON (injection.section_id = section.id)
-    INNER JOIN seriesbrowser_tracer tracer ON (tracer.injection_id = injection.id)
-    INNER JOIN seriesbrowser_region region ON (region.id = injection.region_id)
+    LEFT OUTER JOIN seriesbrowser_injection injection ON (injection.series_id = series.id)
+    INNER JOIN seriesbrowser_tracer tracer ON (injection.tracer_id = tracer.id)
+    INNER JOIN seriesbrowser_region region ON (injection.region_id = region.id)
     
     '''
 
     try:
-        filter = int(request.GET.get('filter','0'))
+        tracer_filter = int(request.GET.get('tracer_filter','0'))
     except ValueError:
-        filter = 0
+        tracer_filter = 0
+
+    try:
+        region_filter = int(request.GET.get('region_filter','0'))
+    except ValueError:
+        region_filter = 0
 
     where = '1'
-    if filter > 0:
-        where = ' '.join(['t.id =',str(filter)])
+    if tracer_filter > 0:
+        where = ' '.join(['tracer.id =',str(tracer_filter)])
+    if region_filter > 0:
+        region = Region.objects.get(pk=region_filter)
+        if where == '1':
+            where = ' '.join(['injection.region_id IN (', ','.join(map(str,region.descendant_ids())), ')'])
+        else:
+            where = ' '.join([where,'AND injection.region_id IN (', ','.join(map(str,region.descendant_ids())), ')'])
+
 
     sort = request.GET.get('sort','name_asc')
     sort, dir = sort.split('_')
@@ -48,13 +59,13 @@ def index(request):
     extra = ''
     if sort == 'coordx':
         field = 'xCoord'
-        extra = ' '.join([',i.y',dir,',i.z',dir])
+        extra = ' '.join([',yCoord',dir,',zCoord',dir])
     elif sort == 'coordy':
         field = 'yCoord'
-        extra = ' '.join([',i.x',dir,',i.z',dir])
+        extra = ' '.join([',xCoord',dir,',zCoord',dir])
     elif sort == 'coordz':
         field = 'zCoord'
-        extra = ' '.join([',i.x',dir,',i.y',dir])
+        extra = ' '.join([',xCoord',dir,',yCoord',dir])
     elif sort == 'region':
         field = 'regionCode'
     elif sort == 'tracer':
@@ -79,11 +90,19 @@ def index(request):
     except (EmptyPage, InvalidPage):
         series_page = paginator.page(paginator.num_pages)
 
-    form = FilterForm()
+    form = FilterForm(initial={'tracer_filter' : tracer_filter, 'region_filter' : region_filter})
+
+
+    filters = '&'.join(["tracer_filter=" + str(tracer_filter),"region_filter=" + str(region_filter)])
 
     return render_to_response('seriesbrowser/index.html', {
-        'series_page': series_page,
-        'sort'       : sort,
-        'dir'        : dir,
-        'filter'     : request.GET.get('filter',None),
-        'form'       : form})
+        'series_page' : series_page,
+        'sort'        : sort,
+        'dir'         : dir,
+        'filters'     : filters,
+        'form'        : form})
+
+def tree(request):
+    root = Region.objects.get(pk=1)
+    tree = json.dumps(root.generate_tree(2))
+    return render_to_response('seriesbrowser/tree.html', {'tree' : tree})

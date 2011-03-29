@@ -40,7 +40,7 @@ class ImageMethod(BrainMethod):
 #        db_table = 'seriesbrowser_label_method'  
 
     def __unicode__(self):
-        return self.imageMethodname
+        return self.imageMethodName
 
 class SectioningPlane(models.Model):
     desc = models.CharField('description', max_length=10)
@@ -77,17 +77,49 @@ class Section(models.Model):
         return self.name
 
 class Region(models.Model):
-    code = models.CharField(max_length=5)
     desc = models.CharField('description', max_length=200)
-    parentId = models.IntegerField()
-    #other atlas and injection fields
+    code = models.CharField(max_length=5)
+    parent = models.ForeignKey('Region')
+    leftId = models.IntegerField()
+    rightId = models.IntegerField()
+
+    def descendant_ids(self):
+        children = Region.objects.filter(leftId__gte=self.leftId, rightId__lte=self.rightId)
+        return [child.id for child in children]
+
+    def injection_count(self):
+        #nodes = Region.objects.filter(leftId__gte=self.leftId, rightId__lte=self.rightId)
+        #count = 0
+        #for node in nodes:
+        #    count += node.injection_set.count()
+        #return count
+        return Injection.objects.filter(region__id__in=self.descendant_ids()).count()
+
+    def generate_tree(self,expand=0):
+        tree = {'property' : { 'id' : self.id, 'name' : '%s (%d)' % (self.desc, self.injection_count()) }}
+        if expand > 0:
+            tree['state'] = { 'open' : True }
+            expand -= 1
+        children = self.region_set.all()
+        if children.count() > 0:
+            tree['children'] = []
+            for child in children:
+                tree['children'].append(child.generate_tree(expand))
+        return tree
 
     def __unicode__(self):
         return self.code
 
+class Tracer(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return self.name
+
 class Injection(models.Model):
-    section = models.ForeignKey(Section)
+    series = models.ForeignKey(Series)
     region = models.ForeignKey(Region)
+    tracer = models.ForeignKey(Tracer)
     volume = models.DecimalField(max_digits=5, decimal_places=2)
     volumeUnits = models.CharField(max_length=2)
     x_coord = models.DecimalField(max_digits=3, decimal_places=2)
@@ -97,14 +129,6 @@ class Injection(models.Model):
 
     def __unicode__(self):
         return "x:%.3f y:%.3f z:%.3f" % (self.x_coord, self.y_coord, self.z_coord)
-
-class Tracer(models.Model):
-    name = models.CharField(max_length=200)
-    injection = models.ForeignKey(Injection)
-
-    def __unicode__(self):
-        return self.name
-
 
 class Updater(models.Model):
     name = models.CharField(max_length=200)

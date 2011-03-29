@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block css %}
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/css/tree.css" />
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
+<script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
+<script type="text/javascript" src="/static/js/mif.tree-v1.2.6.4.js"></script>
+<script type="text/javascript">
+window.addEvent('domready',function(){
+    var tree = new Mif.Tree({
+        container: $('tree_container'),
+        types: {
+            folder: {
+                openIcon: 'mif-tree-open-icon',
+                closeIcon: 'mif-tree-close-icon'
+            }
+        },
+        dfltType: 'folder',
+        height: 18
+    });
+    var json = [{{ tree|safe }}];
+
+    tree.load({ json: json });
+    tree.addEvent('select', function(node) {
+		window.location.href = '/seriesbrowser/?region_filter=' + node.property.id;
+	});
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<h1>Select a brain region:</h1>
+<div id="tree_container"></div>
+{% endblock %}
