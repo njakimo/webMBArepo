@@ -48,6 +48,8 @@ def index(request):
         else:
             where = ' '.join([where,'AND injection.region_id IN (', ','.join(map(str,region.descendant_ids())), ')'])
 
+    if not request.user.is_authenticated():
+        where += ' AND series.isRestricted = 0'
 
     sort = request.GET.get('sort','name_asc')
     sort, dir = sort.split('_')
@@ -96,6 +98,7 @@ def index(request):
     filters = '&'.join(["tracer_filter=" + str(tracer_filter),"region_filter=" + str(region_filter)])
 
     return render_to_response('seriesbrowser/index.html', {
+        'user'        : request.user,
         'series_page' : series_page,
         'sort'        : sort,
         'dir'         : dir,
@@ -104,5 +107,7 @@ def index(request):
 
 def tree(request):
     root = Region.objects.get(pk=1)
-    tree = json.dumps(root.generate_tree(2))
-    return render_to_response('seriesbrowser/tree.html', {'tree' : tree})
+    tree = json.dumps(root.generate_tree(2,request.user.is_authenticated()))
+    return render_to_response('seriesbrowser/tree.html', {
+        'user' : request.user,
+        'tree' : tree})

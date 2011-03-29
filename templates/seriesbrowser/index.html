@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if series_page %}
+{% if series_page.object_list %}
     <div class="filter">
         <form action="/seriesbrowser/" method="get">{% csrf_token %}
         <div class="fieldWrapper">
@@ -69,6 +69,6 @@
     </span>
     </div>
 {% else %}
-    <p>No injection series are available.</p>
+    <p>No injection series are available that match the given criteria.</p>
 {% endif %}
 {% endblock content %}

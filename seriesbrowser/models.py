@@ -87,16 +87,14 @@ class Region(models.Model):
         children = Region.objects.filter(leftId__gte=self.leftId, rightId__lte=self.rightId)
         return [child.id for child in children]
 
-    def injection_count(self):
-        #nodes = Region.objects.filter(leftId__gte=self.leftId, rightId__lte=self.rightId)
-        #count = 0
-        #for node in nodes:
-        #    count += node.injection_set.count()
-        #return count
-        return Injection.objects.filter(region__id__in=self.descendant_ids()).count()
+    def injection_count(self,auth=False):
+        if auth:
+            return Injection.objects.filter(region__id__in=self.descendant_ids()).count()
+        else:
+            return Injection.objects.filter(region__id__in=self.descendant_ids(),series__isRestricted=0).count()
 
-    def generate_tree(self,expand=0):
-        tree = {'property' : { 'id' : self.id, 'name' : '%s (%d)' % (self.desc, self.injection_count()) }}
+    def generate_tree(self,expand=0,auth=False):
+        tree = {'property' : { 'id' : self.id, 'name' : '%s (%d)' % (self.desc, self.injection_count(auth)) }}
         if expand > 0:
             tree['state'] = { 'open' : True }
             expand -= 1
@@ -104,7 +102,7 @@ class Region(models.Model):
         if children.count() > 0:
             tree['children'] = []
             for child in children:
-                tree['children'].append(child.generate_tree(expand))
+                tree['children'].append(child.generate_tree(expand,auth))
         return tree
 
     def __unicode__(self):
