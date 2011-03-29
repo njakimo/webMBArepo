@@ -42,6 +42,11 @@ class ImageMethod(BrainMethod):
     def __unicode__(self):
         return self.imageMethodname
 
+class SectioningPlane(models.Model):
+    desc = models.CharField('description', max_length=10)
+    def __unicode__(self):
+        return self.desc
+
 class Series(models.Model):
     desc = models.CharField('description', max_length=200)
     brain = models.ForeignKey(Brain)
@@ -49,8 +54,9 @@ class Series(models.Model):
     isRestricted = models.BooleanField(default='false')
     sectionThickness = models.IntegerField()
     sectionThicknessUnit = models.CharField(max_length=2) 
-    sectioningPlane = models.CharField(max_length=200)
+    sectioningPlane = models.ForeignKey(SectioningPlane)
     pedagogicalUnit = models.ManyToManyField(PedagogicalUnit)
+    numQCSections = models.IntegerField()
     #indicate sample section
     def __unicode__(self):
         return self.name
@@ -63,18 +69,12 @@ class Section(models.Model):
     imageMethod = models.ForeignKey(ImageMethod)
     pngPathLow = models.CharField(max_length=200)
     pngPathHigh = models.CharField(max_length=200)
-#   jp2Path = models.CharField(max_length=200)
-    isSampleSection = models.BooleanField()
+    jp2Path = models.URLField(verify_exists=False)
+    jp2FileSize = models.IntegerField()
+    jp2BitDepth = models.IntegerField()
+    isSampleSection = models.BooleanField(default='false')
     def __unicode__(self):
         return self.name
-
-class Jp2ImagePath(models.Model):
-    url = models.URLField(verify_exists=False)
-    fileSize = models.IntegerField()
-    section = models.ForeignKey(Section)
-    bitDepth = models.IntegerField()
-    def __unicode__(self):
-        return self.url
 
 class Region(models.Model):
     code = models.CharField(max_length=5)

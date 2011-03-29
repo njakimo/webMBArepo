@@ -10,20 +10,23 @@ class FilterForm(forms.Form):
 
 def index(request):
     sql = '''
+    
     SELECT
-        s.name as seriesName,
-        r.region as regionCode,
-        r.region as regionDesc,
-        i.x_coord as xCoord,
-        i.y_coord as yCoord,
-        i.z_coord as zCoord,
-        t.name as tracerName
-    FROM seriesbrowser_series s
-    INNER JOIN seriesbrowser_injection_series si ON (s.id = si.series_id)
-    INNER JOIN seriesbrowser_injection i ON (i.id = si.injection_id)
-    INNER JOIN seriesbrowser_tracer_series st ON (s.id = st.series_id)
-    INNER JOIN seriesbrowser_tracer t ON (t.id = st.tracer_id)
-    INNER JOIN seriesbrowser_region r ON (i.region_id = r.region_id)
+        series.desc as seriesDesc,
+        region.code as regionCode,
+        region.desc as regionDesc,
+        injection.x_coord as xCoord,
+        injection.y_coord as yCoord,
+        injection.z_coord as zCoord,
+        injection.volume as volume,
+        injection.volumeUnits as volumeUnits,
+        tracer.name as tracerName
+    FROM seriesbrowser_series series
+    INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)
+    LEFT OUTER JOIN seriesbrowser_injection injection ON (injection.section_id = section.id)
+    INNER JOIN seriesbrowser_tracer tracer ON (tracer.injection_id = injection.id)
+    INNER JOIN seriesbrowser_region region ON (region.id = injection.region_id)
+    
     '''
 
     try:
@@ -41,7 +44,7 @@ def index(request):
     if dir != 'asc' and dir != 'desc':
         dir = 'asc'
 
-    field = 'seriesName'
+    field = 'seriesDesc'
     extra = ''
     if sort == 'coordx':
         field = 'xCoord'
