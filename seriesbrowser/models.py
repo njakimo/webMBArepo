@@ -106,7 +106,7 @@ class Region(models.Model):
         return tree
 
     def __unicode__(self):
-        return self.code
+        return "[%s] %s" % (self.code, self.desc)
 
 class Tracer(models.Model):
     name = models.CharField(max_length=200)
