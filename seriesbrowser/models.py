@@ -48,6 +48,8 @@ class SectioningPlane(models.Model):
         return self.desc
 
 class Series(models.Model):
+    labelMethod = models.ForeignKey(LabelMethod)
+    imageMethod = models.ForeignKey(ImageMethod)
     desc = models.CharField('description', max_length=200)
     brain = models.ForeignKey(Brain)
     lab = models.ForeignKey(Laboratory)
@@ -65,8 +67,6 @@ class Section(models.Model):
     series = models.ForeignKey(Series)
     name = models.CharField(max_length=200)
     sectionOrder = models.IntegerField()
-    labelMethod = models.ForeignKey(LabelMethod)
-    imageMethod = models.ForeignKey(ImageMethod)
     pngPathLow = models.CharField(max_length=200)
     pngPathHigh = models.CharField(max_length=200)
     jp2Path = models.URLField(verify_exists=False)
