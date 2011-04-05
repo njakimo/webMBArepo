@@ -3,3 +3,4 @@
 *.pyc
 dbMBA
 import
+static/slices/*

@@ -1,0 +1,115 @@
+#viewer {
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+}
+#targetframe {
+    width: 99%;
+    height: 99%;
+    margin-left: auto;
+    margin-right: auto;
+}
+#nav {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+}
+#sagittal {
+    float: left;
+    width: 250px;
+}
+#filmstrip {
+    position: fixed;
+    right: 120px;
+    width: 960px;
+    background-color: #000000;
+	overflow: hidden;
+}
+#filmstrip .holder {
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	z-index: 2;
+}
+#filmstrip .holder ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 30000px;
+}
+#filmstrip .holder ul li {
+	float: left;
+	width: 120px;
+	padding: 0 1px 1px 0;
+}
+#filmstrip .holder ul li img { display: block; }
+
+.next,
+.prev {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	margin-top: -30px;
+	width: 40px;
+	height: 40px;
+	background: url(/static/img/btn-next.png) no-repeat;
+	z-index: 20;
+	overflow: hidden;
+	text-indent: -9999px;
+	outline: none;
+	cursor: pointer;
+}
+.next-disable { background: url(/static/img/btn-next-disable.png) no-repeat; }
+.prev {
+	background: url(/static/img/btn-prev.png) no-repeat;
+	right: auto;
+	left: 10px;
+}
+.prev-disable { background: url(/static/img/btn-prev-disable.png) no-repeat; }
+.control {
+	font-size: 18px;
+	line-height: 21px;
+	padding: 5px 0 0;
+}
+#panel {
+position: fixed;
+top: 10px;
+left: 0;
+display: block;
+background: #111111;
+border:1px solid #222222;
+-moz-border-radius-topright: 20px;
+-webkit-border-top-right-radius: 20px;
+-moz-border-radius-bottomright: 20px;
+-webkit-border-bottom-right-radius: 20px;
+width: 330px;
+height: 500px;
+padding: 30px 30px 30px 130px;
+filter: alpha(opacity=85);
+opacity: .85;
+color:#FFFFFF;
+z-index: -1;
+}
+
+a.trigger{
+position: fixed;
+text-decoration: none;
+top: 80px; left: 0;
+font-size: 16px;
+letter-spacing:-1px;
+font-family: verdana, helvetica, arial, sans-serif;
+color:#fff;
+padding: 20px 40px 20px 15px;
+font-weight: 700;
+background:#333333 url(images/plus.png) 85% 55% no-repeat;
+border:1px solid #444444;
+-moz-border-radius-topright: 20px;
+-webkit-border-top-right-radius: 20px;
+-moz-border-radius-bottomright: 20px;
+-webkit-border-bottom-right-radius: 20px;
+-moz-border-radius-bottomleft: 0px;
+-webkit-border-bottom-left-radius: 0px;
+display: block;
+z-index: 2;
+}

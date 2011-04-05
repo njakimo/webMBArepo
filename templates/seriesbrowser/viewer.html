@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+{% block title %}<title>{% if title %}{{ title }}{% else %}The Mouse Brain Architecture Project{% endif %}</title>{% endblock title %}
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/viewer.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/static/djatoka/css/iip.compressed.css" />
+
+<script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
+<script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
+<script type="text/javascript" src="/static/js/iipmooviewer-1.1.js"></script>
+<script type="text/javascript" src="/static/js/slideGallery.js"></script>
+<script type="text/javascript">
+/*
+    var server = 'http://localhost:8000/';
+    var image = 'http://localhost:8000/static/slices/PMD64_0068.jp2';
+    var credit = '';
+
+    var iip = new IIP( "targetframe", {
+		image: image,
+		server: server,
+		credit: credit,
+		zoom: 1,
+		render: 'random',
+        showNavButtons: true
+    });
+*/
+    window.addEvent("domready", function() {
+       var filmstrip = new slideGallery($$("#filmstrip"), {
+            steps: 4,
+            mode: "line"
+        });
+
+        var panel = new Fx.Slide('panel', {mode: 'horizontal'});
+        panel.hide();
+        $('panel').setStyle('z-index','1');
+        $('trigger').addEvent('click', function(event){
+            event.stop();
+            panel.toggle();
+        });
+
+        $$('#filmstrip img').each(function(elem) {
+           elem.addEvent('click', function(){
+               parts = elem.id.split('-')
+               new Request.HTML({
+                   url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
+                   method: 'get',
+                   onComplete: function(response) {
+                        $('panel_content').empty().adopt(response);
+                    }
+               }).send();
+
+               path = elem.get('src');
+               file = path.split('/').pop();
+               pieces = file.split('_');
+               jp2 = pieces[0] + '_' + pieces[1] + '.jp2';
+               alert(jp2);
+           });
+        });
+    });
+</script>
+</head>
+<body>
+
+<div id="viewer">
+  <div id="targetframe"></div>
+  <div id="nav">
+    <div id="sagittal"><img src="/static/img/sagittal.jpg" alt="sagittal" width="192" height="100"/></div>
+    <div id="filmstrip">
+      <div class="holder">
+        <ul>
+          {% for section in sections %}
+          <li><img id="section-{{ section.id }}" src="/static/slices/{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="control">
+        <a href="#" class="prev">prev</a>
+        <a href="#" class="next">next</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="panel">
+  <div id="panel_content">{% include 'seriesbrowser/ajax/section.html' with section=sections.0 %}</div>
+  <div style="clear:both;"></div>
+</div>
+<div><a id="trigger" class="trigger" href="#">Info</a></div>
+</body>
+</html>

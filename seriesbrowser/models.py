@@ -61,7 +61,7 @@ class Series(models.Model):
     numQCSections = models.IntegerField()
     #indicate sample section
     def __unicode__(self):
-        return self.name
+        return self.desc
 
 class Section(models.Model):
     series = models.ForeignKey(Series)

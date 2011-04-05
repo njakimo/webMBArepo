@@ -8,6 +8,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     (r'^seriesbrowser/$', 'seriesbrowser.views.index'),
     (r'^seriesbrowser/tree/$', 'seriesbrowser.views.tree'),
+    (r'^seriesbrowser/viewer/$', 'seriesbrowser.views.viewer'),
+    (r'^seriesbrowser/ajax/section/(?P<id>\d+)/$', 'seriesbrowser.views.section'),
     (r'^seriesbrowser/login/$', 'django.contrib.auth.views.login', {'template_name': 'seriesbrowser/login.html'}),
     (r'^seriesbrowser/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/seriesbrowser/'}),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),

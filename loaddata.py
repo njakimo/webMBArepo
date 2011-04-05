@@ -39,7 +39,7 @@ aralist = []
 #load data from ARA
 for ara in araf:
     ar = ara.split(",")
-    r = Region(code=ar[2].strip(), desc=ar[1].strip(),parent_id=ar[3],leftId=ar[4],rightId=ar[5])
+    r = Region(id=ar[0],code=ar[2].strip(), desc=ar[1].strip(),parent_id=ar[3],leftId=ar[4],rightId=ar[5])
     r.save()
     aralist.append(r)
 

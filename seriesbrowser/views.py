@@ -1,8 +1,9 @@
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from django.shortcuts import render_to_response
 from django import forms
-from seriesbrowser.models import Tracer, Region
+from seriesbrowser.models import Tracer, Region, Series, Section
 
 import json
 
@@ -106,8 +107,27 @@ def index(request):
         'form'        : form})
 
 def tree(request):
-    root = Region.objects.get(pk=1)
-    tree = json.dumps(root.generate_tree(2,request.user.is_authenticated()))
+    try:
+        root = Region.objects.get(pk=1)
+        tree = root.generate_tree(2,request.user.is_authenticated())
+    except ObjectDoesNotExist:
+        tree = {}
     return render_to_response('seriesbrowser/tree.html', {
         'user' : request.user,
-        'tree' : tree})
+        'tree' : json.dumps(tree)})
+
+def viewer(request):
+    try:
+        series = Series.objects.get(pk=74)
+        sections = series.section_set.order_by('sectionOrder').all()
+    except ObjectDoesNotExist:
+        sections = []
+    
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections})
+
+def section(request,id):
+    try:
+        section = Section.objects.get(pk=id)
+    except ObjectDoesNotExist:
+        section = None
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section})
