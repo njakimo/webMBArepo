@@ -123,7 +123,7 @@ def viewer(request):
     except ObjectDoesNotExist:
         sections = []
     
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections})
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': sections[0]})
 
 def section(request,id):
     try:
