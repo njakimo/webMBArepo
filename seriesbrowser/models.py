@@ -70,15 +70,15 @@ class Section(models.Model):
     pngPathLow = models.CharField(max_length=200)
     pngPathHigh = models.CharField(max_length=200)
     jp2Path = models.URLField(verify_exists=False)
-    jp2FileSize = models.IntegerField()
-    jp2BitDepth = models.IntegerField()
+    jp2FileSize = models.BigIntegerField(null=True)
+    jp2BitDepth = models.IntegerField(null=True)
     isSampleSection = models.BooleanField(default='false')
     def __unicode__(self):
         return self.name
 
 class Region(models.Model):
     desc = models.CharField('description', max_length=200)
-    code = models.CharField(max_length=5)
+    code = models.CharField(max_length=10)
     parent = models.ForeignKey('Region')
     leftId = models.IntegerField()
     rightId = models.IntegerField()
@@ -109,7 +109,7 @@ class Region(models.Model):
         return "[%s] %s" % (self.code, self.desc)
 
 class Tracer(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
 
     def __unicode__(self):
         return self.name
