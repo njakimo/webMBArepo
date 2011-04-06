@@ -94,6 +94,7 @@ im_f.save()
 
 slist = os.listdir('/mnt/data001/MBAProcessingResults/PMD')
 
+
 for sr in slist:
 
     if sr.startswith('PMD'):
@@ -101,6 +102,10 @@ for sr in slist:
        brain.save()
 
        numSections = (len(os.listdir('/mnt/data001/MBAProcessingResults/PMD/'+sr))-1)/2
+
+       sampleSectionNum = random.randrange(1,numSections)
+
+       errorf.write(' sample section num ' + str(sampleSectionNum) + '\n')
 
        series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id, numQCSections = numSections)
        series_n.save()
@@ -133,6 +138,11 @@ for sr in slist:
        for sc in sclist:
           if sc.startswith('meta'):
                 scOrder = sc[sc.rfind("_")+1:sc.find(".txt")]
+
+                sampleSection = False
+                if sampleSectionNum == int(scOrder) :
+                   sampleSection = True
+                   errorf.write(" ******* sample section for " + sc + " is " + str(sampleSectionNum) + "\n")
                 scName = sc[5:len(sc)-4]
                 metaName = ''
 
@@ -143,15 +153,15 @@ for sr in slist:
                   metal = metaf.readline()
 
                   if metal.find('N') != -1:
-                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8)
+                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = sampleSection)
                      section.save()
 
                   elif metal.find('F') != -1:
-                     section = Section(series_id=series_f.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=16)
+                     section = Section(series_id=series_f.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=16, isSampleSection = sampleSection)
                      section.save()
                 
                   elif metal.find('IHC') != -1:
-                     section = Section(series_id=series_ihc.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',        pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8)
+                     section = Section(series_id=series_ihc.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',        pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = sampleSection)
                      section.save()
                 except:
                    errorf.write('File not found : ' + metaName + '\n')

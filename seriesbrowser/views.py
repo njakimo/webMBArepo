@@ -13,20 +13,20 @@ class FilterForm(forms.Form):
 
 def index(request):
     sql = '''
-    
-    SELECT
-        series.desc as seriesDesc,
-        region.code as regionCode,
-        injection.x_coord as xCoord,
-        injection.y_coord as yCoord,
-        injection.z_coord as zCoord,
-        tracer.name as tracerName,
-        series.numQCSections as qcSections
-    FROM seriesbrowser_series series
-    LEFT OUTER JOIN seriesbrowser_injection injection ON (injection.series_id = series.id)
-    INNER JOIN seriesbrowser_tracer tracer ON (injection.tracer_id = tracer.id)
-    INNER JOIN seriesbrowser_region region ON (injection.region_id = region.id)
-    
+         SELECT
+            series.desc as seriesDesc,
+            region.code as regionCode,  
+            injection.x_coord as xCoord,  
+            injection.y_coord as yCoord, 
+            injection.z_coord as zCoord,   
+            tracer.name as tracerName, 
+            series.numQCSections as qcSections,
+            section.pngPathLow as imagePath     
+         FROM seriesbrowser_series series     
+         LEFT OUTER JOIN seriesbrowser_injection injection ON (injection.series_id = series.id) 
+         LEFT OUTER JOIN seriesbrowser_tracer tracer ON (injection.tracer_id = tracer.id) 
+         LEFT OUTER  JOIN seriesbrowser_region region ON (injection.region_id = region.id) 
+         INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)     WHERE section.isSampleSection = 1
     '''
 
     try:
@@ -39,18 +39,23 @@ def index(request):
     except ValueError:
         region_filter = 0
 
-    where = '1'
+#    where = '1'
+    where = ''
     if tracer_filter > 0:
         where = ' '.join(['tracer.id =',str(tracer_filter)])
     if region_filter > 0:
         region = Region.objects.get(pk=region_filter)
-        if where == '1':
+        if where == '':
             where = ' '.join(['injection.region_id IN (', ','.join(map(str,region.descendant_ids())), ')'])
         else:
             where = ' '.join([where,'AND injection.region_id IN (', ','.join(map(str,region.descendant_ids())), ')'])
 
     if not request.user.is_authenticated():
-        where += ' AND series.isRestricted = 0'
+        if where == '':
+           where += ' series.isRestricted = 0'
+        else:
+           where += ' AND series.isRestricted = 0'
+
 
     sort = request.GET.get('sort','name_asc')
     sort, dir = sort.split('_')
@@ -58,24 +63,24 @@ def index(request):
     if dir != 'asc' and dir != 'desc':
         dir = 'asc'
 
-    field = 'seriesDesc'
+    field = 'series.desc'
     extra = ''
     if sort == 'coordx':
-        field = 'xCoord'
-        extra = ' '.join([',yCoord',dir,',zCoord',dir])
+        field = 'x_coord'
+        extra = ' '.join([',y_coord',dir,',z_coord',dir])
     elif sort == 'coordy':
-        field = 'yCoord'
-        extra = ' '.join([',xCoord',dir,',zCoord',dir])
+        field = 'y_coord'
+        extra = ' '.join([',x_coord',dir,',z_coord',dir])
     elif sort == 'coordz':
-        field = 'zCoord'
-        extra = ' '.join([',xCoord',dir,',yCoord',dir])
+        field = 'z_coord'
+        extra = ' '.join([',x_coord',dir,',y_coord',dir])
     elif sort == 'region':
-        field = 'regionCode'
+        field = 'region.code'
     elif sort == 'tracer':
-        field = 'tracerName'
+        field = 'tracer.name'
     order = ' '.join([field, dir, extra])
 
-    sql = ' '.join([sql,'WHERE',where,'ORDER BY',order])
+    sql = ' '.join([sql,' AND ',where,'ORDER BY',order])
 
     cursor = connection.cursor()
     cursor.execute(sql)
@@ -118,7 +123,7 @@ def tree(request):
 
 def viewer(request):
     try:
-        series = Series.objects.get(pk=74)
+        series = Series.objects.get(pk=73)
         sections = series.section_set.order_by('sectionOrder').all()
     except ObjectDoesNotExist:
         sections = []
