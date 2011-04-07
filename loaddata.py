@@ -129,10 +129,10 @@ for sr in slist:
                  tracer.save()
                except:
                  pass
-               if l.labelmethod.find("Flou") != -1:
+               if l.labelMethod.find("Flou") != -1:
                   injection = Injection(series_id = series_f.id, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
                   injection.save()
-               elif l.labelmethod.find("IHC") != -1:
+               elif l.labelMethod.find("IHC") != -1:
                   injection = Injection(series_id = series_ihc.id, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
                   injection.save()
                break
@@ -158,15 +158,15 @@ for sr in slist:
 
                   metal = metaf.readline()
 
-                  if metal.find('N') != -1:
+                  if metal.find(' N ') != -1:
                      section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
                      section.save()
 
-                  elif metal.find('F') != -1:
+                  elif metal.find(' F ') != -1:
                      section = Section(series_id=series_f.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=16, isSampleSection = firstSection)
                      section.save()
                 
-                  elif metal.find('IHC') != -1:
+                  elif metal.find(' IHC ') != -1:
                      section = Section(series_id=series_ihc.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',        pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
                      section.save()
                 except:
