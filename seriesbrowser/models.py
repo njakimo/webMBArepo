@@ -73,6 +73,7 @@ class Section(models.Model):
     jp2FileSize = models.BigIntegerField(null=True)
     jp2BitDepth = models.IntegerField(null=True)
     isSampleSection = models.BooleanField(default='false')
+    y_coord = models.IntegerField(null=True)
     def __unicode__(self):
         return self.name
 

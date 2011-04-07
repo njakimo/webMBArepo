@@ -15,10 +15,11 @@ from seriesbrowser.models import Region
 from seriesbrowser.models import SectioningPlane
 
 class Mouse:
-   def __init__(self, Name,Injdate,Tracer,Injvolume,Injvolunits, Xcoord, Ycoord, Zcoord):
+   def __init__(self, Name,Injdate,Tracer,LabelMethod,Injvolume,Injvolunits, Xcoord, Ycoord, Zcoord):
       self.name = Name
       self.injdate = Injdate
       self.tracer = Tracer
+      self.labelMethod = LabelMethod
       self.injvolume = Injvolume
       self.injvolunits= Injvolunits
       self.xcoord = Xcoord
@@ -60,7 +61,7 @@ for sline in limsf:
         #  errorf.write('Mouse ' + n + '\n')
           iarray = sarray[7].split(' ')
         
-          mouse = Mouse(n, sarray[1], sarray[2],iarray[0].strip(), 'nl', sarray[3].strip(), sarray[4].strip(), sarray[5].strip())
+          mouse = Mouse(n, sarray[1], sarray[2],sarray[11].strip(),iarray[0].strip(), 'nl', sarray[3].strip(), sarray[4].strip(), sarray[5].strip())
           limslist.append(mouse)
           namelist.append(n)
    except:
@@ -128,21 +129,26 @@ for sr in slist:
                  tracer.save()
                except:
                  pass
-               injection = Injection(series_id = series_f.id, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
-               injection.save()
+               if l.labelmethod.find("Flou") != -1:
+                  injection = Injection(series_id = series_f.id, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
+                  injection.save()
+               elif l.labelmethod.find("IHC") != -1:
+                  injection = Injection(series_id = series_ihc.id, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
+                  injection.save()
                break
              except:
                errorf.write('Cannot save ' + sr + ' - ' + tn + '\n')
 
        sclist = os.listdir('/mnt/data001/MBAProcessingResults/PMD/'+sr)
+       firstSection = True 
        for sc in sclist:
           if sc.startswith('meta'):
                 scOrder = sc[sc.rfind("_")+1:sc.find(".txt")]
 
-                sampleSection = False
-                if sampleSectionNum == int(scOrder) :
-                   sampleSection = True
-                   errorf.write(" ******* sample section for " + sc + " is " + str(sampleSectionNum) + "\n")
+      #          sampleSection = False
+      #          if sampleSectionNum == int(scOrder) :
+      #             sampleSection = True
+      #             errorf.write(" ******* sample section for " + sc + " is " + str(sampleSectionNum) + "\n")
                 scName = sc[5:len(sc)-4]
                 metaName = ''
 
@@ -153,17 +159,18 @@ for sr in slist:
                   metal = metaf.readline()
 
                   if metal.find('N') != -1:
-                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = sampleSection)
+                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
                      section.save()
 
                   elif metal.find('F') != -1:
-                     section = Section(series_id=series_f.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=16, isSampleSection = sampleSection)
+                     section = Section(series_id=series_f.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=16, isSampleSection = firstSection)
                      section.save()
                 
                   elif metal.find('IHC') != -1:
-                     section = Section(series_id=series_ihc.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',        pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = sampleSection)
+                     section = Section(series_id=series_ihc.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',        pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
                      section.save()
                 except:
                    errorf.write('File not found : ' + metaName + '\n')
-                   #errorf.write('File not found: \n')
+                   #erirorf.write('File not found: \n')
+                firstSection = False
 
