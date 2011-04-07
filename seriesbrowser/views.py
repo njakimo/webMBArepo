@@ -21,7 +21,8 @@ def index(request):
             injection.z_coord as zCoord,   
             tracer.name as tracerName, 
             series.numQCSections as qcSections,
-            section.pngPathLow as imagePath     
+            section.pngPathLow as imagePath,     
+            series.id as seriesId     
          FROM seriesbrowser_series series     
          LEFT OUTER JOIN seriesbrowser_injection injection ON (injection.series_id = series.id) 
          LEFT OUTER JOIN seriesbrowser_tracer tracer ON (injection.tracer_id = tracer.id) 
@@ -123,7 +124,7 @@ def tree(request):
 
 def viewer(request):
     try:
-        series = Series.objects.get(pk=73)
+        series = Series.objects.get(pk=int(request.GET.get('seriesId','0')))
         sections = series.section_set.order_by('sectionOrder').all()
     except ObjectDoesNotExist:
         sections = []
@@ -133,6 +134,8 @@ def viewer(request):
 def section(request,id):
     try:
         section = Section.objects.get(pk=id)
+       # series  = Series.objects.get(pk=section.seriesId)
+        series  = Series.objects.get(pk=section.series.id)
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section})
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series})
