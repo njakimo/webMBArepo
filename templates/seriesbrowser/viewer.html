@@ -26,23 +26,44 @@
         showNavButtons: true
     });
 */
-    window.addEvent("domready", function() {
-       var filmstrip = new slideGallery($$("#filmstrip"), {
-            steps: 4,
-            mode: "line"
-        });
+    window.addEvent('domready', function() {
+        var nSections = {{ sections.count }};
+        if($('filmstrip')) {
+            var filmstrip = new slideGallery($('filmstrip'), {
+                steps: 4,
+                mode: "line"
+            });
+        }
 
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
         panel.hide();
         $('panel').setStyle('z-index','1');
-        $('trigger').addEvent('click', function(event){
+        $('trigger').addEvent('click', function(event) {
             event.stop();
             panel.toggle();
         });
 
+        var setSagittalX = function(x) {
+            $('sagittal_pos').setStyle('left', x);
+        };
+        var highlightSection = function(elem) {
+            elem.getSiblings().setStyle('border-top','');
+            elem.setStyle('border-top','3px solid #FFFFFF');
+        };
+        $('sagittal').addEvent('click', function(event) {
+            setSagittalX(event.page.x)
+            //y_pos = 5.762 - 0.067*(event.page.x-10);
+            y_pos = Math.round((event.page.x-10) / 200 * nSections) + 1;
+            filmstrip.jump(y_pos);
+            section = $$('img[id$='+y_pos+']');
+            highlightSection(section[0].getParent('li'));
+        });
+        
         $$('#filmstrip img').each(function(elem) {
            elem.addEvent('click', function(){
-               parts = elem.id.split('-')
+               parts = elem.id.split('-');
+               highlightSection(elem.getParent('li'));
+               setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
                new Request.HTML({
                    url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
                    method: 'get',
@@ -55,9 +76,21 @@
                file = path.split('/').pop();
                pieces = file.split('_');
                jp2 = pieces[0] + '_' + pieces[1] + '.jp2';
-               alert(jp2);
            });
         });
+
+        var color = [0, 0, 0];
+
+        $$('.advanced.slider').each(function(slider, i){
+            new Slider(slider, slider.getElement('.knob'), {
+                steps: 255,
+                onChange: function(){
+                    color[i] = this.step;
+                }
+            });
+        });
+
+        
     });
 </script>
 </head>
@@ -65,13 +98,22 @@
 
 <div id="viewer">
   <div id="targetframe"></div>
+  <div id="colors">
+    <div id="red_low" class="advanced slider"><div class="knob"></div></div>
+    <div id="red_high" class="advanced slider"><div class="knob"></div></div>
+    <div id="green_low" class="advanced slider"><div class="knob"></div></div>
+    <div id="green_high" class="advanced slider"><div class="knob"></div></div>
+    <div id="blue_low" class="advanced slider"><div class="knob"></div></div>
+    <div id="blue_high" class="advanced slider"><div class="knob"></div></div>
+  </div>
   <div id="nav">
-    <div id="sagittal"><img src="/static/img/sagittal.jpg" alt="sagittal" width="192" height="100"/></div>
+    <div id="sagittal"><div id="sagittal_pos"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
+    {% if sections %}
     <div id="filmstrip">
       <div class="holder">
         <ul>
           {% for section in sections %}
-          <li><img id="section-{{ section.id }}" src="/static/img/{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
+          <li><img id="section-{{ section.id }}-{{ section.sectionOrder }}" src="/static/slices/{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
           {% endfor %}
         </ul>
       </div>
@@ -80,11 +122,12 @@
         <a href="#" class="next">next</a>
       </div>
     </div>
+  {% endif %}
   </div>
 </div>
 
 <div id="panel">
-  <div id="panel_content">{% include 'seriesbrowser/ajax/section.html' %}</div>
+  <div id="panel_content">{% if section %}{% include 'seriesbrowser/ajax/section.html' %}{% endif %}</div>
   <div style="clear:both;"></div>
 </div>
 <div><a id="trigger" class="trigger" href="#">Info</a></div>

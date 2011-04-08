@@ -124,12 +124,19 @@ def tree(request):
 
 def viewer(request):
     try:
-        series = Series.objects.get(pk=int(request.GET.get('seriesId','0')))
+        series_id = int(request.GET.get('seriesId','0'))
+    except ValueError:
+        series_id = 0
+
+    try:
+        series = Series.objects.get(pk=series_id)
         sections = series.section_set.order_by('sectionOrder').all()
+        section = sections[0]
     except ObjectDoesNotExist:
-        sections = []
+        sections = None
+        section = None
     
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': sections[0]})
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section})
 
 def section(request,id):
     try:

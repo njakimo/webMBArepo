@@ -224,6 +224,18 @@ var slideGallery = new Class({
 		}
 		return this;
 	},
+    jump: function(slide) {
+        var temp = this.options.steps;
+        var jump = slide - this.current;
+        if(jump > 0) {
+            this.options.steps = jump;
+            this.nextSlide();
+        } else if(jump < 0) {
+            this.options.steps = -jump;
+            this.prevSlide();
+        }
+        this.options.steps = temp;		
+    },
 	prevSlide: function() {
 		if(this.options.mode != "circle") {
 			if(this.current <= 0) {
