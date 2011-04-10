@@ -63,6 +63,10 @@ class Series(models.Model):
     def __unicode__(self):
         return self.desc
 
+class NearestSeries(models.Model):
+    distance = models.DecimalField(max_digits=5, decimal_places=2)
+    series = models.ForeignKey(Series)
+
 class Section(models.Model):
     series = models.ForeignKey(Series)
     name = models.CharField(max_length=200)
