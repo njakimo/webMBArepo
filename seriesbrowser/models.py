@@ -66,6 +66,7 @@ class Series(models.Model):
 class NearestSeries(models.Model):
     distance = models.DecimalField(max_digits=5, decimal_places=2)
     series = models.ForeignKey(Series)
+    nearestSeriesId = models.IntegerField(Series)
 
 class Section(models.Model):
     series = models.ForeignKey(Series)

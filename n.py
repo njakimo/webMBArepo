@@ -42,13 +42,16 @@ for s in slist:
     
     ilist = Injection.objects.all()
 
+    if i_sid ==0:
+       continue
+
     for i in ilist:
         if i.series_id != i_sid:
            d = math.sqrt((i.x_coord-x_coord)*(i.x_coord-x_coord)+(i.y_coord-y_coord)*(i.y_coord-y_coord)+(i.z_coord-z_coord)*(i.z_coord-z_coord))
            distf.write("Distance between " + s.desc + " and " + str(i.series_id) + " = " + str(d) + "\n") 
            if d <= 3 :
-              nn = NearestSeries(distance=str(d), series_id = i.series_id)
-              distf.write("In save " + str(d) + " series id " + str(i.series_id) +  "\n") 
+              nn = NearestSeries(distance=str(d), series_id = i_sid, nearestSeriesId = i.series_id)
+              distf.write("In save " + str(d) + " for series id " + str(i_sid) + " nearest series " + str(i.series_id) +  "\n") 
               nn.save()
    
  #distf.write(s.desc + '\n')
