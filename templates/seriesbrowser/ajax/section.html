@@ -1,6 +1,14 @@
 <h3>{{ series.desc }}</h3>
 <p>Section: {{section.name}}</p>
 <p>Num QC sections: {{series.numQCSections}}</p>
+<p>Nearest Series:
+<ul>
+{% for s in nslist %}
+<li>
+ {{s.desc}}</p>
+</li>
+{% endfor %}
+</ul>
 <p></p>
 <p>Links to search options</p>
 <p></p>

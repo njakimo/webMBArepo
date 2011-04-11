@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from django.shortcuts import render_to_response
 from django import forms
-from seriesbrowser.models import Tracer, Region, Series, Section
+from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries
 
 import json
 
@@ -142,7 +142,14 @@ def section(request,id):
     try:
         section = Section.objects.get(pk=id)
        # series  = Series.objects.get(pk=section.seriesId)
-        series  = Series.objects.get(pk=section.series.id)
+        sr  = Series.objects.get(pk=section.series.id)
+        ns = NearestSeries.objects.filter(series=sr)
+        nslist = []
+        for n in ns:
+           s = Series.objects.get(pk=n.series.id)
+           nslist.append(s)
+           if len(nslist) >= 5:
+              break
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series})
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':sr, 'nslist':nslist})
