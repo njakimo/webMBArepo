@@ -1,17 +1,27 @@
 <h3>{{ series.desc }}</h3>
+<br/>
 <p>Section: {{section.name}}</p>
+<br/>
 <p>Num QC sections: {{series.numQCSections}}</p>
-<p>Nearest Series:
+<br/>
+<p>5 Nearest Series:
+<br/><br/>
+<div id = "button">
 <ul>
 {% for s in nslist %}
 <li>
- {{s.desc}}</p>
+ <a href="/seriesbrowser/viewer/?seriesId={{s.id}}">{{s.desc}}</a></p>
 </li>
 {% endfor %}
 </ul>
-<p></p>
-<p>Links to search options</p>
-<p></p>
-<p>Link to all thumbnail view page (possible overlay)</p>
-<p></p>
-<p>Pedagogical unit info if present.</p>
+</div>
+<br/>
+<p>Injection region:&nbsp;{{region.code}} - {{ region.desc}}</p>
+<br/>
+<p>Search the literature on <a href="http://brainarchitecture.org:8080/neuro_nlp/index.jsp?query='{{region.desc}}'&docsPerPage=5&category0=connectivity&sentsPerDoc=5&twoBrains=yes&sentsToSort=1000">
+region</a>
+</p>
+<br/>
+<p><a href="/seriesbrowser/?region_filter={{region.id}}">Show</a> all injection series for the region</p>
+<br/>
+<p>Pedagogical unit info.</p>

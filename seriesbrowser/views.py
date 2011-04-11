@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from django.shortcuts import render_to_response
 from django import forms
-from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries
+from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries, Injection
 
 import json
 
@@ -132,24 +132,42 @@ def viewer(request):
         series = Series.objects.get(pk=series_id)
         sections = series.section_set.order_by('sectionOrder').all()
         section = sections[0]
+        inj  = Injection.objects.filter(series=series)
+        region = ''         
+        for i in inj:
+           region  = Region.objects.get(pk=i.region.id)
+           break
+        ns = NearestSeries.objects.filter(series=series)
+        nslist = []
+        for n in ns:
+           s = Series.objects.get(pk=n.nearestSeriesId)
+           nslist.append(s)
+           if len(nslist) >= 5:
+              break
     except ObjectDoesNotExist:
         sections = None
         section = None
     
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section})
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
 
 def section(request,id):
     try:
         section = Section.objects.get(pk=id)
        # series  = Series.objects.get(pk=section.seriesId)
-        sr  = Series.objects.get(pk=section.series.id)
-        ns = NearestSeries.objects.filter(series=sr)
+        series  = Series.objects.get(pk=section.series.id)
+        inj  = Injection.objects.filter(series=series)
+        region = ''         
+        for i in inj:
+           region  = Region.objects.get(pk=i.region.id)
+           break
+        ns = NearestSeries.objects.filter(series=series)
         nslist = []
         for n in ns:
-           s = Series.objects.get(pk=n.series.id)
+           s = Series.objects.get(pk=n.nearestSeriesId)
            nslist.append(s)
            if len(nslist) >= 5:
               break
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':sr, 'nslist':nslist})
+ #   return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':sr, 'nslist':nslist})
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region})
