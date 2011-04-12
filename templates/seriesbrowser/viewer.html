@@ -12,9 +12,9 @@
 <script type="text/javascript" src="/static/js/iipmooviewer-1.1.js"></script>
 <script type="text/javascript" src="/static/js/slideGallery.js"></script>
 <script type="text/javascript">
-/*
-    var server = 'http://localhost:8000/';
-    var image = 'http://localhost:8000/static/slices/PMD64_0068.jp2';
+    var imageBase = 'http://mbaimages.cshl.edu/data/MBAProcessingResults/PMD/';
+    var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
+    var image = imageBase + 'PMD9/PMD9_0002.jp2';
     var credit = '';
 
     var iip = new IIP( "targetframe", {
@@ -23,9 +23,10 @@
 		credit: credit,
 		zoom: 1,
 		render: 'random',
-        showNavButtons: true
+        showNavButtons: true,
+        crossSiteTest: true
     });
-*/
+
     window.addEvent('domready', function() {
         var nSections = {{ sections.count }};
         if($('filmstrip')) {
@@ -53,15 +54,15 @@
         $('sagittal').addEvent('click', function(event) {
             setSagittalX(event.page.x)
             //y_pos = 5.762 - 0.067*(event.page.x-10);
-            y_pos = Math.round((event.page.x-10) / 200 * nSections) + 1;
+            var y_pos = Math.round((event.page.x-10) / 200 * nSections) + 1;
             filmstrip.jump(y_pos);
-            section = $$('img[id$='+y_pos+']');
+            var section = $$('img[id$='+y_pos+']');
             highlightSection(section[0].getParent('li'));
         });
         
         $$('#filmstrip img').each(function(elem) {
            elem.addEvent('click', function(){
-               parts = elem.id.split('-');
+               var parts = elem.id.split('-');
                highlightSection(elem.getParent('li'));
                setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
                new Request.HTML({
@@ -72,25 +73,46 @@
                     }
                }).send();
 
-               path = elem.get('src');
-               file = path.split('/').pop();
-               pieces = file.split('_');
-               jp2 = pieces[0] + '_' + pieces[1] + '.jp2';
+               var path = elem.get('src');
+               var file = path.split('/').pop();
+               var pieces = file.split('_');
+               iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
            });
         });
 
-        var color = [0, 0, 0];
+        var low_sliders = [0,0,0];
+        var high_sliders = [0,0,0];
 
-        $$('.advanced.slider').each(function(slider, i){
-            new Slider(slider, slider.getElement('.knob'), {
-                steps: 255,
-                onChange: function(){
-                    color[i] = this.step;
+        var updateColorRange = function() {
+            $('red_range').innerHTML = low_sliders[0].step + ',' + high_sliders[0].step;
+            $('green_range').innerHTML = low_sliders[1].step + ',' + high_sliders[1].step;
+            $('blue_range').innerHTML = low_sliders[2].step + ',' + high_sliders[2].step;
+        };
+        $$('.slider.low').each(function(slider, i){
+            low_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
+                range: [0,65534],
+                onChange: function() {
+                    if(this.step >= high_sliders[i].step) {
+                        high_sliders[i].set(this.step+1);
+                    }
+                    updateColorRange();
                 }
             });
         });
+        $$('.slider.high').each(function(slider, i){
+            high_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
+                range: [1,65535],
+                initialStep: 255,
+                onChange: function(){
+                    if(this.step <= low_sliders[i].step) {
+                        low_sliders[i].set(this.step-1);
+                    }
+                    updateColorRange();
+                }
+            });
+        });
+        updateColorRange();
 
-        
     });
 </script>
 </head>
@@ -98,14 +120,17 @@
 
 <div id="viewer">
   <div id="targetframe"></div>
+{% comment %}
   <div id="colors">
-    <div id="red_low" class="advanced slider"><div class="knob"></div></div>
-    <div id="red_high" class="advanced slider"><div class="knob"></div></div>
-    <div id="green_low" class="advanced slider"><div class="knob"></div></div>
-    <div id="green_high" class="advanced slider"><div class="knob"></div></div>
-    <div id="blue_low" class="advanced slider"><div class="knob"></div></div>
-    <div id="blue_high" class="advanced slider"><div class="knob"></div></div>
+    <div id="red_low" class="advanced slider low"><div class="knob"></div></div>
+    <div id="red_high" class="advanced slider high"><div class="knob"></div></div>
+    <div id="green_low" class="advanced slider low"><div class="knob"></div></div>
+    <div id="green_high" class="advanced slider high"><div class="knob"></div></div>
+    <div id="blue_low" class="advanced slider low"><div class="knob"></div></div>
+    <div id="blue_high" class="advanced slider high"><div class="knob"></div></div>
+    <div id="color_submit">R: <span id="red_range"></span><br/>G: <span id="green_range"></span><br/>B: <span id="blue_range"></span></div>
   </div>
+  {% endcomment %}
   <div id="nav">
     <div id="sagittal"><div id="sagittal_pos"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
     {% if sections %}

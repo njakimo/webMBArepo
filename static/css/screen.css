@@ -42,3 +42,11 @@ body {
 .pagination {
     float: right;
 }
+
+a.tooltip:hover {background:#ffffff; text-decoration:none;} /*BG color is a must for IE6*/
+a.tooltip span {display:none; padding:2px 3px; margin-left:60px; width:140px;}
+a.tooltip:hover span{display:inline; position:absolute; margin-top: -50px; background:#ffffff; border:1px solid #cccccc; color:#6c6c6c;}
+
+a.tooltip2:hover {background:#ffffff; text-decoration:none;} /*BG color is a must for IE6*/
+a.tooltip2 span {display:none; padding:2px 3px; width:140px;}
+a.tooltip2:hover span{display:inline; position:absolute; background:#ffffff; border:1px solid #cccccc; color:#6c6c6c; opacity:0.5; -moz-opacity:0.5;}

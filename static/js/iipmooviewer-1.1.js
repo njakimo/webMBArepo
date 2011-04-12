@@ -175,6 +175,8 @@ var IIP = new Class({
 
     this.render = options['render'] || 'random';
 
+    this.crossSiteTest = options['crossSiteTest'] || false;
+
     this.images = new Array(options['image'].length);
     options['image'] || alert( 'Image location not set in IIP constructor options');
     if( $type(options['image']) == 'array' ){
@@ -267,8 +269,7 @@ var IIP = new Class({
   /* Create a grid of tiles with the appropriate JTL request and positioning
    */
   loadGrid: function(){
-      return;
-   
+
     var pos = $(this.source).getPosition();
 
     // Delete our old image mosaic
@@ -324,7 +325,7 @@ var IIP = new Class({
 
     var map = new Array((endx-startx)*(endx-startx));
 
-    // Should put this into 
+    // Should put this into
     var ntiles=0;
     for( j=starty; j<=endy; j++ ){
       for (i=startx;i<=endx; i++) {
@@ -347,8 +348,8 @@ var IIP = new Class({
     this.nTilesToLoad = ntiles*this.images.length;
 
     //map.sort(function s(a,b){return a.n - b.n;});
-    
-    // djatoka mods 
+
+    // djatoka mods
     map.sort(function (a,b){return a > b;});
     var first = true;
     var r = this.num_resolutions - this.res;
@@ -360,7 +361,7 @@ var IIP = new Class({
       var i = map[m].x;
       var j = map[m].y;
 
-      // djatoka mods 
+      // djatoka mods
       var djatoka_x = i * f;
       var djatoka_y = j * f;
       if (first) {
@@ -407,13 +408,13 @@ var IIP = new Class({
 	    	    + this.res + "&svc.rotate=0&svc.region="
 	    	    + djatoka_y + "," + djatoka_x + ",256,256";
 	    // end djatoka mods
-	    
+
 	    // We set the source at the end so that the 'load' function is properly fired
         //var src = this.server+"?FIF="+this.images[n].src+"&cnt="+this.contrast+"&sds="+this.images[n].sds+"&jtl="+this.res+"," + k;
 	    tile.set( 'src', src );
         tile.injectInside('target');
       }
-     } else 
+     } else
          this.nTilesLoaded++
     }
 
@@ -421,7 +422,7 @@ var IIP = new Class({
       var selector = 'img.layer'+(n-1);
       $$(selector).set( 'opacity', this.opacity );
     }
-    
+
   },
 
   // djatoka mods
@@ -454,7 +455,7 @@ var IIP = new Class({
         + "&svc.rotate=0&svc.region=" + top_left_y + ","
         + top_left_x + "," + h + "," + w;
    },
-   
+
   /*
    * Open the OpenURL for the current viewport in a new window
    */
@@ -548,7 +549,7 @@ var IIP = new Class({
 
     this.rgn_x = Math.round(xmove * this.wid / this.min_x);
     this.rgn_y = Math.round(ymove * this.hei / this.min_y);
- 
+
     this.requestImages();
     if( e.event ) this.positionZone();
   },
@@ -579,7 +580,7 @@ var IIP = new Class({
 
     this.rgn_x = x;
     this.rgn_y = y;
- 
+
   },
 
 
@@ -741,7 +742,6 @@ var IIP = new Class({
   },
 
 
-
   /* Create our main and navigation windows
    */
   createWindows: function(){
@@ -783,11 +783,11 @@ var IIP = new Class({
 
     // Add our logo and a tooltip explaining how to use the viewer
     new Element( 'a', {href: 'http://iipimage.sourceforge.net', id:'logo'} ).injectInside(this.source);
-    new Element('img', {src: 'images/djatoka.32x32.png', id: 'info', styles: { opacity: 0.8 } } ).injectInside('logo');
+    new Element('img', {src: '/static/djatoka/images/djatoka.32x32.png', id: 'info', styles: { opacity: 0.8 } } ).injectInside('logo');
 
     // Fix IE7 PNG transparency problem
     if( Browser.Engine.trident5 ){
-      $('info').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="images/djatoka.32x32.png",sizingMethod=scale)' );
+      $('info').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="/static/djatoka/images/djatoka.32x32.png",sizingMethod=scale)' );
     }
 
     new Tips( '#info, #toolbar', {
@@ -797,7 +797,7 @@ var IIP = new Class({
 	  onShow: function(t){ t.setStyle('opacity',0); t.fade(0.7); },
 	  onHide: function(t){ t.fade(0); }
     });
-    $('info').store('tip:text', '<h2><img src="images/djatoka.32x32.png"/>djatoka IIPViewer</h2>djatoka Viewer - an IIPImage High Resolution Ajax Image Viewer<ul><li>To navigate within image:<ul><li>drag image within main window or</li><li>drag zone within the navigation window</li><li>click an area within navigation window</li></ul><li>To zoom in:<ul><li>double click with the mouse or</li><li>use the mouse scroll wheel or</li><li>or simply press the "+" key</li></ul><li>To zoom out:<ul><li>shift double click with the mouse or</li><li>use the mouse wheel or</li><li>press the "-" key</li></ul></li><li>To move the navigation window:<ul><li>drag navigation window toolbar</li></ul><li>To show / hide navigation buttons:</li><ul><li>double click navigation window toolbar</li></ul></ul>Written by Ruven Pillay, Modified for use with djatoka by Ryan Chute<br/>For more information visit http://iipimage.sf.net & http://djatoka.sf.net');
+    $('info').store('tip:text', '<h2><img src="/static/djatoka/images/djatoka.32x32.png"/>djatoka IIPViewer</h2>djatoka Viewer - an IIPImage High Resolution Ajax Image Viewer<ul><li>To navigate within image:<ul><li>drag image within main window or</li><li>drag zone within the navigation window</li><li>click an area within navigation window</li></ul><li>To zoom in:<ul><li>double click with the mouse or</li><li>use the mouse scroll wheel or</li><li>or simply press the "+" key</li></ul><li>To zoom out:<ul><li>shift double click with the mouse or</li><li>use the mouse wheel or</li><li>press the "-" key</li></ul></li><li>To move the navigation window:<ul><li>drag navigation window toolbar</li></ul><li>To show / hide navigation buttons:</li><ul><li>double click navigation window toolbar</li></ul></ul>Written by Ruven Pillay, Modified for use with djatoka by Ryan Chute<br/>For more information visit http://iipimage.sf.net & http://djatoka.sf.net');
 
 
     // Add some info
@@ -839,7 +839,7 @@ var IIP = new Class({
         width: this.min_x
       },
 	events: {
-	    dblclick: function(){$('navbuttons').slide('toggle');}
+	    dblclick: function(){$('navcontrols').slide('toggle');}
 	}
     });
     toolbar.store( 'tip:text', '* Drag to move<br/>* Double Click to show/hide navigation buttons' );
@@ -855,7 +855,7 @@ var IIP = new Class({
     });
     navwin.injectInside( navcontainer );
 
-    // Create our navigation image and inject inside the div we just created    
+    // Create our navigation image and inject inside the div we just created
     // djatoka mods
     var navimage = new Element('img', {
         id :'navigation',
@@ -864,14 +864,14 @@ var IIP = new Class({
             + "&svc_val_fmt=" + this.svc_val_fmt
             + "&svc.format=image/jpeg&svc.scale=" + this.min_x + "," + this.min_y
     // end djatoka mods
-    
+
     //var navimage = new Element( 'img', {
 	//id: 'navigation',
 	//src: this.server + '?FIF=' + this.images[0].src + '&SDS=' + this.images[0].sds + '&CNT=1.0' +
 	//    '&WID=' + this.min_x + '&QLT=99&CVT=jpeg'
-    
+
     });
-    
+
     navimage.injectInside( navwin );
 
     // Create our navigation zone and inject inside the navigation div
@@ -904,15 +904,31 @@ var IIP = new Class({
       }
     });
 
-
+    var navcontrols = new Element('div', {id: 'navcontrols'});
 
     // Create our nav buttons
     var navbuttons = new Element('div', {
 	id: 'navbuttons',
 	html: '<img id="shiftLeft" src="/static/djatoka/images/left.png"/><img id="shiftUp" src="/static/djatoka/images/up.png"/><img id="shiftRight" src="/static/djatoka/images/right.png"/><br/><img id="shiftDown" src="/static/djatoka/images/down.png"/><br/><img id="zoomIn" src="/static/djatoka/images/zoomIn.png"/><img id="zoomOut" src="/static/djatoka/images/zoomOut.png"/><img id="reset" src="/static/djatoka/images/reset.png"/>&nbsp;&nbsp;<img id="snapshot" width="24" height="24" src="/static/djatoka/images/djatoka.32x32.png"/>'
     });
-    navbuttons.injectInside(navcontainer);
-    navbuttons.set('slide', {duration: 300, transition: Fx.Transitions.Quad.easeInOut, mode:'vertical'});
+    navbuttons.injectInside(navcontrols);
+    //navbuttons.injectInside(navcontainer);
+    //navbuttons.set('slide', {duration: 300, transition: Fx.Transitions.Quad.easeInOut, mode:'vertical'});
+
+    var colorSliders = new Element('div', {
+        id: 'colors',
+        html: '<div id="red_low" class="slider low"><div class="knob red"></div></div>'
+              + '<div id="red_high" class="slider high"><div class="knob red"></div></div>'
+              + '<div id="green_low" class="slider low"><div class="knob green"></div></div>'
+              + '<div id="green_high" class="slider high"><div class="knob green"></div></div>'
+              + '<div id="blue_low" class="slider low"><div class="knob blue"></div></div>'
+              + '<div id="blue_high" class="slider high"><div class="knob blue"></div></div>'
+              + '<div id="color_submit">R: <span id="red_range"></span><br/>G: <span id="green_range"></span><br/>B: <span id="blue_range"></span></div>'
+    });
+    colorSliders.injectInside(navcontrols);
+    //colorSliders.injectInside(navcontainer);
+    navcontrols.injectInside(navcontainer);
+    navcontrols.set('slide', {duration: 300, transition: Fx.Transitions.Quad.easeInOut, mode:'vertical'});
 
     loadBarContainer.injectInside(navcontainer);
     navcontainer.injectInside( this.source );
@@ -1032,18 +1048,19 @@ var IIP = new Class({
 
   // djatoka mod
   load : function() {
-      this.max_width = 2000;
-            this.max_height = 2000;
-            this.tileSize[0] = 256;
-            this.tileSize[1] = 256;
-            this.num_resolutions = 5;
-            this.res = this.num_resolutions;
-      this.createWindows();
-      return;
-    new Request( {
+    if(this.crossSiteTest) {
+        this.max_width = 16513;
+        this.max_height = 11169;
+        this.tileSize[0] = 256;
+        this.tileSize[1] = 256;
+        this.num_resolutions = 8;
+        this.res = this.num_resolutions;
+        this.createWindows();
+    } else {
+      new Request( {
         method :'get',
         url :this.server,
-        onComplete : function(transport) {
+        onSuccess : function(transport) {
             var response = transport || alert("No response from server " + this.server);
             var p = eval("(" + response + ")");
             var tmp = p.levels;
@@ -1056,9 +1073,10 @@ var IIP = new Class({
             this.createWindows();
         }.bind(this),
         onFailure : function() {
-        alert('Unable to get image and tile sizes from server!');
-     }
-    }).send("url_ver=Z39.88-2004&rft_id=" + this.images[0].src + "&svc_id=info:lanl-repo/svc/getMetadata");
+            alert('Unable to get image and tile sizes from server!');
+        }
+      }).send("url_ver=Z39.88-2004&rft_id=" + this.images[0].src + "&svc_id=info:lanl-repo/svc/getMetadata");
+    }
   },
   // end djatoka mod
 
@@ -1104,8 +1122,26 @@ var IIP = new Class({
 	height: height - border/2
     });
 
+  },
+
+  reloadNavImage: function() {
+      var newSrc = this.server + "?url_ver=Z39.88-2004&rft_id="
+                 + this.images[0].src + "&svc_id=" + this.svc_id
+                 + "&svc_val_fmt=" + this.svc_val_fmt
+                 + "&svc.format=image/jpeg&svc.scale=" + this.min_x + "," + this.min_y;
+      $('navigation').set('src',newSrc);
+  },
+
+  changeImage: function(image) {
+      // svc_id? svc_val_fmt? min_x? min_y?
+      this.images = [{ src:image, sds:"0,90"} ];
+      this.reloadNavImage();
   }
 
 
+
+
+
 });
+
 
