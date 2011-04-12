@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block css %}
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/css/injectionGallery.css" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/css/slider.css" />
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
+<script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
+<script type="text/javascript" src="/static/js/slideGallery.js"></script>
+
+<script type="text/javascript">
+  window.addEvent("domready", function() {
+  
+    var ARA_gallery = new slideGallery($$(".ARAgallery"), {
+      steps: 3,
+      mode: "circle",
+      direction: "vertical",
+      speed: 250
+    });
+
+  var slider = $('slider');
+  new Slider(slider, slider.getElement('.knob'), {
+    range: [0, 10],
+    initialStep: 5,
+    onChange: function(value){
+      $('overlayImg').set('opacity',value/10);
+    }
+  });
+
+});
+
+var tnFiles = [{% for f in tn_list %}'{{f}}',{% endfor %}];
+
+var secYCoord = [{% for y in yCoord %}{{y}},{% endfor %}];
+
+var injSecNum = [{% for c in closestSec %}{{c}},{% endfor %}];
+
+var injX = [{% for i in injection_list %}{{i.x_coord}},{% endfor %}];
+var injY = [{% for i in injection_list %}{{i.y_coord}},{% endfor %}];
+var injZ = [{% for i in injection_list %}{{i.z_coord}},{% endfor %}];
+
+var seriesNum = [{% for i in injection_list %}{{i.series.id}},{% endfor %}];
+</script>
+
+<script type="text/javascript">
+function updateMain(fname) {
+   // Find any injections marked in the current atlas view and erase!
+   var children = $('atlasWindow').getChildren('.injTarget');
+   children.dispose();
+ 
+   // Set the nissl image and the overlay image for the chosen section
+   imgPath = '/static/img/jpgSections/';
+   nisslName = 'nissl_' + fname.substr(6);
+   legendName = 'legend_' + fname.substr(6);
+   $('mainImg').set('src',imgPath + nisslName);
+   $('overlayImg').set('src',imgPath + legendName);
+
+   // Display the approximate y coordinate of the atlas section
+   idx = tnFiles.indexOf(fname);
+   coord = secYCoord[idx].toFixed(2);
+   if (coord>0) { coord = '+' + coord; }
+   $('bregmaLoc').set('text','Bregma '+ coord + 'mm');
+
+   // Find the injections for this section
+   firstIdx = injSecNum.indexOf(idx);
+   if (firstIdx != -1) {
+     lastIdx = injSecNum.lastIndexOf(idx);
+     nInjections = lastIdx - firstIdx + 1;
+     for (i=firstIdx; i<=lastIdx; i++) {
+       var my_img = new Element('img', {'src':'/static/img/target.png',
+				'class':'injTarget',
+			        'style':'position:absolute; top:150px; left:400px;',
+				'title': 'Injection: (' + injX[i] + ',' + injY[i] + ',' + injZ[i] + ')'});      
+       x = Math.round((5.7 + injX[i])/(11.4) * 456);
+       x = x + 290 - 10; // account for image position within div and img size
+       y = Math.round((1.5 + (injZ[i]-18/35))/ 8 *320);
+       y = y + 80 - 10; // account for image position within div and img size
+       my_img.set('style','cursor: pointer; position:absolute; top:' +y+ 'px; left:' +x+ 'px;');
+       myURL = '/seriesbrowser/viewer/?seriesId='+seriesNum[i];
+       my_img.addEvents({click: function() { open(myURL,'_blank'); }});
+				  
+       my_img.injectInside($('atlasWindow'));
+
+
+     }
+   }
+}
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div id="wrapper">
+  <div class="gallery ARAgallery gallery-vert">
+    <div class="holder">
+      <ul>
+	{% for fname in tn_list %}
+	<li><a href = "javascript:updateMain('{{fname}}')" class="tooltip"><img src="/static/img/jpgSections/tn/{{fname}}" alt="image" width="228" height="160" /><span>This tooltip should say how many injections in the image</span></a></li>
+	{% endfor %}
+      </ul>
+      <div class="control">
+	<a href="#" class="prev">prev</a>
+	<a href="#" class="next">next</a>
+      </div>
+    </div>
+  <div id="atlasWindow">
+    <div id="bregmaLoc" style="font-size: 14pt; position: absolute; top: 60px; left: 430px;"></div>
+    <div style="position: absolute; top: 80px; left: 290px;">
+      <img id="mainImg" src="/static/img/jpgSections/nissl_016.jpg" width="456" height="320" />
+    </div>
+    <div style="position: absolute; top: 80px; left: 290px;">
+      <img id="overlayImg" src="/static/img/jpgSections/legend_016.jpg" width="456" height="320" />
+    </div>
+    <div style="position: absolute; left:438px; top:400px;" id="slider" class="slider">
+      <div class="knob"></div>&nbsp; Atlas Overlay Opacity
+   </div>  <!-- slider -->
+  </div> <!-- atlasWindow -->
+  </div> <!-- gallery -->
+</div> <!-- wrapper -->
+
+{% endblock %}

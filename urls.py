@@ -7,6 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^seriesbrowser/$', 'seriesbrowser.views.index'),
+    (r'^seriesbrowser/injections/$', 'seriesbrowser.views.injections'),
     (r'^seriesbrowser/tree/$', 'seriesbrowser.views.tree'),
     (r'^seriesbrowser/viewer/$', 'seriesbrowser.views.viewer'),
     (r'^seriesbrowser/ajax/section/(?P<id>\d+)/$', 'seriesbrowser.views.section'),

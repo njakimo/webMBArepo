@@ -4,8 +4,8 @@ from django.db import connection
 from django.shortcuts import render_to_response
 from django import forms
 from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries, Injection
-
-import json
+from settings import STATIC_DOC_ROOT
+import json, os
 
 class FilterForm(forms.Form):
     tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
@@ -171,3 +171,34 @@ def section(request,id):
         section = None
  #   return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':sr, 'nslist':nslist})
     return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region})
+
+def injections(request):
+    # 'View 2' - show injection locations graphically in atlas context
+
+    injection_list = Injection.objects.order_by('-y_coord')
+    tnDir = STATIC_DOC_ROOT + '/img/jpgSections/tn'
+#    tn_list = os.listdir('X:/MBAPortal/njakimo-webMBArepo-80d5844/static/img/jpgSections/TN')
+    tn_list = os.listdir(tnDir)
+    nSections = len(tn_list)
+    secYCoord = [] 
+
+    for i in range(nSections):
+        # Map each section linearly to a y coordinate value (approximate)
+        temp = 5.435 - 13.25 * i / (nSections-1)
+        secYCoord.append(temp)
+        
+    # Find the closest section for each injection - it will be drawn
+    # on that section in the application
+    curSec = 0
+    closestSec = []
+    for y in injection_list:
+        while secYCoord[curSec]>y.y_coord:
+            curSec = curSec + 1
+        closestSec.append(curSec)
+        
+    return render_to_response('seriesbrowser/injections.html', {
+        'user' : request.user,
+        'injection_list' : injection_list, # the injection records
+        'tn_list' : tn_list, # the filenames of the atlas sections
+        'yCoord' : secYCoord, # the y coordinates for each atlas section
+        'closestSec' : closestSec}) # section to draw each injection on
