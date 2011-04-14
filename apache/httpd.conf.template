@@ -1,0 +1,17 @@
+### Copy this httpd conf snippet and place it in the appropriate conf file
+### that is rsponsible for the server. Be sure to change all the paths to
+### point to the correct places
+
+    Alias /static/ /path/to/django/myproject/static/
+
+    <Directory /path/to/django/myproject/static>
+      Order deny,allow
+      Allow from all
+    </Directory>
+
+    WSGIScriptAlias / /path/to/django/myproject/apache/django.wsgi
+    <Directory /path/to/django/myproject/apache>
+      Order deny,allow
+      Allow from all
+    </Directory>
+

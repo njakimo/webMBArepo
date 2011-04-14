@@ -1,0 +1,25 @@
+To use Django with Apache, there are a number of steps that have to be followed.
+
+1) Make sure mod_wsgi is installed. It is easily obtainable via yum or apt-get.
+
+2) Create the django.wsgi file from the template in this directory. It is a small stub application
+that is used to act as the bridge between Apache and our application. It has further detailed
+instructions in its comments.
+
+3) Update the appropriate httpd.conf with the directives in the conf template in the directory.
+If you aren't using virtual hosts or other more complicated configurations, it may simply be
+possible to copy the template file to /etc/httpd/conf.d/ (on Fedora), then restart Apache.
+
+4) Comment out the static content handler line in urls.py. Also, if you decide to have a separate 
+production copy in a different location, you will need to update the template location path to the
+new one. Make sure that whereever the project directory is, it is not under the Apache server's
+DocumentRoot.
+
+For example, my directory stucture looks like this:
+byrongalbraith.com/
+byrongalbraith.com/html
+byrongalbraith.com/logs
+byrongalbraith.com/mba
+
+I have the DocumentRoot pointing at html, while the Django project is in the mba directory.
+
