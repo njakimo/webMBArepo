@@ -13,10 +13,25 @@
 }
 */
 div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity:.6;width:auto;padding:5px;-moz-border-radius-bottomleft:2%;-moz-border-radius-bottomright:2%;-webkit-border-bottom-left-radius:2%;-webkit-border-bottom-right-radius:2%;}
+.value {
+    width: 36px;
+}
+.value input {
+    float: left;
+    display: block;
+    width: 25px;
+    margin: 5px 0px;
+    padding: 0px 0px;
+    height: 14px;
+    //line-height:8pt;
+    font-size: 7px;
+    border: 1px ridge #ccc;
+    background: #CCC;
+}
 .slider {
   background: #CCC;
   height: 16px;
-  margin: 5px 0;
+  margin: 5px 0px;
   width: auto;
 }
 .slider .knob {

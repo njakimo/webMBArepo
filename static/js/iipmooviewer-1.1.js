@@ -917,13 +917,15 @@ var IIP = new Class({
 
     var colorSliders = new Element('div', {
         id: 'colors',
-        html: '<div id="red_low" class="slider low"><div class="knob red"></div></div>'
-              + '<div id="red_high" class="slider high"><div class="knob red"></div></div>'
-              + '<div id="green_low" class="slider low"><div class="knob green"></div></div>'
-              + '<div id="green_high" class="slider high"><div class="knob green"></div></div>'
-              + '<div id="blue_low" class="slider low"><div class="knob blue"></div></div>'
-              + '<div id="blue_high" class="slider high"><div class="knob blue"></div></div>'
-              + '<div id="color_submit">R: <span id="red_range"></span><br/>G: <span id="green_range"></span><br/>B: <span id="blue_range"></span></div>'
+        html: '<table width="100%" cellpadding="0" cellspacing="0">' +
+              '<tr><td class="value"><input id="rmin" type="text" maxlength="5" name="rmin" value="0"/></td><td><div id="red_low" class="slider low"><div class="knob red"></div></div></td></tr>' +
+              '<tr><td class="value"><input id="rmax" type="text" maxlength="5" name="rmax" value="65535"/></td><td><div id="red_high" class="slider high"><div class="knob red"></div></div></td></tr>' +
+              '<tr><td class="value"><input id="gmin" type="text" maxlength="5" name="gmin" value="0"/></td><td><div id="green_low" class="slider low"><div class="knob green"></div></div></td></tr>' +
+              '<tr><td class="value"><input id="gmax" type="text" maxlength="5" name="gmax" value="65535"/></td><td><div id="green_high" class="slider high"><div class="knob green"></div></div></td></tr>' +
+              '<tr><td class="value"><input id="bmin" type="text" maxlength="5" name="bmin" value="0"/></td><td><div id="blue_low" class="slider low"><div class="knob blue"></div></div></td></tr>' +
+              '<tr><td class="value"><input id="bmax" type="text" maxlength="5" name="bmax" value="65535"/></td><td><div id="blue_high" class="slider high"><div class="knob blue"></div></div></td></tr>' +
+              '<tr><td colspan="2"><input type="submit" name="set" value="Resample"/></td></tr></table>'
+
     });
     colorSliders.injectInside(navcontrols);
     //colorSliders.injectInside(navcontainer);
@@ -934,7 +936,7 @@ var IIP = new Class({
     navcontainer.injectInside( this.source );
 
     // Hide our navigation buttons if requested
-    if( this.showNavButtons == false ) navbuttons.slide('out');
+    if( this.showNavButtons == false ) navcontainer.slide('out');
 
     // Needed as IE doesn't take CSS opacity into account
     if( Browser.Engine.trident ){

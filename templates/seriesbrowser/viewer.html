@@ -29,6 +29,7 @@
 
     window.addEvent('domready', function() {
         var nSections = {{ sections.count }};
+        var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
         if($('filmstrip')) {
             var filmstrip = new slideGallery($('filmstrip'), {
                 steps: 4,
@@ -80,38 +81,59 @@
            });
         });
 
+        var colors = ['r','g','b'];
         var low_sliders = [0,0,0];
         var high_sliders = [0,0,0];
 
-        var updateColorRange = function() {
-            $('red_range').innerHTML = low_sliders[0].step + ',' + high_sliders[0].step;
-            $('green_range').innerHTML = low_sliders[1].step + ',' + high_sliders[1].step;
-            $('blue_range').innerHTML = low_sliders[2].step + ',' + high_sliders[2].step;
+        $$('.value input').each(function (elem) {
+              elem.addEvent('change', function() {
+                  var new_step = elem.value;
+                  var re = /^\d*$/;
+                  if(!re.test(new_step) || new_step < 0 || new_step == '') {
+                      new_step = elem.value = 0;
+                  }
+                  if(new_step > bitDepth) {
+                      new_step = elem.value = bitDepth;
+                  }
+                  var id = elem.id;
+                  var color = id.substring(0,1);
+                  var group = id.substring(1);
+                  
+                  if (group == 'min') {
+                      low_sliders[colors.indexOf(color)].set(new_step);
+                  }
+                  else if (group == 'max') {
+                      high_sliders[colors.indexOf(color)].set(new_step);
+                  }
+              });
+        });
+
+        var updateColorRange = function(group, index, step) {
+            $(colors[index]+group).value = step;
         };
         $$('.slider.low').each(function(slider, i){
             low_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
-                range: [0,65534],
+                range: [0,bitDepth],
                 onChange: function() {
                     if(this.step >= high_sliders[i].step) {
-                        high_sliders[i].set(this.step+1);
+                        high_sliders[i].set(this.step);
                     }
-                    updateColorRange();
+                    updateColorRange('min',i,this.step);
                 }
             });
         });
         $$('.slider.high').each(function(slider, i){
             high_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
-                range: [1,65535],
-                initialStep: 255,
+                range: [0,bitDepth],
+                initialStep: bitDepth,
                 onChange: function(){
                     if(this.step <= low_sliders[i].step) {
-                        low_sliders[i].set(this.step-1);
+                        low_sliders[i].set(this.step);
                     }
-                    updateColorRange();
+                    updateColorRange('max',i,this.step);
                 }
             });
         });
-        updateColorRange();
 
     });
 </script>
