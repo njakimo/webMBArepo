@@ -6,14 +6,46 @@
     {% block title %}<title>{% if title %}{{ title }}{% else %}The Mouse Brain Architecture Project{% endif %}</title>{% endblock title %}
     {% block head %}{% endblock head %}
     <link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="/static/css/screen.css" />
+    {% comment %}
+    <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/grid.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/superfish.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/superfish-vertical.css" />
+    <style type="text/css">
+
+		.border {
+			behavior:url(http://mbaimages.cshl.edu/wp-content/themes/theme1161/PIE.php)
+		}
+
+  </style>
+    {% endcomment %}
     {% block css %}{% endblock css %}
     {% block js %}{% endblock js %}
 </head>
 <body>
-    <div id="container">
-        <div id="header">
-            <img src="/static/img/bg_hdr_new.jpg" alt="Brain Architecture Project" />
+<div id="main">
+    <header>
+        <div id="header-bg">
+            <div class="container">
+                <div class="logo">
+                    <h2><a href="http://mbaimages.cshl.edu/" title="Filling the gaps in our knowledge of brain circuitry"><img src="http://mbaimages.cshl.edu/wp-content/themes/theme1161/images/logo.png" alt="" /></a></h2>
+                </div>
+                <nav class="primary">
+                    <ul>
+                <li><a href="/seriesbrowser/">View 1</a> |</li>
+                <li><a href="/seriesbrowser/injections/">View 2</a> |</li>
+                <li><a href="/seriesbrowser/tree/">View 3 |</a></li>
+                <li><a href="/seriesbrowser/viewer/">Image Viewer</a></li>
+            </ul>
+            <div id="login" style="float:right;">
+            {% if user.is_authenticated %}<a href="/seriesbrowser/logout/">logout</a>{% else %}<a href="/seriesbrowser/login/">login</a>{% endif %}
+            </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+    {% comment %}
             <ul>
                 <li><a href="/seriesbrowser/">View 1</a> |</li>
                 <li><a href="/seriesbrowser/injections/">View 2</a> |</li>
@@ -24,11 +56,33 @@
             {% if user.is_authenticated %}<a href="/seriesbrowser/logout/">logout</a>{% else %}<a href="/seriesbrowser/login/">login</a>{% endif %}
             </div>
         </div>
-        <div id="content">
-            {% block content %}{% endblock content %}
+        {% endcomment %}
+    <div class="content-bg">
+        <div class="container primary_content_wrap">
+            <div class="wrapper">
+                <div id="indent">
+                    <div class="wrapper">
+                        <div id="content">
+                            <div class="indent">
+                                {% block content %}{% endblock content %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="footer">Copyright © 2011 by Mitra Lab | mitralab.org</div>
     </div>
+    <footer id="footer">
+        <div class="container">
+            <div class="indent">
+                <div class="wrapper">
+                    <b><a href="http://mbaimages.cshl.edu/" title="Filling the gaps in our knowledge of brain circuitry">Brain Architecture Project</a></b>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
 </body>
 </html>
 
