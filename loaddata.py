@@ -27,20 +27,50 @@ class Mouse:
       self.zcoord = Zcoord
    def __unicode__(self):
       return self.name  
-      
+
+class Bams:
+   def __init__(self, RatId, RatCode, MouseId, MouseCode):
+      self.ratid = RatId
+      self.ratcde = RatCode
+      self.mouseid = MouseId
+      self.mousecode = MouseCode
+   def __unicode__(self):
+      return self.mouseCode  
+     
 limsf = open('../csvfiles/lims_2011_04_04.txt', 'r')
 dsf = open('../csvfiles/datasummary.csv', 'r')
 araf = open('../csvfiles/allen_reference_atlas.csv', 'r')
 errorf = open('../csvfiles/load_error.txt', 'w')
+bamsf = open('../csvfiles/bams.csv', 'r')
 
 r = random.seed()
 
 aralist = []
+bamsDict = {}
+
+#load data from bams
+for b in bamsf:
+    br = b.split(",")
+    bobj = Bams(br[0],br[1], br[3],br[4])
+    errorf.write('adding code ** ' + bobj.mousecode + '\n') 
+    bamsDict[bobj.mousecode] = bobj
 
 #load data from ARA
 for ara in araf:
     ar = ara.split(",")
-    r = Region(id=ar[0],code=ar[2].strip(), desc=ar[1].strip(),parent_id=ar[3],leftId=ar[4],rightId=ar[5])
+    mouseCode = ar[2].strip()
+    bMouseId = 0
+    bRatId = 0
+    try:    
+      if bamsDict[mouseCode]:
+        errorf.write('for code ** ' + mouseCode + '\n') 
+        bMouseId = bamsDict[mouseCode].mouseid
+        bRatId = bamsDict[mouseCode].ratid
+    except:
+      errorf.write(' not found code ** ' + mouseCode + '\n') 
+      pass
+    errorf.write('for code ' + mouseCode + ' mouse id ' + str(bMouseId) + ' rat id ' + str(bRatId) + '\n')
+    r = Region(id=ar[0],code=ar[2].strip(), desc=ar[1].strip(),parent_id=ar[3],bamsMouseId = bMouseId, bamsRatId = bRatId, leftId=ar[4],rightId=ar[5])
     r.save()
     aralist.append(r)
 

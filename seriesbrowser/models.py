@@ -85,6 +85,8 @@ class Section(models.Model):
 class Region(models.Model):
     desc = models.CharField('description', max_length=200)
     code = models.CharField(max_length=10)
+    bamsMouseId = models.IntegerField()
+    bamsRatId = models.IntegerField()
     parent = models.ForeignKey('Region')
     leftId = models.IntegerField()
     rightId = models.IntegerField()
