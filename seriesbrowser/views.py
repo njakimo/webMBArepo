@@ -226,8 +226,8 @@ def showNissl(request,id):
                        sclist = Section.objects.filter(series=sr)
 
         scOriginallist  = Section.objects.filter(series=series)
-        scFinalList = sorted(scList + sc1List)
-
+  #      scFinalList = sorted(scList + sc1List)
+        scFinalList = sc1List
     except ObjectDoesNotExist:
         section = None
     return render_to_response('seriesbrowser/viewer.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region})
