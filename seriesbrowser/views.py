@@ -171,32 +171,32 @@ def section(request,id):
         section = None
     return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region})
 
-def addNote(request,id):
-    try:
-        section = Section.objects.get(pk=id)
-        series  = Series.objects.get(pk=section.series.id)
-        inj  = Injection.objects.filter(series=series)
-        region = ''         
-        for i in inj:
-           region  = Region.objects.get(pk=i.region.id)
-           break
-        ns = NearestSeries.objects.filter(series=series)
-        nslist = []
-        for n in ns:
-           s = Series.objects.get(pk=n.nearestSeriesId)
-           nslist.append(s)
-           if len(nslist) >= 5:
-              break
+#def addNote(request,id):
+#    try:
+#        section = Section.objects.get(pk=id)
+#        series  = Series.objects.get(pk=section.series.id)
+#        inj  = Injection.objects.filter(series=series)
+#        region = ''         
+#        for i in inj:
+#           region  = Region.objects.get(pk=i.region.id)
+#           break
+#        ns = NearestSeries.objects.filter(series=series)
+#        nslist = []
+#        for n in ns:
+#           s = Series.objects.get(pk=n.nearestSeriesId)
+#           nslist.append(s)
+#           if len(nslist) >= 5:
+#              break
     #   add notes and comment
-        u = Updater.objects.get(pk=1)    
-        sc = request.GET.get('score','')
-        nt = request.GET.get('note','')
-        sn = request.GET.get('showNissl','')
-        sNote = SectionNote(section_id=section.id, updater_id = u.id, score = sc , comment = nt, write_date = datetime.datetime.now())        
-        sNote.save() 
-    except ObjectDoesNotExist:
-        section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region,'sectionNote':sNote, 'showNissl':sn})
+#        u = Updater.objects.get(pk=1)    
+#        sc = request.GET.get('score','')
+#        nt = request.GET.get('note','')
+#        sn = request.GET.get('showNissl','')
+#        sNote = SectionNote(section_id=section.id, updater_id = u.id, score = sc , comment = nt, write_date = datetime.datetime.now())        
+#        sNote.save() 
+#    except ObjectDoesNotExist:
+#        section = None
+#    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region,'sectionNote':sNote, 'showNissl':sn})
 
 def showNissl(request,id):
     try:
