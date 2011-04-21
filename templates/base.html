@@ -1,17 +1,31 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+    {% block meta %}
+    <meta name="keywords" content=" , Brain Architecuture Project , Bioinformatics Web Applications">
+    <meta name="description" content=" | Bioinformatics Web Applications">
+    <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    {% block meta %}{% endblock meta %}
+    {% endblock meta %}
     {% block title %}<title>{% if title %}{{ title }}{% else %}The Mouse Brain Architecture Project{% endif %}</title>{% endblock title %}
     {% block head %}{% endblock head %}
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <link rel="pingback" href="http://mbaimages.cshl.edu/xmlrpc.php">
+    <link rel="index" title="Mouse Brain Architecuture Project" href="seriesbrowser/series">
+    <link rel="alternate" type="application/rss+xml" title="Brain Architecuture Project" href="http://mbaimages.cshl.edu/?feed=rss2">
+    <link rel="alternate" type="application/atom+xml" title="Brain Architecuture Project" href="http://mbaimages.cshl.edu/?feed=atom">
+    <link rel="alternate" type="application/rss+xml" title="Brain Architecuture Project » Comments Feed" href="http://mbaimages.cshl.edu/?feed=comments-rss2">
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://mbaimages.cshl.edu/xmlrpc.php?rsd">
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://mbaimages.cshl.edu/wp-includes/wlwmanifest.xml"> 
+    {% block css %}
     <link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
-    <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/style.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="/static/css/screen.css" />
-    {% comment %}
+    <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/style.css" />
     <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/grid.css" />
     <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/superfish.css" />
     <link rel="stylesheet" type="text/css" media="all" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/superfish-vertical.css" />
+    <link rel="stylesheet" id="contact-form-7-css" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/styles.css" type="text/css" media="all">
+    <link rel="stylesheet" type="text/css" href="http://mbaimages.cshl.edu/wp-content/themes/theme1161/css/social_widget.css">
     <style type="text/css">
 
 		.border {
@@ -19,9 +33,38 @@
 		}
 
   </style>
-    {% endcomment %}
-    {% block css %}{% endblock css %}
-    {% block js %}{% endblock js %}
+  {% endblock css %}
+  {% block js %}
+ 
+  <script type="text/javascript" src="http://mbaimages.cshl.edu/wp-content/js/l10n.js"></script>
+  <script type="text/javascript" src="http://mbaimages.cshl.edu/wp-content/themes/theme1161/js/jquery-1.4.4.min.js"></script>
+  <script type="text/javascript" src="http://mbaimages.cshl.edu/wp-content/themes/theme1161/js/superfish.js"></script>
+  <script type="text/javascript" src="http://mbaimages.cshl.edu/wp-content/themes/theme1161/js/jquery.faded.js"></script>
+ <script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script> 
+ <script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
+ <script type="text/javascript" src="/static/js/mif.tree-v1.2.6.4.js"></script>
+  <script type="text/javascript">
+        // initialise plugins
+                jQuery(function(){
+                        // main navigation init
+                        jQuery('ul.sf-menu').superfish({
+                                animation:   {opacity:'show', height:'show'}
+                        });
+                        
+                        //faded slider init
+                        jQuery("#faded").faded({
+                                speed: 500,
+                                crossfade: true,
+                                bigtarget: false,
+                                loading: true,
+                                autoplay: 5000,
+                                autorestart: 8000,
+                                autopagination:false
+                        });
+                });
+
+ </script>
+  {% endblock js %}
 </head>
 <body>
 <div id="main">
@@ -31,32 +74,61 @@
                 <div class="logo">
                     <h2><a href="http://mbaimages.cshl.edu/" title="Filling the gaps in our knowledge of brain circuitry"><img src="http://mbaimages.cshl.edu/wp-content/themes/theme1161/images/logo.png" alt="" /></a></h2>
                 </div>
-                <nav class="primary">
-                    <ul>
-                <li><a href="/seriesbrowser/">View 1</a> |</li>
-                <li><a href="/seriesbrowser/injections/">View 2</a> |</li>
-                <li><a href="/seriesbrowser/tree/">View 3 |</a></li>
-                <li><a href="/seriesbrowser/viewer/">Image Viewer</a></li>
-            </ul>
-            <div id="login" style="float:right;">
+            <nav class="primary">
+                <ul id="topnav" class="sf-menu sf-horizontal sf-js-enabled sf-shadow">
+                   <li id="menu-item-34" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-34"><a href="./mba_website_files/mba_website.html">Home</a></li>
+                   <li id="menu-item-333" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-333"><a href="http://mbaimages.cshl.edu/?page_id=311" class="sf-with-ul">About<span class="sf-sub-indicator"> »</span></a>
+                     <ul class="sub-menu" style="display: none; visibility: hidden; ">
+                     <li id="menu-item-334" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-334"><a href="http://mbaimages.cshl.edu/?page_id=325">People</a></li>
+                    <li id="menu-item-335" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-335"><a href="http://mbaimages.cshl.edu/?page_id=5">Project Overview</a></li>
+                   <li id="menu-item-336" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-336"><a href="http://mbaimages.cshl.edu/?page_id=326">Sponsors</a></li>
+                   </ul>
+               </li>
+<li id="menu-item-43" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-43"><a href="http://mbaimages.cshl.edu/?page_id=36" class="sf-with-ul">Projects<span class="sf-sub-indicator"> »</span></a>
+<ul class="sub-menu" style="display: none; visibility: hidden; ">
+        <li id="menu-item-348" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-348"><a href="http://zebrafinch.brainarchitecture.org/">Zebra Finch</a></li>
+        <li id="menu-item-33" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-33"><a href="http://mbaimages.cshl.edu/?page_id=2">Mouse</a></li>
+        <li id="menu-item-349" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-349"><a href="http://addiction.brainarchitecture.org/">Addiction Genes</a></li>
+        <li id="menu-item-337" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-337"><a href="http://mbaimages.cshl.edu/?page_id=331">Text Mining</a></li>
+        <li id="menu-item-340" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-340"><a href="http://mbaimages.cshl.edu/?page_id=323" class="sf-with-ul">Human Brain Connectivity Database<span class="sf-sub-indicator"> »</span></a>
+        <ul class="sub-menu" style="display: none; visibility: hidden; ">
+                <li id="menu-item-343" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-343"><a href="http://mbaimages.cshl.edu/?page_id=314">Online Brain Atlas Reconciliation Tool</a></li>
+                <li id="menu-item-341" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-341"><a href="http://mbaimages.cshl.edu/?page_id=324">Brain Architecture Text Mining System</a></li>
+                <li id="menu-item-342" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-342"><a href="http://addiction.brainarchitecture.org/">Allen Brain Attlas Tool</a></li>
+        </ul>
+</li>
+</ul>
+</li>
+<li id="menu-item-339" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-339"><a href="http://mbaimages.cshl.edu/?page_id=329" class="sf-with-ul">Community<span class="sf-sub-indicator"> »</span></a>
+<ul class="sub-menu" style="display: none; visibility: hidden; ">
+        <li id="menu-item-347" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-347"><a href="http://mbaimages.cshl.edu/?page_id=318">Job Opening</a></li>
+        <li id="menu-item-344" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-344"><a href="http://mbaimages.cshl.edu/?page_id=332">art</a></li>
+        <li id="menu-item-345" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-345"><a href="http://mbaimages.cshl.edu/?page_id=319">Join User Group</a></li>
+        <li id="menu-item-346" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-346"><a href="http://mbaimages.cshl.edu/?page_id=320">Discussion Forum</a></li>
+</ul>
+</li>
+<li id="menu-item-42" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-42"><a href="http://mbaimages.cshl.edu/?page_id=40">Contacts</a></li>
+</ul> 
+</nav>
+     <div id="search-3" class="widget">
+               <form method="get" id="searchform" action="http://mbaimages.cshl.edu/">
+                	<input type="text" value="Searching..." onblur="if(this.value==&#39;&#39;) this.value=&#39;Searching...&#39;" onfocus="if(this.value ==&#39;Searching...&#39; ) this.value=&#39;&#39;" name="s" id="s">
+                <input class="submit" type="submit" value="">
+               </form>
+     </div>
+     <div id="text-3" class="widget">			            
+<div id="login" style="float:right;">
             {% if user.is_authenticated %}<a href="/seriesbrowser/logout/">logout</a>{% else %}<a href="/seriesbrowser/login/">login</a>{% endif %}
             </div>
-                </nav>
-            </div>
         </div>
+      </div>
     </header>
-    {% comment %}
-            <ul>
-                <li><a href="/seriesbrowser/">View 1</a> |</li>
-                <li><a href="/seriesbrowser/injections/">View 2</a> |</li>
-                <li><a href="/seriesbrowser/tree/">View 3 |</a></li>
-                <li><a href="/seriesbrowser/viewer/">Image Viewer</a></li>
-            </ul>
-            <div id="login" style="float:right;">
-            {% if user.is_authenticated %}<a href="/seriesbrowser/logout/">logout</a>{% else %}<a href="/seriesbrowser/login/">login</a>{% endif %}
-            </div>
+  <section id="slider">
+  	<div class="container"> <a href="http://mbaimages.cshl.edu:8000/seriesbrowser/series/">
+<img src="http://mbaimages.cshl.edu/wp-content/themes/theme1161/images/Mouse-link.png" style="float:left">
+</a><br clear="all">
         </div>
-        {% endcomment %}
+  </section><!--#slider-->
     <div class="content-bg">
         <div class="container primary_content_wrap">
             <div class="wrapper">

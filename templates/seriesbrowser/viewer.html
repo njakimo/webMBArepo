@@ -81,6 +81,34 @@
            });
         });
 
+        $('noteSubmit').addEvent('click', function(event) {
+	     var sectionId = document.getElementById("sectionId").value;
+	     var score = document.getElementById("sectionScore").value;
+	     var note = document.getElementById("sectionNote").value;
+             var showNissl = document.getElementById("showNisslBox").value;
+             new Request.HTML({
+                url: '/seriesbrowser/ajax/section/addNote/' + sectionId + '/?score='+score+'&note='+note+'&showNissl='+showNissl,
+                method: 'get',
+                onComplete: function(response) {
+                    $('panel_content').empty().adopt(response);
+                 }
+             }).send();
+        });
+
+        $('showNisslDiv').addEvent('click', function(event) {
+	     var sectionId = document.getElementById("sectionId").value;
+	     var score = document.getElementById("sectionScore").value;
+	     var note = document.getElementById("sectionNote").value;
+             var showNissl = document.getElementById("showNisslBox").value;
+             new Request.HTML({
+                url: '/seriesbrowser/ajax/section/showNissl/' + sectionId + '/?score='+score+'&note='+note+'&showNissl='+showNissl,
+                method: 'get',
+                onComplete: function(response) {
+                    $('panel_content').empty().adopt(response);
+                 }
+             }).send();
+        });
+
         var colors = ['r','g','b'];
         var low_sliders = [0,0,0];
         var high_sliders = [0,0,0];
