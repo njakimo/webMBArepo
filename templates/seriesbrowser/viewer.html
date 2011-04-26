@@ -16,7 +16,6 @@
     var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
     var image = imageBase + 'PMD9/PMD9_0002.jp2';
     var credit = '';
-
     var iip = new IIP( "targetframe", {
 		image: image,
 		server: server,
@@ -26,7 +25,6 @@
         showNavButtons: true,
         crossSiteTest: true
     });
-
     window.addEvent('domready', function() {
         var nSections = {{ sections.count }};
         var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
@@ -36,7 +34,6 @@
                 mode: "line"
             });
         }
-
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
         panel.hide();
         $('panel').setStyle('z-index','1');
@@ -73,13 +70,23 @@
                         $('panel_content').empty().adopt(response);
                     }
                }).send();
-
                var path = elem.get('src');
                var file = path.split('/').pop();
                var pieces = file.split('_');
                iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
            });
         });
+//        var positionSection() = function(){
+//           alert("{{section.sectionOrder}}"); 
+//           setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / nSections * 200));
+//           alert("after {{section.sectionOrder}}"); 
+//            var y_pos = Math.round(({{section.sectionOrder}}-10) / 200 * nSections) + 1;
+//            filmstrip.jump(y_pos);
+//            var section = $$('img[id$='+y_pos+']');
+//            highlightSection(section[0].getParent('li'));
+//        };
+//       alert("**");
+//        positionSection();
 	/*
         $('noteSubmit').addEvent('click', function(event) {
 	     var sectionId = document.getElementById("sectionId").value;
@@ -96,23 +103,17 @@
         });
     */
         $('showNisslDiv').addEvent('click', function(event) {
-	     var sectionId = document.getElementById("sectionId").value;
-	     var score = document.getElementById("sectionScore").value;
-	     var note = document.getElementById("sectionNote").value;
-             var showNissl = document.getElementById("showNisslBox").value;
-             new Request.HTML({
-                url: '/seriesbrowser/ajax/section/showNissl/' + sectionId + '/?score='+score+'&note='+note+'&showNissl='+showNissl,
-                method: 'get',
-                onComplete: function(response) {
-                    $('panel_content').empty().adopt(response);
-                 }
-             }).send();
+   //          new Request.HTML({
+  //              url: '/seriesbrowser/ajax/section/showNissl/' + {{series.id}} + '/?seriesId='+{{series.id}},
+  //              method: 'get',
+  //              onComplete: function(response) {
+  //                  $('panel_content').empty().adopt(response);
+  //               }
+  //           }).send();
         });
-
         var colors = ['r','g','b'];
         var low_sliders = [0,0,0];
         var high_sliders = [0,0,0];
-
         $$('.value input').each(function (elem) {
               elem.addEvent('change', function() {
                   var new_step = elem.value;
@@ -164,6 +165,7 @@
         });
 
     });
+
 </script>
 </head>
 <body>

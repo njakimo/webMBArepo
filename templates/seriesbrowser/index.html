@@ -40,6 +40,7 @@
         <td><a href="?sort=tracer_{% if sort == 'tracer' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Tracer Type</a></td>
         <td>Image Type</td>
         <td><a href="?sort=qc_{% if sort == 'qc' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">QC Sections</a></td>
+        <td>Preview</td>
     </tr>
     {% for series in series_page.object_list %}
         <tr>
@@ -51,6 +52,7 @@
             <td>{{ series.5 }}</td>
             <td>{{ 'fluoro/brightfield' }}</td>
             <td>{{ series.6 }}</td>
+            <td><a href="/seriesbrowser/allSections/?seriesId={{series.8}}"><img src="{{series.7}}" /></a></td> 
         </tr>
     {% endfor %}
     </table>

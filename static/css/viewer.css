@@ -61,6 +61,11 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     bottom: 0px;
     width: 100%;
 }
+#nav1 {
+    position: relative;
+    bottom: 0px;
+    width: 100%;
+}
 #sagittal {
     float: left;
     margin-left: 10px;
@@ -71,6 +76,21 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     border-left: 3px solid #FFFFFF;
     height: 100px;
     left: 10px;
+}
+#sagittal1 {
+    float: left;
+    margin-left: 600px;
+    width: 200px;
+    bottom: 300px;
+    position: relative;
+}
+#sagittal_pos1 {
+    position: fixed;
+    border-left: 3px solid #FFFFFF;
+    height: 100px;
+    left: 10px;
+    margin-left:600px;
+    bottom: 300px;
 }
 #filmstrip {
     position: fixed;
@@ -97,7 +117,32 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 	margin: 0 1px 1px 0;
 }
 #filmstrip .holder ul li img { display: block; }
-
+#filmgallery {
+    position: fixed;
+    top: 300px;
+    right: 120px;
+    width: 976px;
+    background-color: #000000;
+    overflow: hidden;
+}
+#filmgallery .holder {
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	z-index: 2;
+}
+#filmgallery .holder ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 30000px;
+}
+#filmgallery .holder ul li {
+	float: left;
+	width: 120px;
+	margin: 0 1px 1px 0;
+}
+#filmgallery .holder ul li img { display: block; }
 .next,
 .prev {
 	position: absolute;

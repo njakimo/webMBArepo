@@ -112,7 +112,6 @@ def index(request):
         'dir'         : dir,
         'filters'     : filters,
         'form'        : form})
-
 def tree(request):
     try:
         root = Region.objects.get(pk=1)
@@ -128,7 +127,40 @@ def viewer(request):
         series_id = int(request.GET.get('seriesId','0'))
     except ValueError:
         series_id = 0
+    try:
+        series = Series.objects.get(pk=series_id)
+        sections = series.section_set.order_by('sectionOrder').all()
+        section_id = 0
+        try:
+           section_id =  int(request.GET.get('sectionId','0'))
+        except:
+           pass
+        if section_id != 0:  
+           section = Section.objects.get(pk = section_id)
+        else:
+           section = sections[0]     
+        inj  = Injection.objects.filter(series=series)
+        region = ''         
+        for i in inj:
+           region  = Region.objects.get(pk=i.region.id)
+           break
+        ns = NearestSeries.objects.filter(series=series)
+        nslist = []
+        for n in ns:
+           s = Series.objects.get(pk=n.nearestSeriesId)
+           nslist.append(s)
+           if len(nslist) >= 5:
+              break
+    except ObjectDoesNotExist:
+        sections = None
+        section = None
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
 
+def allSections(request):
+    try:
+        series_id = int(request.GET.get('seriesId','0'))
+    except ValueError:
+        series_id = 0
     try:
         series = Series.objects.get(pk=series_id)
         sections = series.section_set.order_by('sectionOrder').all()
@@ -148,8 +180,7 @@ def viewer(request):
     except ObjectDoesNotExist:
         sections = None
         section = None
-    
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
+    return render_to_response('seriesbrowser/allSections.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
 
 def section(request,id):
     try:
@@ -200,8 +231,10 @@ def section(request,id):
 
 def showNissl(request,id):
     try:
-        section = Section.objects.get(pk=id)
-        series  = Series.objects.get(pk=section.series.id)
+        series_id = int(request.GET.get('seriesId','0'))
+        series  = Series.objects.get(pk=series_id)
+        sections = Section.objects.filter(series = series)
+        section = sections[0]
         inj  = Injection.objects.filter(series=series)
         region = ''         
         for i in inj:
@@ -226,8 +259,7 @@ def showNissl(request,id):
                        sclist = Section.objects.filter(series=sr)
 
         scOriginallist  = Section.objects.filter(series=series)
-  #      scFinalList = sorted(scList + sc1List)
-        scFinalList = sc1List
+        scFinal11List = sorted(scList + sc1List)
     except ObjectDoesNotExist:
         section = None
     return render_to_response('seriesbrowser/viewer.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region})
