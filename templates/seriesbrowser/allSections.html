@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+{% block title %}<title>{% if title %}{{ title }}{% else %}The Mouse Brain Architecture Project{% endif %}</title>{% endblock title %}
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/viewer.css" />
+<link rel="stylesheet" type="text/css" media="all" href="/static/djatoka/css/iip.compressed.css" />
+<link rel="stylesheet" href="static/css/hoverbox.css" type="text/css" media="screen, projection" />
+<script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
+<script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
+<script type="text/javascript" src="/static/js/iipmooviewer-1.1.js"></script>
+<script type="text/javascript" src="/static/js/slideGallery.js"></script>
+<script type="text/javascript">
+    var imageBase = 'http://mbaimages.cshl.edu/data/MBAProcessingResults/PMD/';
+    var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
+    var image = imageBase + 'PMD9/PMD9_0002.jp2';
+    var credit = '';
+
+    window.addEvent('domready', function() {
+        var nSections = {{ sections.count }};
+        var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
+        if($('filmgallery')) {
+            var filmgallery = new slideGallery($('filmgallery'), {
+                steps: 4,
+                mode: "line"
+            });
+        }
+
+        var panel = new Fx.Slide('panel', {mode: 'horizontal'});
+        panel.hide();
+        $('panel').setStyle('z-index','1');
+        $('trigger').addEvent('click', function(event) {
+            event.stop();
+            panel.toggle();
+        });
+
+        var setSagittalX = function(x) {
+            $('sagittal_pos1').setStyle('left', x);
+        };
+        var highlightSection = function(elem) {
+            elem.getSiblings().setStyle('border-top','');
+            elem.setStyle('border-top','3px solid #FFFFFF');
+        };
+        $('sagittal1').addEvent('click', function(event) {
+            setSagittalX(event.page.x)
+            //y_pos = 5.762 - 0.067*(event.page.x-10);
+            var y_pos = Math.round((event.page.x-10) / 200 * nSections) + 1;
+            filmgallery.jump(y_pos);
+            var section = $$('img[id$='+y_pos+']');
+            highlightSection(section[0].getParent('li'));
+        });
+        
+        $$('#filmgallery img').each(function(elem) {
+           elem.addEvent('mouseover', function(){
+               var parts = elem.id.split('-');
+               highlightSection(elem.getParent('li'));
+               setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
+               new Request.HTML({
+                   url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
+                   method: 'get',
+                   onComplete: function(response) {
+                        $('panel_content').empty().adopt(response);
+                    }
+               }).send();
+           });
+       });
+        $('showNisslDiv').addEvent('click', function(event) {
+             new Request.HTML({
+                url: '/seriesbrowser/ajax/section/showNissl/' + seriesId + '/',
+                method: 'get',
+                onComplete: function(response) {
+                    $('filmgallery').empty().adopt(response);
+                 }
+             }).send();
+        });
+    });
+</script>
+</head>
+<body>
+
+<div id="viewer">
+  <div id = "targetframe"></div>
+  <div id="nav">
+    <div id="sagittal1"><div id="sagittal_pos1"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
+    {% if sections %}
+    <div id = "filmgallery" >
+      <div class="holder">
+        <ul>
+          {% for section in sections %}
+          <li>
+           <a href="/seriesbrowser/viewer/?seriesId={{series.id}}&sectionId={{section.id}}">            
+
+           <img id="section-{{ section.id }}-{{ section.sectionOrder }}"
+                  src="/static/slices/{{ section.pngPathLow }}" alt="brain
+                  slice" width="120" height="90" />
+
+           <img id="section-{{ section.id }}-{{ section.sectionOrder }}"
+                  src="/static/slices/{{ section.pngPathHigh }}" alt="brain
+                  slice" width="120" height="90" class="preview"/>
+
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="control">
+        <a href="#" class="prev">prev</a>
+        <a href="#" class="next">next</a>
+      </div>
+    </div>
+  {% endif %}
+  </div>
+</div>
+
+<div id="panel">
+  <div id="panel_content">{% if section %}{% include 'seriesbrowser/ajax/section.html' %}{% endif %}</div>
+  <div style="clear:both;"></div>
+</div>
+<div><a id="trigger" class="trigger" href="#">Info</a></div>
+</body>
+</html>
