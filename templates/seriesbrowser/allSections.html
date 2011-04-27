@@ -66,13 +66,7 @@
            });
        });
         $('showNisslDiv').addEvent('click', function(event) {
-             new Request.HTML({
-                url: '/seriesbrowser/ajax/section/showNissl/' + seriesId + '/',
-                method: 'get',
-                onComplete: function(response) {
-                    $('filmgallery').empty().adopt(response);
-                 }
-             }).send();
+             document.getElementById('showNisslForm').submit();
         });
     });
 </script>
@@ -90,15 +84,9 @@
           {% for section in sections %}
           <li>
            <a href="/seriesbrowser/viewer/?seriesId={{series.id}}&sectionId={{section.id}}">            
-
            <img id="section-{{ section.id }}-{{ section.sectionOrder }}"
-                  src="/static/slices/{{ section.pngPathLow }}" alt="brain
+                  src="{{ section.pngPathLow }}" alt="brain
                   slice" width="120" height="90" />
-
-           <img id="section-{{ section.id }}-{{ section.sectionOrder }}"
-                  src="/static/slices/{{ section.pngPathHigh }}" alt="brain
-                  slice" width="120" height="90" class="preview"/>
-
             </a>
           </li>
           {% endfor %}
