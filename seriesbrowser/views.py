@@ -154,6 +154,9 @@ def viewer(request):
     except ObjectDoesNotExist:
         sections = None
         section = None
+        series=None
+        nslist = None
+        region=None
     return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
 
 def allSections(request):
