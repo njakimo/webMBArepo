@@ -1,0 +1,17 @@
+/* /seriesbrowser/index.html */
+.pagination {
+    float: right;
+}
+#content {
+    width: 100%;
+}
+
+#filter ul {
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#filter li {
+    display: inline;
+}

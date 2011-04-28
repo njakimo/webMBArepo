@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if series_page.object_list %}
-    <div class="filter">
-        <form action="/seriesbrowser/" method="get">{% csrf_token %}
+    <div id="filter">
+        <form action="/seriesbrowser/" method="get">
         <div class="fieldWrapper">
         {{ form.subject.errors }}
-        <label for="id_tracer_filter">Tracer:</label>
-        {{ form.tracer_filter }}
-        <label for="id_region_filter">Region:</label>
-        {{ form.region_filter }}
-        <input type="submit" value="Filter" />
+            <ul>
+            <li>Tracer: {{ form.tracer_filter }}</li>
+            <li>Region: {{ form.region_filter }}</li>
+        {% comment %}
+        <label for="id_tracer_filter">Tracer:</label>{{ form.tracer_filter }}
+        <label for="id_region_filter">Region:</label>{{ form.region_filter }}
+        {% endcomment %}
+        <li><input type="submit" value="Filter" /></li>
+                </ul>
+        </div>
         </form>
     </div>
-    </div>
+{% if series_page.object_list %}
     <div class="pagination">
     <span class="step-links">
         {% if series_page.has_previous %}

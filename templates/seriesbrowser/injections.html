@@ -1,19 +1,16 @@
 {% extends "base.html" %}
 
 {% block css %}
- <link rel="stylesheet" type="text/css" media="screen" href="/static/css/injectionGallery.css" />
- <link rel="stylesheet" type="text/css" media="screen" href="/static/css/slider.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/injectionGallery.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/slider.css" />
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
-<script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
 <script type="text/javascript" src="/static/js/slideGallery.js"></script>
-
 <script type="text/javascript">
   window.addEvent("domready", function() {
   
-    var ARA_gallery = new slideGallery($$(".ARAgallery"), {
+    var ARA_gallery = new slideGallery($("ARAgallery"), {
       steps: 3,
       mode: "circle",
       direction: "vertical",
@@ -88,14 +85,11 @@ function updateMain(fname) {
    }
 }
 </script>
-
 {% endblock %}
 
 {% block content %}
-
-
 <div id="wrapper">
-  <div class="gallery ARAgallery gallery-vert">
+  <div id="ARAgallery" class="gallery gallery-vert">
     <div class="holder">
       <ul>
 	{% for fname in tn_list %}
@@ -121,5 +115,4 @@ function updateMain(fname) {
   </div> <!-- atlasWindow -->
   </div> <!-- gallery -->
 </div> <!-- wrapper -->
-
 {% endblock %}
