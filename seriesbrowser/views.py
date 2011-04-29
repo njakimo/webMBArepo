@@ -122,7 +122,7 @@ def tree(request):
         'user' : request.user,
         'tree' : json.dumps(tree)})
 
-def viewer(request, seriesId, sectionId):
+def sectionViewer(request, seriesId, sectionId):
     try:
         series = Series.objects.get(pk=seriesId)
         sections = series.section_set.order_by('sectionOrder').all()
@@ -130,6 +130,32 @@ def viewer(request, seriesId, sectionId):
             section = Section.objects.get(pk=sectionId)
         else: 
             section = sections[0]    
+            section = Section.objects.get(pk=1)    
+        inj  = Injection.objects.filter(series=series)
+        region = ''         
+        for i in inj:
+           region  = Region.objects.get(pk=i.region.id)
+           break
+        ns = NearestSeries.objects.filter(series=series)
+        nslist = []
+        for n in ns:
+           s = Series.objects.get(pk=n.nearestSeriesId)
+           nslist.append(s)
+           if len(nslist) >= 5:
+              break
+    except ObjectDoesNotExist:
+        sections = None
+        section = None
+        series=None
+        nslist = None
+        region=None
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
+
+def viewer(request, seriesId):
+    try:
+        series = Series.objects.get(pk=seriesId)
+        sections = series.section_set.order_by('sectionOrder').all()
+        section = sections[0]    
         inj  = Injection.objects.filter(series=series)
         region = ''         
         for i in inj:
