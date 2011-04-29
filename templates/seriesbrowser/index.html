@@ -50,13 +50,13 @@
         <tr>
             <td>{{ series.0 }}</td>
        <!--     <td><img src="/static/img/slice.jpg" /></td> -->
-            <td><a href="/seriesbrowser/viewer/?seriesId={{series.8}}"><img src="{{series.7}}" /></a></td> 
+            <td><a href="/seriesbrowser/viewer/{{series.8}}/0/"><img src="{{series.7}}" /></a></td> 
             <td>{{ series.1 }}</td>
             <td>x:{{ series.2 }} y:{{ series.3 }} z:{{ series.4 }}</td>
             <td>{{ series.5 }}</td>
             <td>{{ 'fluoro/brightfield' }}</td>
             <td>{{ series.6 }}</td>
-            <td><a href="/seriesbrowser/allSections/?seriesId={{series.8}}"><img src="{{series.7}}" /></a></td> 
+            <td><a href="/seriesbrowser/allSections/{{series.8}}/"><img src="{{series.7}}" /></a></td> 
         </tr>
     {% endfor %}
     </table>
@@ -65,11 +65,9 @@
         {% if series_page.has_previous %}
             <a href="?page={{ series_page.previous_page_number }}&sort={{ sort }}_{{ dir }}&{{ filters }}">prev</a>
         {% endif %}
-
         <span class="current">
             Page {{ series_page.number }} of {{ series_page.paginator.num_pages }}
         </span>
-
         {% if series_page.has_next %}
             <a href="?page={{ series_page.next_page_number }}&sort={{ sort }}_{{ dir }}&{{ filters }}">next</a>
         {% endif %}

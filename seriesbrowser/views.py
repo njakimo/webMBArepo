@@ -122,23 +122,14 @@ def tree(request):
         'user' : request.user,
         'tree' : json.dumps(tree)})
 
-def viewer(request):
+def viewer(request, seriesId, sectionId):
     try:
-        series_id = int(request.GET.get('seriesId','0'))
-    except ValueError:
-        series_id = 0
-    try:
-        series = Series.objects.get(pk=series_id)
+        series = Series.objects.get(pk=seriesId)
         sections = series.section_set.order_by('sectionOrder').all()
-        section_id = 0
-        try:
-           section_id =  int(request.GET.get('sectionId','0'))
-        except:
-           pass
-        if section_id != 0:  
-           section = Section.objects.get(pk = section_id)
-        else:
-           section = sections[0]     
+        if sectionId != 0: 
+            section = Section.objects.get(pk=sectionId)
+        else: 
+            section = sections[0]    
         inj  = Injection.objects.filter(series=series)
         region = ''         
         for i in inj:
@@ -159,13 +150,9 @@ def viewer(request):
         region=None
     return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
 
-def allSections(request):
+def allSections(request, seriesId):
     try:
-        series_id = int(request.GET.get('seriesId','0'))
-    except ValueError:
-        series_id = 0
-    try:
-        series = Series.objects.get(pk=series_id)
+        series = Series.objects.get(pk=seriesId)
         sections = series.section_set.order_by('sectionOrder').all()
         section = sections[0]
         inj  = Injection.objects.filter(series=series)

@@ -83,7 +83,7 @@
         <ul>
           {% for section in sections %}
           <li>
-           <a href="/seriesbrowser/viewer/?seriesId={{series.id}}&sectionId={{section.id}}">            
+           <a href="/seriesbrowser/viewer/{{series.id}}/{{section.id}}/">            
            <img id="section-{{ section.id }}-{{ section.sectionOrder }}"
                   src="{{ section.pngPathLow }}" alt="brain
                   slice" width="120" height="90" />

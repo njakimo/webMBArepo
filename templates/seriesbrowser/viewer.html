@@ -41,7 +41,6 @@
             event.stop();
             panel.toggle();
         });
-
         var setSagittalX = function(x) {
             $('sagittal_pos').setStyle('left', x);
         };
@@ -76,17 +75,14 @@
                iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
            });
         });
-//        var positionSection() = function(){
-//           alert("{{section.sectionOrder}}"); 
-//           setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / nSections * 200));
-//           alert("after {{section.sectionOrder}}"); 
-//            var y_pos = Math.round(({{section.sectionOrder}}-10) / 200 * nSections) + 1;
-//            filmstrip.jump(y_pos);
-//            var section = $$('img[id$='+y_pos+']');
-//            highlightSection(section[0].getParent('li'));
-//        };
-//       alert("**");
-//        positionSection();
+        var positionSection = function(){
+           setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / nSections * 200));
+            var y_pos = Math.round(({{section.sectionOrder}}-10) / 200 * nSections) + 1;
+            filmstrip.jump(y_pos);
+            var section = $$('img[id$='+y_pos+']');
+            highlightSection(section[0].getParent('li'));
+        };
+         positionSection();
 	/*
         $('noteSubmit').addEvent('click', function(event) {
 	     var sectionId = document.getElementById("sectionId").value;
