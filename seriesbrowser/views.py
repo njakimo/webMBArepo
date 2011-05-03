@@ -181,6 +181,7 @@ def allSections(request, seriesId):
         series = Series.objects.get(pk=seriesId)
         sections = series.section_set.order_by('sectionOrder').all()
         section = sections[0]
+        numSections = len(sections)
         inj  = Injection.objects.filter(series=series)
         region = ''         
         for i in inj:
@@ -196,7 +197,7 @@ def allSections(request, seriesId):
     except ObjectDoesNotExist:
         sections = None
         section = None
-    return render_to_response('seriesbrowser/allSections.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
+    return render_to_response('seriesbrowser/allSections.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections})
 
 def section(request,id):
     try:

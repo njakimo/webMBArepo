@@ -39,7 +39,6 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
   height: 16px;
   cursor: pointer;
 }
-
 .slider .knob.red {
   background: red;
 }
@@ -49,7 +48,6 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 .slider .knob.blue {
   background: blue;
 }
-
 #targetframe {
     width: 99%;
     height: 99%;
@@ -77,20 +75,18 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     height: 100px;
     left: 10px;
 }
-#sagittal1 {
+#sagittal_allSections {
+    position: relative;
     float: left;
     margin-left: 600px;
     width: 200px;
-    bottom: 300px;
-    position: relative;
 }
-#sagittal_pos1 {
+#sagittal_pos_allSections {
     position: fixed;
     border-left: 3px solid #FFFFFF;
     height: 100px;
     left: 10px;
     margin-left:600px;
-    bottom: 300px;
 }
 #filmstrip {
     position: fixed;

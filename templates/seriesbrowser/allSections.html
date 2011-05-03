@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/viewer.css" />
 <link rel="stylesheet" type="text/css" media="all" href="/static/djatoka/css/iip.compressed.css" />
-<link rel="stylesheet" href="static/css/hoverbox.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" type="text/css"  media="screen" href="/static/css/main.css"  />
 <script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
 <script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
 <script type="text/javascript" src="/static/js/iipmooviewer-1.1.js"></script>
@@ -16,17 +16,11 @@
     var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
     var image = imageBase + 'PMD9/PMD9_0002.jp2';
     var credit = '';
-
+    var thumbNails =  [{% for s in sections %}"{{s.pngPathLow}}",{% endfor %}];
+    var thumbNailIds =  [{% for s in sections %}"{{s.id}}-{{s.sectionOrder}}",{% endfor %}];
     window.addEvent('domready', function() {
         var nSections = {{ sections.count }};
         var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
-        if($('filmgallery')) {
-            var filmgallery = new slideGallery($('filmgallery'), {
-                steps: 4,
-                mode: "line"
-            });
-        }
-
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
         panel.hide();
         $('panel').setStyle('z-index','1');
@@ -34,73 +28,95 @@
             event.stop();
             panel.toggle();
         });
-
         var setSagittalX = function(x) {
-            $('sagittal_pos1').setStyle('left', x);
+            $('sagittal_pos_allSections').setStyle('left', x);
         };
         var highlightSection = function(elem) {
             elem.getSiblings().setStyle('border-top','');
             elem.setStyle('border-top','3px solid #FFFFFF');
         };
-        $('sagittal1').addEvent('click', function(event) {
-            setSagittalX(event.page.x)
-            //y_pos = 5.762 - 0.067*(event.page.x-10);
-            var y_pos = Math.round((event.page.x-10) / 200 * nSections) + 1;
-            filmgallery.jump(y_pos);
-            var section = $$('img[id$='+y_pos+']');
-            highlightSection(section[0].getParent('li'));
-        });
-        
-        $$('#filmgallery img').each(function(elem) {
-           elem.addEvent('mouseover', function(){
-               var parts = elem.id.split('-');
-               highlightSection(elem.getParent('li'));
-               setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
-               new Request.HTML({
-                   url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
-                   method: 'get',
-                   onComplete: function(response) {
-                        $('panel_content').empty().adopt(response);
-                    }
-               }).send();
-           });
+       var showGallery = function(){
+       var while_pictures = 0;
+	while(while_pictures < nSections) {
+		var new_image = new Element('img', {
+			'src': thumbNails[while_pictures],
+			'id': thumbNailIds[while_pictures],
+			'events': {
+				'click': function(){
+					$('display_picture_img').innerHTML = "<img src=\"" + this.src + "\" id=\"big_picture\" class=\"" + this.id + "\" />";
+					$('controls_vert').setStyle('display', 'none');
+					if(Browser.Engine.trident4) { $('left').tween('margin-left', '143px'); } else { $('left').tween('margin-left', '286px'); }
+				}
+			}
+		});
+		new_image.inject($('gallery_inside'));
+		while_pictures++;
+	}
+    };
+    showGallery();
+    $$('#gallery_inside img').each(function(elem) {
+       elem.addEvent('mouseover', function(){
+           var sectionParts = elem.id.split('-');
+    //       alert(600 + Math.round((sectionParts[1]-1) / nSections * 200));
+           setSagittalX(10 + Math.round((sectionParts[1]-1) / nSections * 200));
+           new Request.HTML({
+               url: '/seriesbrowser/ajax/section/' + sectionParts[0] + '/',
+               method: 'get',
+               onComplete: function(response) {
+                    $('panel_content').empty().adopt(response);
+                }
+           }).send();
        });
-        $('showNisslDiv').addEvent('click', function(event) {
-             document.getElementById('showNisslForm').submit();
-        });
-    });
+   });
+    var vertical_moves = 0;
+    var rows = Math.ceil(nSections/7);
+    if(rows>10) {
+	$('up').addEvent('click', function(event){
+		if(!$('up').hasClass('deactivated')) {
+			vertical_moves--;
+			$('down').erase('class');
+			$('gallery_inside').tween('margin-top', '-'+ (250 * vertical_moves) +'px');
+			if (vertical_moves==0) {
+				$('up').set('class', 'deactivated');	
+			}
+		}
+	});
+		
+	$('down').addEvent('click', function(event){
+		if(!$('down').hasClass('deactivated')) {
+			vertical_moves++;
+			$('up').erase('class');	
+			$('gallery_inside').tween('margin-top', '-'+ (250 *vertical_moves) +'px');
+			if(vertical_moves*4 >= (rows-10)) {
+				$('down').set('class', 'deactivated');	
+			}
+		}
+	});
+   } else {
+	$('up').set('class', 'deactivated');	
+	$('down').set('class', 'deactivated');	
+  }
+});
+
 </script>
 </head>
 <body>
-
-<div id="viewer">
-  <div id = "targetframe"></div>
-  <div id="nav">
-    <div id="sagittal1"><div id="sagittal_pos1"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
+  <div id="sagittal_allSections"><div id="sagittal_pos_allSections"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
+  <br/>
     {% if sections %}
-    <div id = "filmgallery" >
-      <div class="holder">
-        <ul>
-          {% for section in sections %}
-          <li>
-           <a href="/seriesbrowser/viewer/{{series.id}}/{{section.id}}/">            
-           <img id="section-{{ section.id }}-{{ section.sectionOrder }}"
-                  src="{{ section.pngPathLow }}" alt="brain
-                  slice" width="120" height="90" />
-            </a>
-          </li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div class="control">
-        <a href="#" class="prev">prev</a>
-        <a href="#" class="next">next</a>
-      </div>
-    </div>
+<!-- Photo gallery -->
+   <div id="gallery_container">
+     <h1>Section thumbnails</h1>
+     <div id="picture_section">
+	<div id="gallery_inside">
+	</div>
+     </div>
+     <div id="controls_vert">
+       <div id="up" class="deactivated">Scroll Up</div>
+       <div id="down">Scroll Down</div>
+     </div>
+  <!-- end galley -->
   {% endif %}
-  </div>
-</div>
-
 <div id="panel">
   <div id="panel_content">{% if section %}{% include 'seriesbrowser/ajax/section.html' %}{% endif %}</div>
   <div style="clear:both;"></div>
