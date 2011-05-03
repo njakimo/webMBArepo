@@ -38,18 +38,16 @@
        var showGallery = function(){
        var while_pictures = 0;
 	while(while_pictures < nSections) {
+                var sectionParts = thumbNailIds[while_pictures].split('-');
+	         var image_anchor = new Element('a', {
+		   'href': "/seriesbrowser/viewer/{{series.id}}/"+sectionParts[0]+"/",
+		 } );
 		var new_image = new Element('img', {
 			'src': thumbNails[while_pictures],
 			'id': thumbNailIds[while_pictures],
-			'events': {
-				'click': function(){
-					$('display_picture_img').innerHTML = "<img src=\"" + this.src + "\" id=\"big_picture\" class=\"" + this.id + "\" />";
-					$('controls_vert').setStyle('display', 'none');
-					if(Browser.Engine.trident4) { $('left').tween('margin-left', '143px'); } else { $('left').tween('margin-left', '286px'); }
-				}
-			}
 		});
-		new_image.inject($('gallery_inside'));
+		new_image.injectInside(image_anchor);
+		image_anchor.inject($('gallery_inside'));
 		while_pictures++;
 	}
     };
@@ -57,7 +55,6 @@
     $$('#gallery_inside img').each(function(elem) {
        elem.addEvent('mouseover', function(){
            var sectionParts = elem.id.split('-');
-    //       alert(600 + Math.round((sectionParts[1]-1) / nSections * 200));
            setSagittalX(10 + Math.round((sectionParts[1]-1) / nSections * 200));
            new Request.HTML({
                url: '/seriesbrowser/ajax/section/' + sectionParts[0] + '/',
