@@ -16,7 +16,7 @@
     var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
     var image = imageBase + 'PMD9/PMD9_0002.jp2';
     var credit = '';
-    var iip = new IIP( "targetframe", {
+/*    var iip = new IIP( "targetframe", {
 		image: image,
 		server: server,
 		credit: credit,
@@ -24,7 +24,7 @@
 		render: 'random',
         showNavButtons: true,
         crossSiteTest: true
-    });
+    });*/
     window.addEvent('domready', function() {
         var nSections = {{ sections.count }};
         var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
@@ -77,11 +77,10 @@
         });
         var positionSection = function(){
            setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / nSections * 200));
-            var y_pos = Math.round(({{section.sectionOrder}}-10) / 200 * nSections) + 1;
+            var y_pos = Math.round(({{section.sectionOrder}}-10) / 490 * nSections) + 1;
             filmstrip.jump(y_pos);
-            var section = $$('img[id$='+y_pos+']');
-            highlightSection(section[0].getParent('li'));
-        };
+            highlightSection($('section-{{ section.id }}-{{ section.sectionOrder }}').getParent('li'));
+         };
          positionSection();
 	/*
         $('noteSubmit').addEvent('click', function(event) {
@@ -123,7 +122,6 @@
                   }
               });
         });
-
         var updateColorRange = function(group, index, step) {
             $(colors[index]+group).value = step;
         };

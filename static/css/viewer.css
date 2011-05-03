@@ -76,9 +76,10 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     left: 10px;
 }
 #sagittal_allSections {
-    position: relative;
+    position: fixed;
     float: left;
-    margin-left: 600px;
+    margin-left: 50px;
+    margin-top: 600px;
     width: 200px;
 }
 #sagittal_pos_allSections {
@@ -86,7 +87,8 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     border-left: 3px solid #FFFFFF;
     height: 100px;
     left: 10px;
-    margin-left:600px;
+    margin-left:50px;
+    bottom:330px;
 }
 #filmstrip {
     position: fixed;

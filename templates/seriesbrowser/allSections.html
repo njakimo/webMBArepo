@@ -22,7 +22,7 @@
         var nSections = {{ sections.count }};
         var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
-        panel.hide();
+        panel.show();
         $('panel').setStyle('z-index','1');
         $('trigger').addEvent('click', function(event) {
             event.stop();
@@ -72,7 +72,7 @@
 		if(!$('up').hasClass('deactivated')) {
 			vertical_moves--;
 			$('down').erase('class');
-			$('gallery_inside').tween('margin-top', '-'+ (250 * vertical_moves) +'px');
+			$('gallery_inside').tween('margin-top', '-'+ (400 * vertical_moves) +'px');
 			if (vertical_moves==0) {
 				$('up').set('class', 'deactivated');	
 			}
@@ -83,8 +83,8 @@
 		if(!$('down').hasClass('deactivated')) {
 			vertical_moves++;
 			$('up').erase('class');	
-			$('gallery_inside').tween('margin-top', '-'+ (250 *vertical_moves) +'px');
-			if(vertical_moves*4 >= (rows-10)) {
+			$('gallery_inside').tween('margin-top', '-'+ (400 *vertical_moves) +'px');
+			if(vertical_moves*5>= (rows-14)) {
 				$('down').set('class', 'deactivated');	
 			}
 		}

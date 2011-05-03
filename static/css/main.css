@@ -8,12 +8,11 @@ body {
 }
 #gallery_container {
 	width:835px;
-	height:700px;
+	height:900px;
 	background:#111;
 	overflow:hidden;
 	border:1px solid #333;
-        margin-left: 500px;
-        margin-top: 200px;
+        margin-left: 550px;
 }
 h1 {
 	background:#222;
@@ -28,7 +27,7 @@ h1 {
 #picture_section {
 	padding:7px 0 7px 7px;
 	width:829px;
-	height:632px;
+	height:832px;
 	overflow:hidden;
 }
 #gallery_inside {
