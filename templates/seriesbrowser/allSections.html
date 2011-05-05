@@ -17,9 +17,9 @@
     var image = imageBase + 'PMD9/PMD9_0002.jp2';
     var credit = '';
     var thumbNails =  [{% for s in sections %}"{{s.pngPathLow}}",{% endfor %}];
-    var thumbNailIds =  [{% for s in sections %}"{{s.id}}-{{s.sectionOrder}}",{% endfor %}];
+    var thumbNailIds =  [{% for s in sections %}"{{s.series_id}}-{{s.id}}-{{s.sectionOrder}}",{% endfor %}];
     window.addEvent('domready', function() {
-        var nSections = {{ sections.count }};
+        var nSections = {{numSections}};
         var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
         panel.show();
@@ -40,7 +40,7 @@
 	while(while_pictures < nSections) {
                 var sectionParts = thumbNailIds[while_pictures].split('-');
 	         var image_anchor = new Element('a', {
-		   'href': "/seriesbrowser/viewer/{{series.id}}/"+sectionParts[0]+"/",
+		   'href': "/seriesbrowser/viewer/"+sectionParts[0]+"/"+sectionParts[1]+"/",
 		 } );
 		var new_image = new Element('img', {
 			'src': thumbNails[while_pictures],
@@ -57,7 +57,7 @@
            var sectionParts = elem.id.split('-');
            setSagittalX(10 + Math.round((sectionParts[1]-1) / nSections * 200));
            new Request.HTML({
-               url: '/seriesbrowser/ajax/section/' + sectionParts[0] + '/',
+               url: '/seriesbrowser/ajax/section/' + sectionParts[1] + '/{{showNissl}}/{{screen}}',
                method: 'get',
                onComplete: function(response) {
                     $('panel_content').empty().adopt(response);

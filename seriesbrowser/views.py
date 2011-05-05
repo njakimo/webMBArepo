@@ -7,6 +7,7 @@ from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries,
 from settings import STATIC_DOC_ROOT
 import json, os
 import datetime
+import itertools
 
 class FilterForm(forms.Form):
     tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
@@ -126,6 +127,9 @@ def sectionViewer(request, seriesId, sectionId):
     try:
         series = Series.objects.get(pk=seriesId)
         sections = series.section_set.order_by('sectionOrder').all()
+        numSections = len(sections)
+        screen = '1'
+        showNissl = '0'
         if sectionId != 0: 
             section = Section.objects.get(pk=sectionId)
         else: 
@@ -145,19 +149,18 @@ def sectionViewer(request, seriesId, sectionId):
               break
     except ObjectDoesNotExist:
         sections = None
-        section = None
-        series=None
-        nslist = None
-        region=None
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
 
 def viewer(request, seriesId):
     try:
         series = Series.objects.get(pk=seriesId)
         sections = series.section_set.order_by('sectionOrder').all()
+        numSections = len(sections)
         section = sections[0]    
         inj  = Injection.objects.filter(series=series)
         region = ''         
+        screen = '1'
+        showNissl = '0'
         for i in inj:
            region  = Region.objects.get(pk=i.region.id)
            break
@@ -170,11 +173,7 @@ def viewer(request, seriesId):
               break
     except ObjectDoesNotExist:
         sections = None
-        section = None
-        series=None
-        nslist = None
-        region=None
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region})
+    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
 
 def allSections(request, seriesId):
     try:
@@ -184,6 +183,8 @@ def allSections(request, seriesId):
         numSections = len(sections)
         inj  = Injection.objects.filter(series=series)
         region = ''         
+        screen = '0'
+        showNissl = '0'
         for i in inj:
            region  = Region.objects.get(pk=i.region.id)
            break
@@ -197,14 +198,15 @@ def allSections(request, seriesId):
     except ObjectDoesNotExist:
         sections = None
         section = None
-    return render_to_response('seriesbrowser/allSections.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections})
+    return render_to_response('seriesbrowser/allSections.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
 
-def section(request,id):
+def section(request,id, showNissl, screen):
     try:
         section = Section.objects.get(pk=id)
         series  = Series.objects.get(pk=section.series.id)
         inj  = Injection.objects.filter(series=series)
         region = ''         
+        showNissl='0'
         for i in inj:
            region  = Region.objects.get(pk=i.region.id)
            break
@@ -217,7 +219,7 @@ def section(request,id):
               break
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region})
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'showNissl':showNissl, 'screen':screen})
 
 #def addNote(request,id):
 #    try:
@@ -246,62 +248,57 @@ def section(request,id):
 #        section = None
 #    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region,'sectionNote':sNote, 'showNissl':sn})
 
-def showNissl(request, id):
-          try:
-              series_id = int(request.GET.get('seriesId','0'))
-          except:
-             series_id = 0
- #       try:
-          series  = Series.objects.get(pk=series_id)
-          sections = series.section_set.order_by('sectionOrder').all()
-          section = sections[0]
-          inj  = Injection.objects.filter(series=series)
-          region = ''         
-          for i in inj:
-            region  = Region.objects.get(pk=i.region.id)
-            break
-          ns = NearestSeries.objects.filter(series=series)
-          nslist = []
-          for n in ns:
-           s = Series.objects.get(pk=n.nearestSeriesId)
-           nslist.append(s)
-           if len(nslist) >= 5:
-              break
-           l_method = LabelMethod.objects.get(pk=series.labelMethod_id)
-           scFinalList = []
-           scList = []
-           if l_method.name != 'Nissl':
-             slist = Series.objects.filter(brain=series.brain)
-             for sr in slist:
-                if sr.id != series.id:
-                    l_m1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
-                    if l_m1.name == 'Nissl':
-                       sclist = Section.objects.filter(series=sr)
-
-           scOriginallist  = Section.objects.filter(series=series)
-           scFinalList = sorted(scList + sc1List)
-#        except ObjectDoesNotExist:
-#           pass
-           return render_to_response('seriesbrowser/viewer1.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region})
-  #      except:
-  #         pass
-  #      return render_to_response('seriesbrowser/viewer.html',{'sections':sections, 'section':section,'series':series, 'nslist':nslist, 'region':region})
+def showNissl(request, id, showNissl, screen):
+    series  = Series.objects.get(pk=id)
+    showNissl = '0'
+    sections = series.section_set.order_by('sectionOrder').all()
+    section = sections[0]
+    if screen == '0':
+        forward = "allSections"
+    elif screen == '1': 
+        forward = "viewer"
+    inj  = Injection.objects.filter(series=series)
+    region = ''         
+    for i in inj:
+        region  = Region.objects.get(pk=i.region.id)
+        break
+    ns = NearestSeries.objects.filter(series=series)
+    nslist = []
+    for n in ns:
+        s = Series.objects.get(pk=n.nearestSeriesId)
+        nslist.append(s)
+        if len(nslist) >= 5:
+           break
+    l_method = LabelMethod.objects.get(pk=series.labelMethod_id)
+    scFinalList = sections
+    scList = []
+    try:
+        if l_method.name != 'Nissl':
+              slist = Series.objects.filter(brain=series.brain)
+              for sr in slist:
+                  if sr.id != series.id:
+                      l_m1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
+                      if l_m1.name == 'Nissl':
+                         scList = Section.objects.filter(series=sr)
+                         scFinalList =  sorted(list(sections) + list(scList))
+                         break
+    except:
+      pass
+    numSections = len(scFinalList)
+    return render_to_response('seriesbrowser/' + forward + '.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
    
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
-
     injection_list = Injection.objects.order_by('-y_coord')
     tnDir = STATIC_DOC_ROOT + '/img/jpgSections/tn'
 #    tn_list = os.listdir('X:/MBAPortal/njakimo-webMBArepo-80d5844/static/img/jpgSections/TN')
     tn_list = os.listdir(tnDir)
     nSections = len(tn_list)
     secYCoord = [] 
-
     for i in range(nSections):
         # Map each section linearly to a y coordinate value (approximate)
         temp = 5.435 - 13.25 * i / (nSections-1)
         secYCoord.append(temp)
-        
     # Find the closest section for each injection - it will be drawn
     # on that section in the application
     curSec = 0

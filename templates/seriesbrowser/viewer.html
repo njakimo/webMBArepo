@@ -16,7 +16,7 @@
     var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
     var image = imageBase + 'PMD9/PMD9_0002.jp2';
     var credit = '';
-/*    var iip = new IIP( "targetframe", {
+    var iip = new IIP( "targetframe", {
 		image: image,
 		server: server,
 		credit: credit,
@@ -24,9 +24,9 @@
 		render: 'random',
         showNavButtons: true,
         crossSiteTest: true
-    });*/
+    });
     window.addEvent('domready', function() {
-        var nSections = {{ sections.count }};
+        var nSections = {{ numSections}};
         var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
         if($('filmstrip')) {
             var filmstrip = new slideGallery($('filmstrip'), {
@@ -59,22 +59,24 @@
         
         $$('#filmstrip img').each(function(elem) {
            elem.addEvent('click', function(){
-               var parts = elem.id.split('-');
-               highlightSection(elem.getParent('li'));
-               setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
-               new Request.HTML({
-                   url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
-                   method: 'get',
-                   onComplete: function(response) {
-                        $('panel_content').empty().adopt(response);
-                    }
-               }).send();
                var path = elem.get('src');
                var file = path.split('/').pop();
                var pieces = file.split('_');
                iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
            });
-        });
+      /*     elem.addEvent('mouseover', function(){
+               var parts = elem.id.split('-');
+               highlightSection(elem.getParent('li'));
+               setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
+               new Request.HTML({
+                   url: '/seriesbrowser/ajax/section/' + parts[2] + '/{{showNissl}}/0/' ,
+                   Method: 'get',
+                   onComplete: function(response) {
+                        $('panel_content').empty().adopt(response);
+                    }
+               }).send();
+           });
+      */  });
         var positionSection = function(){
            setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / nSections * 200));
             var y_pos = Math.round(({{section.sectionOrder}}-10) / 490 * nSections) + 1;
@@ -177,7 +179,7 @@
       <div class="holder">
         <ul>
           {% for section in sections %}
-          <li><img id="section-{{ section.id }}-{{ section.sectionOrder }}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
+          <Li><img id="section-{{section.series_id}}-{{ section.id }}-{{ section.sectionOrder }}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
           {% endfor %}
         </ul>
       </div>
