@@ -20,7 +20,6 @@ window.addEvent('domready',function(){
         height: 18
     });
     var json = [{{ tree|safe }}];
-
     tree.load({ json: json });
     tree.addEvent('select', function(node) {
 		window.location.href = '/seriesbrowser/?region_filter=' + node.property.id;
