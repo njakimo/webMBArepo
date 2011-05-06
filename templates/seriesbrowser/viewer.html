@@ -64,19 +64,19 @@
                var pieces = file.split('_');
                iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
            });
-      /*     elem.addEvent('mouseover', function(){
+           elem.addEvent('mouseover', function(){
                var parts = elem.id.split('-');
                highlightSection(elem.getParent('li'));
                setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
                new Request.HTML({
-                   url: '/seriesbrowser/ajax/section/' + parts[2] + '/{{showNissl}}/0/' ,
-                   Method: 'get',
-                   onComplete: function(response) {
-                        $('panel_content').empty().adopt(response);
-                    }
-               }).send();
-           });
-      */  });
+                     url: '/seriesbrowser/ajax/section/' + parts[2] + '/{{showNissl}}/{{screen}}',
+                     method: 'get',
+                     onComplete: function(response) {
+                         $('panel_content').empty().adopt(response);
+                     }
+                  }).send();
+                });
+              });
         var positionSection = function(){
            setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / nSections * 200));
             var y_pos = Math.round(({{section.sectionOrder}}-10) / 490 * nSections) + 1;
