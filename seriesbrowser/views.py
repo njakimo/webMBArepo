@@ -7,7 +7,6 @@ from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries,
 from settings import STATIC_DOC_ROOT
 import json, os
 import datetime
-import itertools
 
 class FilterForm(forms.Form):
     tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
@@ -204,6 +203,19 @@ def section(request,id, showNissl, screen):
     try:
         section = Section.objects.get(pk=id)
         series  = Series.objects.get(pk=section.series.id)
+        # if this is a Nissl series, get the corresponding flourescent or IHC series and set that as the series
+        lm = LabelMethod.objects.get(pk=series.labelMethod_id)
+        try:
+          if lm.name == 'Nissl':
+             slist = Series.objects.filter(brain=series.brain)
+             for sr in slist:
+                if sr.id != series.id:
+                    lm1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
+                    if lm1.name != 'Nissl':
+                        series = sr
+                        break
+        except:
+          pass
         inj  = Injection.objects.filter(series=series)
         region = ''         
         showNissl='0'
@@ -250,7 +262,6 @@ def section(request,id, showNissl, screen):
 
 def showNissl(request, id, showNissl, screen):
     series  = Series.objects.get(pk=id)
-    showNissl = '0'
     sections = series.section_set.order_by('sectionOrder').all()
     section = sections[0]
     if screen == '0':
@@ -271,19 +282,21 @@ def showNissl(request, id, showNissl, screen):
            break
     l_method = LabelMethod.objects.get(pk=series.labelMethod_id)
     scFinalList = sections
-    scList = []
-    try:
+    if showNissl == '1':
+      scList = []
+      try:
         if l_method.name != 'Nissl':
-              slist = Series.objects.filter(brain=series.brain)
-              for sr in slist:
-                  if sr.id != series.id:
-                      l_m1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
-                      if l_m1.name == 'Nissl':
-                         scList = Section.objects.filter(series=sr)
-                         scFinalList =  sorted(list(sections) + list(scList))
-                         break
-    except:
-      pass
+            slist = Series.objects.filter(brain=series.brain)
+            for sr in slist:
+                if sr.id != series.id:
+                    l_m1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
+                    if l_m1.name == 'Nissl':
+                        scList = Section.objects.filter(series=sr)
+                        finalList = list(scList)+list(sections)
+                        scFinalList =  sorted(finalList, key=lambda x: x.sectionOrder )
+                        break
+      except:
+        pass
     numSections = len(scFinalList)
     return render_to_response('seriesbrowser/' + forward + '.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
    
