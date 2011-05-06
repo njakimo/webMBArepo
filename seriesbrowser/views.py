@@ -153,6 +153,16 @@ def sectionViewer(request, seriesId, sectionId):
 def viewer(request, seriesId):
     try:
         series = Series.objects.get(pk=seriesId)
+        # in case the user comes in by clicking on a Nissl series, show the corresponding IHC or flourescent series
+        lm = LabelMethod.objects.get(pk=series.labelMethod_id)
+        if lm.name == 'Nissl':
+           slist = Series.objects.filter(brain=series.brain)
+           for sr in slist:
+                if sr.id != series.id:
+                    lm1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
+                    if lm1.name != 'Nissl':
+                        series = sr
+                        break
         sections = series.section_set.order_by('sectionOrder').all()
         numSections = len(sections)
         section = sections[0]    
