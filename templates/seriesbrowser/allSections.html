@@ -55,7 +55,11 @@
     $$('#gallery_inside img').each(function(elem) {
        elem.addEvent('mouseover', function(){
            var sectionParts = elem.id.split('-');
+           {% if showNissl == '0' %}
            setSagittalX(23 + Math.round((sectionParts[2]-1) / (2*nSections) * 200));
+           {% else %}
+           setSagittalX(23 + Math.round((sectionParts[2]-1) / (nSections) * 200));
+           {% endif %}
            new Request.HTML({
                url: '/seriesbrowser/ajax/section/' + sectionParts[1] + '/{{showNissl}}/{{screen}}',
                method: 'get',
