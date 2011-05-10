@@ -79,6 +79,8 @@ ROOT_URLCONF = 'webMBArepo.urls'
 
 STATIC_DOC_ROOT = '/home/chronux/dada/mbaproject/webMBArepo/static'
 
+STATIC_URL = '/seriesbrowser/static'
+
 TEMPLATE_DIRS = (
     '/home/chronux/dada/mbaproject/webMBArepo/templates'
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

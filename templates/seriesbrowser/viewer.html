@@ -67,7 +67,7 @@
            elem.addEvent('mouseover', function(){
                var parts = elem.id.split('-');
                highlightSection(elem.getParent('li'));
-               setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
+               setSagittalX(10 + Math.round((parts[2]-1) / (2*nSections) * 200));
                new Request.HTML({
                      url: '/seriesbrowser/ajax/section/' + parts[2] + '/{{showNissl}}/{{screen}}',
                      method: 'get',
