@@ -23,12 +23,18 @@ def index(request):
             tracer.name as tracerName, 
             series.numQCSections as qcSections,
             section.pngPathLow as imagePath,     
-            series.id as seriesId     
+            series.id as seriesId,
+            region.desc as regionDesc,       
+            im.name as imageMethod       
          FROM seriesbrowser_series series     
          LEFT OUTER JOIN seriesbrowser_injection injection ON (injection.series_id = series.id) 
          LEFT OUTER JOIN seriesbrowser_tracer tracer ON (injection.tracer_id = tracer.id) 
          LEFT OUTER  JOIN seriesbrowser_region region ON (injection.region_id = region.id) 
-         INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)     WHERE section.isSampleSection = 1
+         INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)  
+         INNER JOIN seriesbrowser_labelmethod lm ON (series.labelMethod_id = lm.id)  
+         INNER JOIN seriesbrowser_imagemethod im ON (series.imageMethod_id = lm.id)  
+         WHERE section.isSampleSection = 1
+         AND lm.name <> 'Nissl'
     '''
 
     try:

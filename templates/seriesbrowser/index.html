@@ -36,7 +36,7 @@
     <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
         <td><a href="?sort=name_{% if sort == 'name' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Series Name</a></td>
-        <td></td>
+        <td>Viewer</td>
         <td><a href="?sort=region_{% if sort == 'region' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Inj Region</a></td>
         <td>Inj Coords (<a href="?sort=coordx_{% if sort == 'coordx' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">X</a>,
             <a href="?sort=coordy_{% if sort == 'coordy' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Y</a>,
@@ -51,10 +51,10 @@
             <td>{{ series.0 }}</td>
        <!--     <td><img src="/static/img/slice.jpg" /></td> -->
             <td><a href="/seriesbrowser/viewer/{{series.8}}/"><img src="{{series.7}}" /></a></td> 
-            <td>{{ series.1 }}</td>
+            <td>{{ series.9 }}</td>
             <td>x:{{ series.2 }} y:{{ series.3 }} z:{{ series.4 }}</td>
             <td>{{ series.5 }}</td>
-            <td>{{ 'fluoro/brightfield' }}</td>
+            <td>{{ series.10}}</td>
             <td>{{ series.6 }}</td>
             <td><a href="/seriesbrowser/allSections/{{series.8}}/"><img src="{{series.7}}" /></a></td> 
         </tr>
