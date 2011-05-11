@@ -82,7 +82,7 @@
                 });
               });
         var positionSection = function(){
-           setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / nSections * 200));
+           setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / (2*nSections) * 200));
             var y_pos = Math.round(({{section.sectionOrder}}-10) / 490 * nSections) + 1;
             filmstrip.jump(y_pos);
             highlightSection($('section-{{ section.id }}-{{ section.sectionOrder }}').getParent('li'));
