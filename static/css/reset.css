@@ -50,3 +50,7 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+img.thumbNailImage{
+    width:80px; 
+    height:80px; 
+}

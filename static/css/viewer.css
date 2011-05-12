@@ -88,7 +88,7 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     height: 100px;
     left: 23px;
     margin-left:50px;
-    bottom:300px;
+    bottom:330px;
 }
 #filmstrip {
     position: fixed;
@@ -188,6 +188,41 @@ color:#FFFFFF;
 z-index: -1;
 }
 
+#helpPanelAllSections {
+position: fixed;
+top: 800px;
+left: 0px;
+display: block;
+background: #111111;
+border:1px solid #222222;
+width: 400px;
+height: 100px;
+color:#FFFFFF;
+z-index: -1;
+}
+#helpPanelContentAllSections {
+position: relative;
+left: 100px;
+padding: 0px 100px 0px 0px;
+}
+
+#helpPanelViewer{
+position: fixed;
+top: 700px;
+left: 0px;
+display: block;
+background: #111111;
+border:1px solid #222222;
+width: 270px;
+height: 100px;
+color:#FFFFFF;
+z-index: -1;
+}
+#helpPanelContentViewer {
+position: relative;
+left: 0px;
+}
+
 a.trigger{
 position: fixed;
 text-decoration: none;
@@ -209,6 +244,49 @@ border:1px solid #444444;
 display: block;
 z-index: 2;
 }
+a.helpTriggerAllSections{
+position: fixed;
+text-decoration: none;
+top: 800px; left: 0;
+font-size: 16px;
+letter-spacing:-1px;
+font-family: verdana, helvetica, arial, sans-serif;
+color:#fff;
+padding: 20px 40px 20px 15px;
+font-weight: 700;
+background:#333333 url(images/plus.png) 85% 55% no-repeat;
+border:1px solid #444444;
+-moz-border-radius-topright: 20px;
+-webkit-border-top-right-radius: 20px;
+-moz-border-radius-bottomright: 20px;
+-webkit-border-bottom-right-radius: 20px;
+-moz-border-radius-bottomleft: 0px;
+-webkit-border-bottom-left-radius: 0px;
+display: block;
+z-index: 2;
+}
+a.helpTriggerViewer{
+position: fixed;
+text-decoration: none;
+top: 600px; left: 0;
+font-size: 16px;
+letter-spacing:-1px;
+font-family: verdana, helvetica, arial, sans-serif;
+color:#fff;
+padding: 20px 40px 20px 15px;
+font-weight: 700;
+background:#333333 url(images/plus.png) 85% 55% no-repeat;
+border:1px solid #444444;
+-moz-border-radius-topright: 20px;
+-webkit-border-top-right-radius: 20px;
+-moz-border-radius-bottomright: 20px;
+-webkit-border-bottom-right-radius: 20px;
+-moz-border-radius-bottomleft: 0px;
+-webkit-border-bottom-left-radius: 0px;
+display: block;
+z-index: 2;
+}
+
 p {
   background-color: white;
   color: black;

@@ -41,6 +41,13 @@
             event.stop();
             panel.toggle();
         });
+        var helpPanelViewer = new Fx.Slide('helpPanelViewer', {mode: 'horizontal'});
+        helpPanelViewer.hide();
+        $('helpPanelViewer').setStyle('z-index','1');
+        $('helpTriggerViewer').addEvent('click', function(event) {
+            event.stop();
+            helpPanelViewer.toggle();
+        });
         var setSagittalX = function(x) {
             $('sagittal_pos').setStyle('left', x);
         };
@@ -68,12 +75,12 @@
                var parts = elem.id.split('-');
                highlightSection(elem.getParent('li'));
               {% if showNissl == '0' %}
-               setSagittalX(10 + Math.round((parts[2]-1) / (2*nSections) * 200));
+               setSagittalX(10 + Math.round((parts[3]-1) / (2*nSections) * 200));
                {% else %}
-               setSagittalX(10 + Math.round((parts[2]-1) / (nSections) * 200));
+               setSagittalX(10 + Math.round((parts[3]-1) / nSections * 200));
                {% endif %}
                new Request.HTML({
-                     url: '/seriesbrowser/ajax/section/' + parts[2] + '/{{showNissl}}/{{screen}}',
+                     url: '/seriesbrowser/ajax/section/' + parts[3] + '/{{showNissl}}/{{screen}}',
                      method: 'get',
                      onComplete: function(response) {
                          $('panel_content').empty().adopt(response);
@@ -201,5 +208,11 @@
   <div style="clear:both;"></div>
 </div>
 <div><a id="trigger" class="trigger" href="#">Info</a></div>
+<div id="helpPanelViewer">
+  <div id="helpPanelContentViewer">
+    {% include 'seriesbrowser/helpPanelViewer.html' %}
+  </div>
+</div>
+<div><a id="helpTriggerViewer" class="helpTriggerViewer" href="#">Help</a></div>
 </body>
 </html>

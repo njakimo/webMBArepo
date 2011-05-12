@@ -28,7 +28,14 @@
             event.stop();
             panel.toggle();
         });
-        var setSagittalX = function(x) {
+        var helpPanelAllSections = new Fx.Slide('helpPanelAllSections', {mode: 'horizontal'});
+        helpPanelAllSections.hide();
+        $('helpPanelAllSections').setStyle('z-index','-1');
+        $('helpTriggerAllSections').addEvent('click', function(event) {
+            event.stop();
+            helpPanelAllSections.toggle();
+        });
+       var setSagittalX = function(x) {
             $('sagittal_pos_allSections').setStyle('left', x);
         };
         var highlightSection = function(elem) {
@@ -123,5 +130,11 @@
   <div style="clear:both;"></div>
 </div>
 <div><a id="trigger" class="trigger" href="#">Info</a></div>
+<div id="helpPanelAllSections">
+  <div id="helpPanelContentAllSections">
+    {% include 'seriesbrowser/helpPanelAllSections.html' %}
+  </div>
+</div>
+<div><a id="helpTriggerAllSections" class="helpTrigger" href="#">Help</a></div>
 </body>
 </html>
