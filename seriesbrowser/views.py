@@ -32,7 +32,7 @@ def index(request):
          LEFT OUTER  JOIN seriesbrowser_region region ON (injection.region_id = region.id) 
          INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)  
          LEFT OUTER JOIN seriesbrowser_labelmethod lm ON (series.labelMethod_id = lm.id)  
-         LEFT OUTER JOIN seriesbrowser_imagemethod im ON (series.imageMethod_id = lm.id)  
+         LEFT OUTER JOIN seriesbrowser_imagemethod im ON (series.imageMethod_id = im.id)  
          WHERE section.isSampleSection = 1
          AND lm.name <> 'Nissl'        
     '''
