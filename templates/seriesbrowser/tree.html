@@ -29,6 +29,11 @@ window.addEvent('domready',function(){
 {% endblock%}
 
 {% block content %}
+<p>
+ Click a brain region to navigate to the series list corresponding to
+ injections given in the region. The number at each node of the tree below
+ corresponds to number of series having injections administered to that site.  
+</p>
 <h1>Select a brain region:</h1>
 <div id="tree_container"></div>
 {% endblock %}

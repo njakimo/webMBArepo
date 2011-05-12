@@ -332,6 +332,7 @@ def injections(request):
     tnDir = STATIC_DOC_ROOT + '/img/jpgSections/tn'
 #    tn_list = os.listdir('X:/MBAPortal/njakimo-webMBArepo-80d5844/static/img/jpgSections/TN')
     tn_list = os.listdir(tnDir)
+    tn_list.sort()  
     nSections = len(tn_list)
     secYCoord = [] 
     for i in range(nSections):
