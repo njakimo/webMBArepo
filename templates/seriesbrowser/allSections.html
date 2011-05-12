@@ -30,7 +30,7 @@
         });
         var helpPanelAllSections = new Fx.Slide('helpPanelAllSections', {mode: 'horizontal'});
         helpPanelAllSections.hide();
-        $('helpPanelAllSections').setStyle('z-index','-1');
+        $('helpPanelAllSections').setStyle('z-index','1');
         $('helpTriggerAllSections').addEvent('click', function(event) {
             event.stop();
             helpPanelAllSections.toggle();
@@ -135,6 +135,6 @@
     {% include 'seriesbrowser/helpPanelAllSections.html' %}
   </div>
 </div>
-<div><a id="helpTriggerAllSections" class="helpTrigger" href="#">Help</a></div>
+<div><a id="helpTriggerAllSections" class="helpTriggerAllSections" href="#">Help</a></div>
 </body>
 </html>
