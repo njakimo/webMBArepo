@@ -18,8 +18,8 @@
       speed: 250
     });
 
-  var slider = $('slider');
-  new Slider(slider, slider.getElement('.knob'), {
+  var mooslider = $('mooslider');
+  new Slider(mooslider, mooslider.getElement('.knob'), {
     range: [0, 10],
     initialStep: 5,
     onChange: function(value){
@@ -117,7 +117,7 @@ function updateMain(fname) {
     <div style="position: absolute; top: 80px; left: 290px;">
       <img id="overlayImg" src="/static/img/jpgSections/legend_016.jpg" width="456" height="320" />
     </div>
-    <div style="position: absolute; left:438px; top:400px;" id="slider" class="slider">
+    <div style="position: absolute; left:438px; top:400px;" id="mooslider" class="mooslider">
       <div class="knob"></div>&nbsp; Atlas Overlay Opacity
    </div>  <!-- slider -->
   </div> <!-- atlasWindow -->
