@@ -1,9 +1,9 @@
-.slider {
+.mooslider {
   background: #CCC;
   height: 12px;
   width: 160px;
 }
-  .slider .knob {
+  .mooslider .knob {
     background: #000;
     width: 12px;
     height: 12px;
