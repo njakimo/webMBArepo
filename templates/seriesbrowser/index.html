@@ -22,10 +22,10 @@
  image under the "View" column or the "Preview" column. Clicking on the
  thumbnail for the "View" column will navigate you to the main image viewer page
  where you will be able to navigate through the sections by selecting on a
- filmstrip provided at the cottom of the escren. The main image will be shown
- in the central panel pf that screen. Clicking on the "Preview" column will
+ filmstrip provided at the bottom of the screen. The main image will be shown
+ in the central panel of that screen. Clicking on the "Preview" column will
  navigate you to an intermediary preview page, providing a larger gallery of
- section thumbnails to choose from. Clicking on a thumbnail from teh preview
+ section thumbnails to choose from. Clicking on a thumbnail from the preview
  page will navigate you to the main viewer page with the section selected in
  the filmstrip and the sagittal view.
 </p>
@@ -35,11 +35,9 @@
         {% if series_page.has_previous %}
             <a href="?page={{ series_page.previous_page_number }}&sort={{ sort }}_{{ dir }}&{{ filters }}">prev</a>
         {% endif %}
-
         <span class="current">
             Page {{ series_page.number }} of {{ series_page.paginator.num_pages }}
         </span>
-
         {% if series_page.has_next %}
             <a href="?page={{ series_page.next_page_number }}&sort={{ sort }}_{{ dir }}&{{ filters }}">next</a>
         {% endif %}
@@ -55,20 +53,21 @@
             <a href="?sort=coordz_{% if sort == 'coordz' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Z</a>)</td>
         <td><a href="?sort=tracer_{% if sort == 'tracer' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Tracer Type</a></td>
         <td>Image Type</td>
-        <td><a href="?sort=qc_{% if sort == 'qc' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">QC Sections</a></td>
+        <td><a href="?sort=qc_{% if sort == 'qc' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Sections</a></td>
         <td>Preview</td>
     </tr>
     {% for series in series_page.object_list %}
         <tr>
             <td>{{ series.0 }}</td>
        <!--     <td><img src="/static/img/slice.jpg" /></td> -->
-            <td><a href="/seriesbrowser/viewer/{{series.8}}/"  id="imageSize" ><img src="{{series.7}}" /></a></td> 
+            <td><a href="/seriesbrowser/viewer/{{series.8}}/"  id="imageSize" ><img src="{{series.7}}" height="90" width="120"/></a></td> 
             <td>{{ series.9 }}</td>
             <td>x:{{ series.2 }} y:{{ series.3 }} z:{{ series.4 }}</td>
             <td>{{ series.5 }}</td>
             <td>{{ series.10}}</td>
             <td>{{ series.6 }}</td>
-            <td><a href="/seriesbrowser/allSections/{{series.8}}/"   id="imageSize"><img src="{{series.7}}" /></a></td> 
+            <td><a href="/seriesbrowser/gallery/{{series.8}}/"
+            id="imageSize">Section Gallery</a></td> 
         </tr>
     {% endfor %}
     </table>

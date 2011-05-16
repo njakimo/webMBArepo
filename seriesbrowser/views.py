@@ -74,14 +74,14 @@ def index(request):
     field = 'series.desc'
     extra = ''
     if sort == 'coordx':
-        field = 'x_coord'
-        extra = ' '.join([',y_coord',dir,',z_coord',dir])
+        field = 'injection.x_coord'
+        extra = ' '.join([',injection.y_coord',dir,',injection.z_coord',dir])
     elif sort == 'coordy':
-        field = 'y_coord'
-        extra = ' '.join([',x_coord',dir,',z_coord',dir])
+        field = 'injection.y_coord'
+        extra = ' '.join([',injection.x_coord',dir,',injection.z_coord',dir])
     elif sort == 'coordz':
-        field = 'z_coord'
-        extra = ' '.join([',x_coord',dir,',y_coord',dir])
+        field = 'injection.z_coord'
+        extra = ' '.join([',injection.x_coord',dir,',injection.y_coord',dir])
     elif sort == 'region':
         field = 'region.code'
     elif sort == 'tracer':
@@ -200,7 +200,7 @@ def viewer(request, seriesId):
         sections = None
     return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
 
-def allSections(request, seriesId):
+def gallery(request, seriesId):
     try:
         series = Series.objects.get(pk=seriesId)
         sections = series.section_set.order_by('sectionOrder').all()
@@ -223,7 +223,7 @@ def allSections(request, seriesId):
     except ObjectDoesNotExist:
         sections = None
         section = None
-    return render_to_response('seriesbrowser/allSections.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
+    return render_to_response('seriesbrowser/gallery.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
 
 def section(request,id, showNissl, screen):
     try:
@@ -291,7 +291,7 @@ def showNissl(request, id, showNissl, screen):
     sections = series.section_set.order_by('sectionOrder').all()
     section = sections[0]
     if screen == '0':
-        forward = "allSections"
+        forward = "gallery"
     elif screen == '1': 
         forward = "viewer"
     inj  = Injection.objects.filter(series=series)
@@ -344,7 +344,7 @@ def injections(request):
     curSec = 0
     closestSec = []
     for y in injection_list:
-        while secYCoord[curSec]>y.y_coord:
+        while secYCoord[curSec]>float(y.y_coord):
             curSec = curSec + 1
         closestSec.append(curSec)
         

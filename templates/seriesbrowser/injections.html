@@ -64,24 +64,28 @@ function updateMain(fname) {
    // Find the injections for this section
    firstIdx = injSecNum.indexOf(idx);
    if (firstIdx != -1) {
-     lastIdx = injSecNum.lastIndexOf(idx);
-     nInjections = lastIdx - firstIdx + 1;
+     lastIdx = firstIdx;
+     while (injSecNum[lastIdx] == idx) { lastIdx = lastIdx + 1;}
+//     lastIdx = injSecNum.lastIndexOf(idx);
+     nInjections = lastIdx - firstIdx;
      for (i=firstIdx; i<=lastIdx; i++) {
+       myURL = '/seriesbrowser/viewer/';
        var my_img = new Element('img', {'src':'/static/img/target.png',
 				'class':'injTarget',
+				'id': i,
 			        'style':'position:absolute; top:150px; left:400px;',
-				'title': 'Injection: (' + injX[i] + ',' + injY[i] + ',' + injZ[i] + ')'});      
+				'title': 'Injection: (' + injX[i] + ',' + injY[i] + ',' + injZ[i] + ')',      
+				'events': {
+				           'click': function() { open(myURL+seriesNum[this.id],'_blank'); }
+					  }
+		                });
        x = Math.round((5.7 + injX[i])/(11.4) * 456);
        x = x + 290 - 10; // account for image position within div and img size
        y = Math.round((1.5 + (injZ[i]-18/35))/ 8 *320);
        y = y + 80 - 10; // account for image position within div and img size
        my_img.set('style','cursor: pointer; position:absolute; top:' +y+ 'px; left:' +x+ 'px;');
-       myURL = '/seriesbrowser/viewer/?seriesId='+seriesNum[i];
-       my_img.addEvents({click: function() { open(myURL,'_blank'); }});
-				  
        my_img.injectInside($('atlasWindow'));
-
-
+       delete my_img;
      }
    }
 }
@@ -89,6 +93,7 @@ function updateMain(fname) {
 {% endblock %}
 
 {% block content %}
+<div id="wrapper">
 <p>
  Each plate shows the series that have been registered
  corresponding to the injection site locations. The overlay opacity for each
@@ -97,12 +102,11 @@ es
  coresponding to a mark on the injection view to navigate to the view screen
  for the series.
 </p>
-<div id="wrapper">
   <div id="ARAgallery" class="gallery gallery-vert">
     <div class="holder">
       <ul>
 	{% for fname in tn_list %}
-	<li><a href = "javascript:updateMain('{{fname}}')" class="tooltip"><img src="/static/img/jpgSections/tn/{{fname}}" alt="image" width="228" height="160" /><span>This tooltip should say how many injections in the image</span></a></li>
+	<li><a href = "javascript:updateMain('{{fname}}')"><img src="/static/img/jpgSections/tn/{{fname}}" alt="image" width="228" height="160" /></a></li>
 	{% endfor %}
       </ul>
       <div class="control">

@@ -66,12 +66,6 @@
         
         $$('#filmstrip img').each(function(elem) {
            elem.addEvent('click', function(){
-               var path = elem.get('src');
-               var file = path.split('/').pop();
-               var pieces = file.split('_');
-               iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
-           });
-           elem.addEvent('mouseover', function(){
                var parts = elem.id.split('-');
                highlightSection(elem.getParent('li'));
               {% if showNissl == '0' %}
@@ -87,7 +81,11 @@
                      }
                   }).send();
                 });
-              });
+               var path = elem.get('src');
+               var file = path.split('/').pop();
+               var pieces = file.split('_');
+               iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
+           });
         var positionSection = function(){
            setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / (2*nSections) * 200));
             var y_pos = Math.round(({{section.sectionOrder}}-10) / 490 * nSections) + 1;
