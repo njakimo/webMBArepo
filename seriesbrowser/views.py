@@ -356,7 +356,7 @@ def showOnlyNissl(request, id):
     except:
         pass
     numSections = len(scList)
-    screen = 2
+    screen = "2"
     return render_to_response('seriesbrowser/viewer.html',{'sections':scList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen})
    
 def injections(request):

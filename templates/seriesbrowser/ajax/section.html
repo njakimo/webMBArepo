@@ -39,9 +39,11 @@ region</a>
 <p> <a onclick ="javascript:window.open('/seriesbrowser/showOnlyNissl/{{series.id}}/');" href = "#"> Show Nissl in
     new window</a>  </p>
 {% endif %}
+{% if screen != "2"   %}
 <p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/1/{{screen}}/"> Show
     interleaved Nissl </a>  </p>
 <p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/0/{{screen}}/"> Hide
     interleaved Nissl </a>  </p>
+{% endif %}
 </div>
 <!--</form>-->
