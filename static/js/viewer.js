@@ -6,7 +6,7 @@ var MBAViewer = {
         
         var image = 'brainimg:64/0068';
         var iip = new IIP( "targetframe", {
-                    image: image,
+                    image: options['image'],
                     server: options['server'],
                     credit: '',
                     zoom: 1,
