@@ -1,23 +1,21 @@
 
 var MBAViewer = {
-    init: function(nSections, bitDepth) {
-        this.nSections = nSections;
-        this.bitDepth = 255;//bitDepth;
-
-        var server = 'http://localhost:8080/adore-djatoka/resolver';
+    init: function(options) {
+        var bitDepth = options['bitDepth'];
+        var nSections = options['nSections'];
+        
         var image = 'brainimg:64/0068';
-        var credit = '';
         var iip = new IIP( "targetframe", {
                     image: image,
-                    server: server,
-                    credit: credit,
+                    server: options['server'],
+                    credit: '',
                     zoom: 1,
-                    bitDepth: this.bitDepth,
+                    bitDepth: bitDepth,
                     render: 'random',
                     showNavButtons: true,
                     crossSiteTest: true
                 });
-        this.initColorSliders(iip, this.bitDepth);
+        this.initColorSliders(iip, bitDepth);
 
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
         panel.hide();
@@ -33,7 +31,7 @@ var MBAViewer = {
         */
 
         if($('filmstrip')) {
-           this.initSectionNav(this.nSections);
+           this.initSectionNav(nSections);
         }
     },
 

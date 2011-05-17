@@ -14,7 +14,12 @@
 <script type="text/javascript" src="/static/js/viewer.js"></script>
 <script type="text/javascript">
 window.addEvent('domready', function() {
-    MBAViewer.init({{ sections.count }}, Math.pow(2,{{ section.jp2BitDepth }})-1);
+    MBAViewer.init({
+        server: 'http://localhost:8080/adore-djatoka/resolver',
+        image: 'brainimg:64/0068',
+        nSections: {{ sections.count }},
+        bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1
+    });
 });
 </script>
 </head>
