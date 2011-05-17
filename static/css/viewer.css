@@ -1,3 +1,6 @@
+body {
+    background-color: #000;
+}
 #viewer {
     left: 0px;
     top: 0px;
@@ -30,11 +33,11 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     height: 14px;
     //line-height:8pt;
     font-size: 7px;
-    border: 1px ridge #ccc;
-    background: #CCC;
+    border: 1px ridge #BBB;
+    background: #BBB;
 }
 .slider {
-  background: #CCC;
+  background: #BBB;
   height: 16px;
   margin: 5px 0px;
   width: auto;
@@ -43,6 +46,7 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
   width: 16px;
   height: 16px;
   cursor: pointer;
+  background: #FFF;
 }
 .slider .knob.red {
   background: red;
@@ -54,15 +58,19 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
   background: blue;
 }
 #targetframe {
-    width: 99%;
-    height: 99%;
+    width: 100%;
+    height: 100%;
     margin-left: auto;
     margin-right: auto;
+    border: 0px !important;
 }
 #nav {
     position: fixed;
-    bottom: 0px;
+    overflow: hidden;
+    height: 90px;
+    bottom: 0;
     width: 100%;
+    background-color: #000;
 }
 #nav1 {
     position: relative;
@@ -71,23 +79,24 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 }
 #sagittal {
     float: left;
+    height: 90px;
     margin-left: 10px;
     width: 200px;
 }
 #sagittal_pos {
     position: relative;
+    height: 90px;
     border-left: 3px solid #FFFFFF;
-    height: 100px;
     left: 10px;
 }
-#sagittal_allSections {
+#sagittal_gallery {
     position: fixed;
     float: left;
     margin-left: 50px;
     margin-top: 600px;
     width: 200px;
 }
-#sagittal_pos_allSections {
+#sagittal_pos_gallery {
     position: fixed;
     border-left: 3px solid #FFFFFF;
     height: 100px;
@@ -97,8 +106,8 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 }
 #filmstrip {
     position: fixed;
-    right: 120px;
-    width: 976px;
+    right: 10px;
+    width: 968px;
     background-color: #000000;
 	overflow: hidden;
 }
@@ -117,7 +126,7 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 #filmstrip .holder ul li {
 	float: left;
 	width: 120px;
-	margin: 0 1px 1px 0;
+	margin: 0 1px 0 0;
 }
 #filmstrip .holder ul li img { display: block; }
 #filmgallery {
@@ -188,13 +197,12 @@ width: 330px;
 height: 500px;
 padding: 30px 30px 30px 130px;
 filter: alpha(opacity=85);
-opacity: 0.85;
+opacity: .85;
 color:#FFFFFF;
 z-index: -1;
-font-family: arial;
 }
 
-#helpPanelAllSections {
+#helpPanelGallery {
 position: fixed;
 top: 600px;
 left: 0px;
@@ -206,7 +214,7 @@ height: 100px;
 color:#FFFFFF;
 z-index: -1;
 }
-#helpPanelContentAllSections {
+#helpPanelContentGallery {
 position: relative;
 left: 100px;
 padding: 0px 100px 0px 0px;
@@ -250,7 +258,7 @@ border:1px solid #444444;
 display: block;
 z-index: 2;
 }
-a.helpTriggerAllSections{
+a.helpTriggerGallery{
 position: fixed;
 text-decoration: none;
 top: 600px; left: 0;
@@ -294,8 +302,8 @@ z-index: 2;
 }
 
 p {
-  background-color: #111111;
-  color: #ffffff;
+  background-color: white;
+  color: black;
   margin: 0;
   }
 
@@ -307,8 +315,8 @@ p {
 	font-family: 'Trebuchet MS', 'Lucida Grande',
 	  Verdana, Lucida, Geneva, Helvetica, 
 	  Arial, sans-serif;
-	background-color: #111111;
-        color: #ffffff;
+	background-color: white;
+        color: black;
 	}
 #button ul {
 	list-style: none;

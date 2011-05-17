@@ -4,183 +4,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 {% block title %}<title>{% if title %}{{ title }}{% else %}The Mouse Brain Architecture Project{% endif %}</title>{% endblock title %}
 <link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/css/viewer.css" />
 <link rel="stylesheet" type="text/css" media="all" href="/static/djatoka/css/iip.compressed.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/viewer.css" />
 
 <script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
 <script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
 <script type="text/javascript" src="/static/js/iipmooviewer-1.1.js"></script>
 <script type="text/javascript" src="/static/js/slideGallery.js"></script>
+<script type="text/javascript" src="/static/js/viewer.js"></script>
 <script type="text/javascript">
-    var imageBase = 'http://mbaimages.cshl.edu/data/MBAProcessingResults/PMD/';
-    var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
-    var image = imageBase + 'PMD9/PMD9_0002.jp2';
-    var credit = '';
-    var iip = new IIP( "targetframe", {
-		image: image,
-		server: server,
-		credit: credit,
-		zoom: 1,
-		render: 'random',
-        showNavButtons: true,
-        crossSiteTest: true
-    });
-    window.addEvent('domready', function() {
-        var nSections = {{ numSections}};
-        var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
-        if($('filmstrip')) {
-            var filmstrip = new slideGallery($('filmstrip'), {
-                steps: 4,
-                mode: "line"
-            });
-        }
-        var panel = new Fx.Slide('panel', {mode: 'horizontal'});
-        panel.hide();
-        $('panel').setStyle('z-index','1');
-        $('trigger').addEvent('click', function(event) {
-            event.stop();
-            panel.toggle();
-        });
-        var helpPanelViewer = new Fx.Slide('helpPanelViewer', {mode: 'horizontal'});
-        helpPanelViewer.hide();
-        $('helpPanelViewer').setStyle('z-index','1');
-        $('helpTriggerViewer').addEvent('click', function(event) {
-            event.stop();
-            helpPanelViewer.toggle();
-        });
-        var setSagittalX = function(x) {
-            $('sagittal_pos').setStyle('left', x);
-        };
-        var highlightSection = function(elem) {
-            elem.getSiblings().setStyle('border-top','');
-            elem.setStyle('border-top','3px solid #FFFFFF');
-        };
-        $('sagittal').addEvent('click', function(event) {
-            setSagittalX(event.page.x)
-            //y_pos = 5.762 - 0.067*(event.page.x-10);
-            var y_pos = Math.round((event.page.x-10) / 200 * nSections) + 1;
-            filmstrip.jump(y_pos);
-            var section = $$('img[id$='+y_pos+']');
-            highlightSection(section[0].getParent('li'));
-        });
-        
-        $$('#filmstrip img').each(function(elem) {
-           elem.addEvent('click', function(){
-               var parts = elem.id.split('-');
-               highlightSection(elem.getParent('li'));
-              {% if showNissl == '0' %}
-               setSagittalX(10 + Math.round((parts[3]-1) / (2*nSections) * 200));
-               {% else %}
-               setSagittalX(10 + Math.round((parts[3]-1) / nSections * 200));
-               {% endif %}
-               new Request.HTML({
-                     url: '/seriesbrowser/ajax/section/' + parts[3] + '/{{showNissl}}/{{screen}}',
-                     method: 'get',
-                     onComplete: function(response) {
-                         $('panel_content').empty().adopt(response);
-                     }
-                  }).send();
-                });
-               var path = elem.get('src');
-               var file = path.split('/').pop();
-               var pieces = file.split('_');
-               iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
-           });
-        var positionSection = function(){
-           setSagittalX(10 + Math.round(({{section.sectionOrder}}-1) / (2*nSections) * 200));
-            var y_pos = Math.round(({{section.sectionOrder}}-10) / 490 * nSections) + 1;
-            filmstrip.jump(y_pos);
-            highlightSection($('section-{{ section.id }}-{{ section.sectionOrder }}').getParent('li'));
-         };
-         positionSection();
-	/*
-        $('noteSubmit').addEvent('click', function(event) {
-	     var sectionId = document.getElementById("sectionId").value;
-	     var score = document.getElementById("sectionScore").value;
-	     var note = document.getElementById("sectionNote").value;
-             var showNissl = document.getElementById("showNisslBox").value;
-             new Request.HTML({
-                url: '/seriesbrowser/ajax/section/addNote/' + sectionId + '/?score='+score+'&note='+note+'&showNissl='+showNissl,
-                method: 'get',
-                onComplete: function(response) {
-                    $('panel_content').empty().adopt(response);
-                 }
-             }).send();
-        });
-    */
-        var colors = ['r','g','b'];
-        var low_sliders = [0,0,0];
-        var high_sliders = [0,0,0];
-        $$('.value input').each(function (elem) {
-              elem.addEvent('change', function() {
-                  var new_step = elem.value;
-                  var re = /^\d*$/;
-                  if(!re.test(new_step) || new_step < 0 || new_step == '') {
-                      new_step = elem.value = 0;
-                  }
-                  if(new_step > bitDepth) {
-                      new_step = elem.value = bitDepth;
-                  }
-                  var id = elem.id;
-                  var color = id.substring(0,1);
-                  var group = id.substring(1);
-                  
-                  if (group == 'min') {
-                      low_sliders[colors.indexOf(color)].set(new_step);
-                  }
-                  else if (group == 'max') {
-                      high_sliders[colors.indexOf(color)].set(new_step);
-                  }
-              });
-        });
-        var updateColorRange = function(group, index, step) {
-            $(colors[index]+group).value = step;
-        };
-        $$('.slider.low').each(function(slider, i){
-            low_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
-                range: [0,bitDepth],
-                onChange: function() {
-                    if(this.step >= high_sliders[i].step) {
-                        high_sliders[i].set(this.step);
-                    }
-                    updateColorRange('min',i,this.step);
-                }
-            });
-        });
-        $$('.slider.high').each(function(slider, i){
-            high_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
-                range: [0,bitDepth],
-                initialStep: bitDepth,
-                onChange: function(){
-                    if(this.step <= low_sliders[i].step) {
-                        low_sliders[i].set(this.step);
-                    }
-                    updateColorRange('max',i,this.step);
-                }
-            });
-        });
-        $('showNisslDiv').addEvent('click', function(event) {
-              $('#showNisslForm').submit();
-        });
-    });
-
+window.addEvent('domready', function() {
+    MBAViewer.init({{ sections.count }}, Math.pow(2,{{ section.jp2BitDepth }})-1);
+});
 </script>
 </head>
 <body>
 
 <div id="viewer">
   <div id="targetframe"></div>
-{% comment %}
-  <div id="colors">
-    <div id="red_low" class="advanced slider low"><div class="knob"></div></div>
-    <div id="red_high" class="advanced slider high"><div class="knob"></div></div>
-    <div id="green_low" class="advanced slider low"><div class="knob"></div></div>
-    <div id="green_high" class="advanced slider high"><div class="knob"></div></div>
-    <div id="blue_low" class="advanced slider low"><div class="knob"></div></div>
-    <div id="blue_high" class="advanced slider high"><div class="knob"></div></div>
-    <div id="color_submit">R: <span id="red_range"></span><br/>G: <span id="green_range"></span><br/>B: <span id="blue_range"></span></div>
-  </div>
-  {% endcomment %}
   <div id="nav">
     <div id="sagittal"><div id="sagittal_pos"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
     {% if sections %}
@@ -188,7 +29,7 @@
       <div class="holder">
         <ul>
           {% for section in sections %}
-          <Li><img id="section-{{section.series_id}}-{{ section.id }}-{{ section.sectionOrder }}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
+          <li><img id="section-{{ section.id }}-{{ section.sectionOrder }}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
           {% endfor %}
         </ul>
       </div>
@@ -206,11 +47,5 @@
   <div style="clear:both;"></div>
 </div>
 <div><a id="trigger" class="trigger" href="#">Info</a></div>
-<div id="helpPanelViewer">
-  <div id="helpPanelContentViewer">
-    {% include 'seriesbrowser/helpPanelViewer.html' %}
-  </div>
-</div>
-<div><a id="helpTriggerViewer" class="helpTriggerViewer" href="#">Help</a></div>
 </body>
 </html>

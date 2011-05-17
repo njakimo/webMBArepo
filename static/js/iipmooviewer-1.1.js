@@ -69,7 +69,7 @@ var TargetDrag = new Class({
    Extends: Drag,
 
    // Simply copy the parent class initialize function
-   initialize: function(){      
+   initialize: function(){
       var params = Array.link(arguments, {'options': Object.type, 'element': $defined});
       this.element = $(params.element);
       this.document = this.element.getDocument();
@@ -134,7 +134,7 @@ var TargetDrag = new Class({
 	  else{
 	    this.value.now[z] = 0;
 	    this.out = true;
-	  } 
+	  }
 	}
 
 	if (this.options.grid[z]) this.value.now[z] -= (this.value.now[z] % this.options.grid[z]);
@@ -164,7 +164,7 @@ var IIP = new Class({
               zoom: the initial zoom level (optional - defaults to 1)
               render: tile rendering style - 'spiral' for a spiral from the centre or
                       'random' for a rendering of tiles in a random order (default)
-              showNavButtons: whether to show navigation buttons: true (default) or false 
+              showNavButtons: whether to show navigation buttons: true (default) or false
 	      scale: pixels per mm
    */
     initialize: function( main_id, options ) {
@@ -176,6 +176,9 @@ var IIP = new Class({
     this.render = options['render'] || 'random';
 
     this.crossSiteTest = options['crossSiteTest'] || false;
+
+    this.colorRanges = [0,options['bitDepth'],0,options['bitDepth'],0,options['bitDepth']];
+    this.gamma = 1.0;
 
     this.images = new Array(options['image'].length);
     options['image'] || alert( 'Image location not set in IIP constructor options');
@@ -236,7 +239,7 @@ var IIP = new Class({
     // end djatoka add
 
 
-    /* Load us up when the DOM is fully loaded! 
+    /* Load us up when the DOM is fully loaded!
      */
     window.addEvent( 'domready', function(){ this.load() }.bind(this) );
   },
@@ -406,7 +409,9 @@ var IIP = new Class({
 	    	    + "&svc_val_fmt=" + this.svc_val_fmt
 	    	    + "&svc.format=image/jpeg&svc.level="
 	    	    + this.res + "&svc.rotate=0&svc.region="
-	    	    + djatoka_y + "," + djatoka_x + ",256,256";
+	    	    + djatoka_y + "," + djatoka_x + ",256,256"
+                + "&svc.crange=" + this.colorRanges[0]+"-"+this.colorRanges[1]+","+this.colorRanges[2]+"-"+this.colorRanges[3]+","+this.colorRanges[4]+"-"+this.colorRanges[5]
+                + "&svc.gamma=" + this.gamma;
 	    // end djatoka mods
 
 	    // We set the source at the end so that the 'load' function is properly fired
@@ -453,7 +458,9 @@ var IIP = new Class({
         + this.svc_val_fmt
         + "&svc.format=image/jpeg&svc.level=" + this.res
         + "&svc.rotate=0&svc.region=" + top_left_y + ","
-        + top_left_x + "," + h + "," + w;
+        + top_left_x + "," + h + "," + w
+        + "&svc.crange=" + this.colorRanges[0]+"-"+this.colorRanges[1]+","+this.colorRanges[2]+"-"+this.colorRanges[3]+","+this.colorRanges[4]+"-"+this.colorRanges[5]
+        + "&svc.gamma=" + this.gamma;
    },
 
   /*
@@ -781,6 +788,7 @@ var IIP = new Class({
     window.addEvent( 'resize', function(){ window.location=window.location; } );
     document.addEvent( 'keydown', this.key.bindWithEvent(this) );
 
+/*
     // Add our logo and a tooltip explaining how to use the viewer
     new Element( 'a', {href: 'http://iipimage.sourceforge.net', id:'logo'} ).injectInside(this.source);
     new Element('img', {src: '/static/djatoka/images/djatoka.32x32.png', id: 'info', styles: { opacity: 0.8 } } ).injectInside('logo');
@@ -798,7 +806,7 @@ var IIP = new Class({
 	  onHide: function(t){ t.fade(0); }
     });
     $('info').store('tip:text', '<h2><img src="/static/djatoka/images/djatoka.32x32.png"/>djatoka IIPViewer</h2>djatoka Viewer - an IIPImage High Resolution Ajax Image Viewer<ul><li>To navigate within image:<ul><li>drag image within main window or</li><li>drag zone within the navigation window</li><li>click an area within navigation window</li></ul><li>To zoom in:<ul><li>double click with the mouse or</li><li>use the mouse scroll wheel or</li><li>or simply press the "+" key</li></ul><li>To zoom out:<ul><li>shift double click with the mouse or</li><li>use the mouse wheel or</li><li>press the "-" key</li></ul></li><li>To move the navigation window:<ul><li>drag navigation window toolbar</li></ul><li>To show / hide navigation buttons:</li><ul><li>double click navigation window toolbar</li></ul></ul>Written by Ruven Pillay, Modified for use with djatoka by Ryan Chute<br/>For more information visit http://iipimage.sf.net & http://djatoka.sf.net');
-
+*/
 
     // Add some info
     if( this.credit ){
@@ -863,6 +871,9 @@ var IIP = new Class({
             + this.images[0].src + "&svc_id=" + this.svc_id
             + "&svc_val_fmt=" + this.svc_val_fmt
             + "&svc.format=image/jpeg&svc.scale=" + this.min_x + "," + this.min_y
+            + "&svc.crange=" + this.colorRanges[0]+"-"+this.colorRanges[1]+","+this.colorRanges[2]+"-"+this.colorRanges[3]+","+this.colorRanges[4]+"-"+this.colorRanges[5]
+            + "&svc.gamma=" + this.gamma
+
     // end djatoka mods
 
     //var navimage = new Element( 'img', {
@@ -924,7 +935,8 @@ var IIP = new Class({
               '<tr><td class="value"><input id="gmax" type="text" maxlength="5" name="gmax" value="65535"/></td><td><div id="green_high" class="slider high"><div class="knob green"></div></div></td></tr>' +
               '<tr><td class="value"><input id="bmin" type="text" maxlength="5" name="bmin" value="0"/></td><td><div id="blue_low" class="slider low"><div class="knob blue"></div></div></td></tr>' +
               '<tr><td class="value"><input id="bmax" type="text" maxlength="5" name="bmax" value="65535"/></td><td><div id="blue_high" class="slider high"><div class="knob blue"></div></div></td></tr>' +
-              '<tr><td colspan="2"><input type="submit" name="set" value="Resample"/></td></tr></table>'
+              '<tr><td class="value"><input id="gamma" type="text" maxlength="5" name="gamma" value="1.0"/></td><td><div id="gamma_slider" class="slider"><div class="knob"></div></div></td></tr>' +
+              '<tr><td colspan="2"><input id="resample" type="submit" name="set" value="Resample"/></td></tr></table>'
 
     });
     colorSliders.injectInside(navcontrols);
@@ -953,6 +965,7 @@ var IIP = new Class({
     $('shiftUp').addEvent( 'click', function(){ this.scrollTo(0,-this.rgn_h/3); }.bind(this) );
     $('shiftDown').addEvent( 'click', function(){ this.scrollTo(0,this.rgn_h/3); }.bind(this) );
     $('shiftRight').addEvent( 'click', function(){ this.scrollTo(this.rgn_w/3,0); }.bind(this) );
+    $('resample').addEvent( 'click', function(){ this.setColorParams() }.bind(this));
 
 
     $('zone').makeDraggable({
@@ -1018,7 +1031,16 @@ var IIP = new Class({
     });
   },
 
-
+  setColorParams: function() {
+    this.gamma = $('gamma').value;
+    this.colorRanges[0] = $('rmin').value;
+    this.colorRanges[1] = $('rmax').value;
+    this.colorRanges[2] = $('gmin').value;
+    this.colorRanges[3] = $('gmax').value;
+    this.colorRanges[4] = $('bmin').value;
+    this.colorRanges[5] = $('bmax').value;
+    this.reload();
+  },
 
   /* Use a AJAX request to get the image size, tile size and number of resolutions from the server
    */
@@ -1051,8 +1073,8 @@ var IIP = new Class({
   // djatoka mod
   load : function() {
     if(this.crossSiteTest) {
-        this.max_width = 16513;
-        this.max_height = 11169;
+        this.max_width = 22753;
+        this.max_height = 21249;
         this.tileSize[0] = 256;
         this.tileSize[1] = 256;
         this.num_resolutions = 8;
@@ -1130,7 +1152,9 @@ var IIP = new Class({
       var newSrc = this.server + "?url_ver=Z39.88-2004&rft_id="
                  + this.images[0].src + "&svc_id=" + this.svc_id
                  + "&svc_val_fmt=" + this.svc_val_fmt
-                 + "&svc.format=image/jpeg&svc.scale=" + this.min_x + "," + this.min_y;
+                 + "&svc.format=image/jpeg&svc.scale=" + this.min_x + "," + this.min_y
+                 + "&svc.crange=" + this.colorRanges[0]+"-"+this.colorRanges[1]+","+this.colorRanges[2]+"-"+this.colorRanges[3]+","+this.colorRanges[4]+"-"+this.colorRanges[5]
+                 + "&svc.gamma=" + this.gamma;
       $('navigation').set('src',newSrc);
   },
 
@@ -1138,11 +1162,12 @@ var IIP = new Class({
       // svc_id? svc_val_fmt? min_x? min_y?
       this.images = [{ src:image, sds:"0,90"} ];
       this.reloadNavImage();
+  },
+
+  reload: function() {
+      this.reloadNavImage();
+      this.requestImages();
   }
-
-
-
-
 
 });
 
