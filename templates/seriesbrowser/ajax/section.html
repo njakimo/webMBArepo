@@ -35,7 +35,13 @@ region</a>
 <!--<form id = "showNisslForm" action="showNissl" method="get">
 <input type="hidden" id="seriesId" name="seriesId" value="{{series.id}}"/>-->
 <div id = "showNissls" >
-<p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/1/{{screen}}/"> Show Nissl </a>  </p>
-<p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/0/{{screen}}/"> Hide Nissl </a>  </p>
+{% if screen == "1"   %}
+<p> <a onclick ="javascript:window.open('/seriesbrowser/showOnlyNissl/{{series.id}}/');" href = "#"> Show Nissl in
+    new window</a>  </p>
+{% endif %}
+<p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/1/{{screen}}/"> Show
+    interleaved Nissl </a>  </p>
+<p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/0/{{screen}}/"> Hide
+    interleaved Nissl </a>  </p>
 </div>
 <!--</form>-->

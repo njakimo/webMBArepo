@@ -74,8 +74,13 @@ pre {
 	float: left;
 	width: 240px;
 	padding: 0 1px 1px 0;
+	background: none;
 }
+
 .gallery .holder ul li img { display: block; border: 1px; }
+
+.gallery .holder ul li a { background: none; }
+
 
 /* vertical mode */
 .gallery-vert { 

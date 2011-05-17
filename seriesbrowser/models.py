@@ -1,5 +1,11 @@
 from django.db import models
 
+class DataResolver(models.Model):
+    identifier = models.CharField(max_length=200)
+    imageFile = models.CharField(max_length=500)
+    def __unicode__(self):
+        return self.identifier
+
 class Brain(models.Model):
     name = models.CharField(max_length=200)
 

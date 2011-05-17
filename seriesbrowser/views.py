@@ -325,6 +325,39 @@ def showNissl(request, id, showNissl, screen):
         pass
     numSections = len(scFinalList)
     return render_to_response('seriesbrowser/' + forward + '.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
+
+def showOnlyNissl(request, id):
+    series  = Series.objects.get(pk=id)
+    sections = series.section_set.order_by('sectionOrder').all()
+    section = sections[0]
+    inj  = Injection.objects.filter(series=series)
+    region = ''         
+    for i in inj:
+        region  = Region.objects.get(pk=i.region.id)
+        break
+    ns = NearestSeries.objects.filter(series=series)
+    nslist = []
+    for n in ns:
+        s = Series.objects.get(pk=n.nearestSeriesId)
+        nslist.append(s)
+        if len(nslist) >= 5:
+           break
+    l_method = LabelMethod.objects.get(pk=series.labelMethod_id)
+    scList = []
+    try:
+        if l_method.name != 'Nissl':
+            slist = Series.objects.filter(brain=series.brain)
+            for sr in slist:
+                if sr.id != series.id:
+                    l_m1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
+                    if l_m1.name == 'Nissl':
+                        scList = Section.objects.filter(series=sr)
+                        break
+    except:
+        pass
+    numSections = len(scList)
+    screen = 2
+    return render_to_response('seriesbrowser/viewer.html',{'sections':scList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen})
    
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
