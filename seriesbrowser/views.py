@@ -350,7 +350,7 @@ def showOnlyNissl(request, id):
         pass
     numSections = len(scList)
     screen = "2"
-    return render_to_response('seriesbrowser/viewer.html',{'sections':scList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen})
+    return render_to_response('seriesbrowser/viewer.html',{'sections':scList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'showNissl':2,'screen':screen})
    
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
