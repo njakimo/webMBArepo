@@ -34,7 +34,7 @@ window.addEvent('domready', function() {
       <div class="holder">
         <ul>
           {% for section in sections %}
-          <li><img id="section-{{ section.id }}-{{ section.sectionOrder }}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
+          <li><img id="section-{{ section.id }}-{{ section.sectionOrder }}-{{showNissl}}-{{screen}}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
           {% endfor %}
         </ul>
       </div>
@@ -52,5 +52,11 @@ window.addEvent('domready', function() {
   <div style="clear:both;"></div>
 </div>
 <div><a id="trigger" class="trigger" href="#">Info</a></div>
+<div id="helpPanelViewer">
+  <div id="helpPanelContentViewer">
+    {% include 'seriesbrowser/helpPanelViewer.html' %}
+  </div>
+</div>
+<div><a id="helpTriggerViewer" class="helpTriggerViewer" href="#">Help</a></div>
 </body>
 </html>

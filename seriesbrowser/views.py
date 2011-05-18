@@ -89,28 +89,20 @@ def index(request):
     order = ' '.join([field, dir, extra])
 
     sql = ' '.join([sql,' AND ',where,'ORDER BY',order])
-
     cursor = connection.cursor()
     cursor.execute(sql)
     rs = cursor.fetchall()
-
     paginator = Paginator(rs, 25)
-
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
-
     try:
         series_page = paginator.page(page)
     except (EmptyPage, InvalidPage):
         series_page = paginator.page(paginator.num_pages)
-
     form = FilterForm(initial={'tracer_filter' : tracer_filter, 'region_filter' : region_filter})
-
-
     filters = '&'.join(["tracer_filter=" + str(tracer_filter),"region_filter=" + str(region_filter)])
-
     return render_to_response('seriesbrowser/index.html', {
         'user'        : request.user,
         'series_page' : series_page,
@@ -118,6 +110,7 @@ def index(request):
         'dir'         : dir,
         'filters'     : filters,
         'form'        : form})
+
 def tree(request):
     try:
         root = Region.objects.get(pk=1)

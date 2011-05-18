@@ -24,14 +24,15 @@ var MBAViewer = {
             event.stop();
             panel.toggle();
         });
-        /*
-         $('showNisslDiv').addEvent('click', function(event) {
-         $('#showNisslForm').submit();
-         });
-        */
-
+        var helpPanelViewer = new Fx.Slide('helpPanelViewer', {mode: 'horizontal'});
+        helpPanelViewer.hide();
+        $('helpPanelViewer').setStyle('z-index','1');
+        $('helpTriggerViewer').addEvent('click', function(event) {
+            event.stop();
+            helpPanelViewer.toggle();
+        });
         if($('filmstrip')) {
-           this.initSectionNav(nSections);
+	    this.initSectionNav(iip,nSections);
         }
     },
 
@@ -60,9 +61,14 @@ var MBAViewer = {
             elem.addEvent('click', function(){
                 var parts = elem.id.split('-');
                 highlightSection(elem.getParent('li'));
-                setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
+		if (parts[3] == '0') {
+		    setSagittalX(10 + Math.round((parts[2]-1) / (2*nSections) * 200));
+		}
+		else{ 
+		    setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
+		}
                 new Request.HTML({
-                            url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
+                            url: '/seriesbrowser/ajax/section/' + parts[1] + '/' + parts[3] + '/' + parts[4] + '/',
                             method: 'get',
                             onComplete: function(response) {
                                 $('panel_content').empty().adopt(response);

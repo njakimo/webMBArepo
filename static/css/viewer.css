@@ -82,12 +82,13 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     height: 90px;
     margin-left: 10px;
     width: 200px;
-}
+ }
 #sagittal_pos {
-    position: relative;
+    position: absolute;
     height: 90px;
     border-left: 3px solid #FFFFFF;
-    left: 10px;
+    left: 10px; 
+    background-color: transparent;
 }
 #sagittal_gallery {
     position: fixed;
@@ -108,10 +109,12 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     position: fixed;
     right: 10px;
     width: 968px;
+    height: 90px;
     background-color: #000000;
 	overflow: hidden;
 }
 #filmstrip .holder {
+	height:90px;
 	width: 100%;
 	position: relative;
 	overflow: hidden;
@@ -163,20 +166,20 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 	margin-top: -30px;
 	width: 40px;
 	height: 40px;
-	background: url(/static/img/btn-next.png) no-repeat;
+	background: url(/static/img/arrow_right.png) no-repeat;
 	z-index: 20;
 	overflow: hidden;
 	text-indent: -9999px;
 	outline: none;
 	cursor: pointer;
 }
-.next-disable { background: url(/static/img/btn-next-disable.png) no-repeat; }
+.next-disable { background: url(/static/img/arrow_right.png) no-repeat; }
 .prev {
-	background: url(/static/img/btn-prev.png) no-repeat;
+	background: url(/static/img/arrow_left.png) no-repeat;
 	right: auto;
 	left: 10px;
 }
-.prev-disable { background: url(/static/img/btn-prev-disable.png) no-repeat; }
+.prev-disable { background: url(/static/img/arrow_left.png) no-repeat; }
 .control {
 	font-size: 18px;
 	line-height: 21px;
@@ -200,6 +203,7 @@ filter: alpha(opacity=85);
 opacity: .85;
 color:#FFFFFF;
 z-index: -1;
+font-family: verdana, helvetica, arial, sans-serif;
 }
 
 #helpPanelGallery {
@@ -302,8 +306,8 @@ z-index: 2;
 }
 
 p {
-  background-color: white;
-  color: black;
+  background-color: #111111;
+  color: #ffffff;
   margin: 0;
   }
 
@@ -315,17 +319,18 @@ p {
 	font-family: 'Trebuchet MS', 'Lucida Grande',
 	  Verdana, Lucida, Geneva, Helvetica, 
 	  Arial, sans-serif;
-	background-color: white;
+	background-color: #111111;
         color: black;
 	}
 #button ul {
-	list-style: none;
-	margin: 0;
+	list-style: disc outside none;
+	margin-left: 20px;
 	padding: 0;
 	border: none;
 	}
 	
 #button li {
-	border-bottom: 1px solid #90bade;
+	text-decoration: none;
+	border-bottom: none;
 	margin: 0;
 	}
