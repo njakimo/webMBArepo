@@ -82,15 +82,13 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     height: 90px;
     margin-left: 10px;
     width: 200px;
-    z-index:1;
  }
 #sagittal_pos {
     position: relative;
-    height: 40px;
+    height: 30px;
     border-left: 3px solid #FFFFFF;
     left: 10px; 
     background-color: transparent;
-    z-index:2;
 }
 #sagittal_gallery {
     position: fixed;
@@ -101,7 +99,7 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 }
 #sagittal_pos_gallery {
     position: fixed;
-    border-left: 3px solid #FFFFFF;
+   border-left: 3px solid #FFFFFF;
     height: 100px;
     left: 23px;
     margin-left:50px;
