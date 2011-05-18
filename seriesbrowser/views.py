@@ -87,8 +87,10 @@ def index(request):
     elif sort == 'tracer':
         field = 'tracer.name'
     order = ' '.join([field, dir, extra])
-
-    sql = ' '.join([sql,' AND ',where,'ORDER BY',order])
+    if where != '':
+            sql = ' '.join([sql,' AND ',where])
+    sql = ' '.join([sql,'ORDER BY',order])
+#    sql1 = ' '.join([sql,' AND ',where,'ORDER BY',order])
     cursor = connection.cursor()
     cursor.execute(sql)
     rs = cursor.fetchall()
@@ -109,7 +111,8 @@ def index(request):
         'sort'        : sort,
         'dir'         : dir,
         'filters'     : filters,
-        'form'        : form})
+        'form'        : form,})
+#        'sql'           :sql,})
 
 def tree(request):
     try:
