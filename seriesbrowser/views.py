@@ -322,10 +322,10 @@ def showNissl(request, id, showNissl, screen):
     numSections = len(scFinalList)
     return render_to_response('seriesbrowser/' + forward + '.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
 
-def showOnlyNissl(request, id):
+def showOnlyNissl(request, id, sectionId):
     series  = Series.objects.get(pk=id)
     sections = series.section_set.order_by('sectionOrder').all()
-    section = sections[0]
+    section  = Section.objects.get(pk=sectionId)
     inj  = Injection.objects.filter(series=series)
     region = ''         
     for i in inj:
@@ -353,7 +353,8 @@ def showOnlyNissl(request, id):
         pass
     numSections = len(scList)
     screen = "2"
-    return render_to_response('seriesbrowser/viewer.html',{'sections':scList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'showNissl':2,'screen':screen})
+    showNissl = "2"
+    return render_to_response('seriesbrowser/viewer.html',{'sections':scList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'showNissl':showNissl,'screen':screen})
    
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context

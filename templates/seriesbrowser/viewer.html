@@ -18,7 +18,11 @@ window.addEvent('domready', function() {
         server: 'http://localhost:8080/adore-djatoka/resolver',
         image: 'brainimg:64/0068',
         nSections: {{ sections.count }},
-        bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1
+        bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1,
+        sectionId: {{section.id}},
+       sectionOrder: {{section.sectionOrder}},
+       showNissl: {{showNissl}},
+       screen:{{screen}}
     });
 });
 </script>

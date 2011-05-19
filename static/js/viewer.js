@@ -3,7 +3,12 @@ var MBAViewer = {
     init: function(options) {
         var bitDepth = options['bitDepth'];
         var nSections = options['nSections'];
-        
+
+        var sectionId = options['sectionId'];
+        var sectionOrder = options['sectionOrder'];
+	var showNissl = options['showNissl'];
+	var screen = options['screen'];
+
         var image = 'brainimg:64/0068';
         var iip = new IIP( "targetframe", {
                     image: options['image'],
@@ -32,11 +37,11 @@ var MBAViewer = {
             helpPanelViewer.toggle();
         });
         if($('filmstrip')) {
-	    this.initSectionNav(iip,nSections);
+	    this.initSectionNav(iip,nSections, sectionId, sectionOrder, showNissl, screen);
         }
     },
 
-    initSectionNav: function(iip, nSections) {
+    initSectionNav: function(iip, nSections, sectionId, sectionOrder, showNissl, screen) {
         var filmstrip = new slideGallery($('filmstrip'), {
                     steps: 4,
                     mode: "line"
@@ -48,6 +53,13 @@ var MBAViewer = {
             elem.getSiblings().setStyle('border-top','');
             elem.setStyle('border-top','3px solid #FFFFFF');
         };
+        // position for any offset
+        var offsetValue = 10 + Math.round(sectionOrder-1)/ (2*nSections) * 200;
+	setSagittalX(offsetValue);
+	 var y_pos = Math.round((sectionOrder-10) / 200 * nSections) + 1;
+         filmstrip.jump(y_pos);
+         highlightSection( $('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen ).getParent('li'));
+
         $('sagittal').addEvent('click', function(event) {
             setSagittalX(event.page.x);
             //y_pos = 5.762 - 0.067*(event.page.x-10);
@@ -80,32 +92,14 @@ var MBAViewer = {
                 //iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
             });
         });
-        /*
-        $$('#filmstrip img').each(function(elem) {
-           elem.addEvent('click', function(){
-               var parts = elem.id.split('-');
-               highlightSection(elem.getParent('li'));
-              {% if showNissl == '0' %}
-               setSagittalX(10 + Math.round((parts[3]-1) / (2*nSections) * 200));
-               {% else %}
-               setSagittalX(10 + Math.round((parts[3]-1) / nSections * 200));
-               {% endif %}
-               new Request.HTML({
-                     url: '/seriesbrowser/ajax/section/' + parts[3] + '/{{showNissl}}/{{screen}}',
-                     method: 'get',
-                     onComplete: function(response) {
-                         $('panel_content').empty().adopt(response);
-                     }
-                  }).send();
-                });
-               var path = elem.get('src');
-               var file = path.split('/').pop();
-               var pieces = file.split('_');
-               iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
-           });
-            */
     },
-
+    positionSection: function(sectionId, sectionOrder, showNissl, screen, nSections) {
+	//		this.setSagittalX(10 + Math.round(sectionOrder-1) / (2*nSections) * 200));
+	//	 var y_pos = Math.round((sectionOrder-10) / 490 * nSections) + 1;
+//	 alert(" ** " + nSections);
+    //filmstrip.jump(y_pos);
+    //	    highlightSection($('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen + ').getParent('li'));
+    },
     initColorSliders: function(iip, bitDepth) {
         var colors = ['r','g','b'];
         var low_sliders = [0,0,0];
