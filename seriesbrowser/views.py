@@ -398,9 +398,9 @@ def downloadPDF(request, id):
         # Create the PDF object, using the buffer 
         p = canvas.Canvas(buffer)
         # Draw things on the PDF. Here's where the PDF generation happens.
-#        p.drawString(100, 100, section.name)
+        p.drawString(100, 100, section.name)
         im = Image.open(section.pngPathLow)
-        canvas.drawImage(self, im, 100,100, width=90,height=120,mask=None) 
+        p.drawImage(self, im, 100,100, width=90,height=120,mask=None) 
         # Close the PDF object cleanly, and we're done.
         p.showPage()
         p.save()
