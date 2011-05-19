@@ -8,7 +8,6 @@ var MBAViewer = {
         var sectionOrder = options['sectionOrder'];
 	var showNissl = options['showNissl'];
 	var screen = options['screen'];
-
         var image = 'brainimg:64/0068';
         var iip = new IIP( "targetframe", {
                     image: options['image'],
@@ -58,8 +57,7 @@ var MBAViewer = {
 	setSagittalX(offsetValue);
 	 var y_pos = Math.round((sectionOrder-10) / 200 * nSections) + 1;
          filmstrip.jump(y_pos);
-         highlightSection( $('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen ).getParent('li'));
-
+        //  highlightSection( $('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen ).getParent('li'));
         $('sagittal').addEvent('click', function(event) {
             setSagittalX(event.page.x);
             //y_pos = 5.762 - 0.067*(event.page.x-10);
@@ -68,7 +66,6 @@ var MBAViewer = {
             var section = $$('img[id$='+y_pos+']');
             highlightSection(section[0].getParent('li'));
         });
-
         $$('#filmstrip img').each(function(elem) {
             elem.addEvent('click', function(){
                 var parts = elem.id.split('-');
@@ -92,13 +89,6 @@ var MBAViewer = {
                 //iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
             });
         });
-    },
-    positionSection: function(sectionId, sectionOrder, showNissl, screen, nSections) {
-	//		this.setSagittalX(10 + Math.round(sectionOrder-1) / (2*nSections) * 200));
-	//	 var y_pos = Math.round((sectionOrder-10) / 490 * nSections) + 1;
-//	 alert(" ** " + nSections);
-    //filmstrip.jump(y_pos);
-    //	    highlightSection($('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen + ').getParent('li'));
     },
     initColorSliders: function(iip, bitDepth) {
         var colors = ['r','g','b'];

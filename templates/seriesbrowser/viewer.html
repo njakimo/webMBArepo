@@ -13,11 +13,13 @@
 <script type="text/javascript" src="/static/js/slideGallery.js"></script>
 <script type="text/javascript" src="/static/js/viewer.js"></script>
 <script type="text/javascript">
+//alert(" {{ numSections }}  ");
+//alert(" {{ sections.count }}  + {{section.id}} + {{section.sectionOrder}} + {{showNissl}} + {{screen}}");
 window.addEvent('domready', function() {
     MBAViewer.init({
         server: 'http://localhost:8080/adore-djatoka/resolver',
         image: 'brainimg:64/0068',
-        nSections: {{ sections.count }},
+        nSections: {{ numSections }},
         bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1,
         sectionId: {{section.id}},
        sectionOrder: {{section.sectionOrder}},
