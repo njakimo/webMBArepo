@@ -53,7 +53,11 @@ var MBAViewer = {
             elem.setStyle('border-top','3px solid #FFFFFF');
         };
         // position for any offset
-        var offsetValue = 10 + Math.round(sectionOrder-1)/ (2*nSections) * 200;
+        var offsetValue = 0;
+	if (showNissl == '0') 
+	    offsetValue = 10 + Math.round(sectionOrder-1)/ (2*nSections) * 200;
+	else
+             offsetValue = 10 + Math.round(sectionOrder-1)/ (nSections) * 200;
 	setSagittalX(offsetValue);
 	 var y_pos = Math.round((sectionOrder-10) / 200 * nSections) + 1;
          filmstrip.jump(y_pos);

@@ -5,8 +5,11 @@ from django.shortcuts import render_to_response
 from django import forms
 from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries, Injection, Updater, SectionNote, LabelMethod, Brain
 from settings import STATIC_DOC_ROOT
+from django.http import HttpResponse
+from PIL import Image
 import json, os
 import datetime
+import reportlab
 
 class FilterForm(forms.Form):
     tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
@@ -384,3 +387,28 @@ def injections(request):
         'tn_list' : tn_list, # the filenames of the atlas sections
         'yCoord' : secYCoord, # the y coordinates for each atlas section
         'closestSec' : closestSec}) # section to draw each injection on
+
+def downloadPDF(request, id):
+     response = HttpResponse(mimetype='application/pdf')
+     try:
+        section = Section.objects.get(pk=id)
+        series  = Series.objects.get(pk=section.series.id)
+        response['Content-Disposition'] = 'attachment; filename=section'+str(section.name)+'.pdf'
+        buffer = StringIO()
+        # Create the PDF object, using the buffer 
+        p = canvas.Canvas(buffer)
+        # Draw things on the PDF. Here's where the PDF generation happens.
+#        p.drawString(100, 100, section.name)
+        im = Image.open(section.pngPathLow)
+        canvas.drawImage(self, im, 100,100, width=90,height=120,mask=None) 
+        # Close the PDF object cleanly, and we're done.
+        p.showPage()
+        p.save()
+        # Get the value of the StringIO buffer and write it to the response.
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+     except:
+       pass
+     return response
+

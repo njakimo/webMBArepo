@@ -86,7 +86,7 @@ class Section(models.Model):
     isSampleSection = models.BooleanField(default='false')
     y_coord = models.IntegerField(null=True)
     def __unicode__(self):
-        return self.sectionOrder
+        return self.name
 
 class Region(models.Model):
     desc = models.CharField('description', max_length=200)
