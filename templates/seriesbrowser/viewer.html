@@ -13,12 +13,10 @@
 <script type="text/javascript" src="/static/js/slideGallery.js"></script>
 <script type="text/javascript" src="/static/js/viewer.js"></script>
 <script type="text/javascript">
-//alert(" {{ numSections }}  ");
-//alert(" {{ sections.count }}  + {{section.id}} + {{section.sectionOrder}} + {{showNissl}} + {{screen}}");
 window.addEvent('domready', function() {
     MBAViewer.init({
         server: 'http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver',
-        image: 'PMD/PMD31_0200',
+        image: 'PMD/{{section.name}}',
         nSections: {{ numSections }},
         bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1,
         sectionId: {{section.id}},
@@ -30,7 +28,6 @@ window.addEvent('domready', function() {
 </script>
 </head>
 <body>
-
 <div id="viewer">
   <div id="targetframe"></div>
   <div id="nav">
@@ -52,7 +49,6 @@ window.addEvent('domready', function() {
   {% endif %}
   </div>
 </div>
-
 <div id="panel">
   <div id="panel_content">{% if section %}{% include 'seriesbrowser/ajax/section.html' %}{% endif %}</div>
   <div style="clear:both;"></div>
