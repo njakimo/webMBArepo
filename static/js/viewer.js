@@ -8,9 +8,9 @@ var MBAViewer = {
         var sectionOrder = options['sectionOrder'];
 	var showNissl = options['showNissl'];
 	var screen = options['screen'];
-        var image = 'brainimg:64/0068';
+	var image = options['image'];
         var iip = new IIP( "targetframe", {
-                    image: options['image'],
+                    image: image,
                     server: options['server'],
                     credit: '',
                     zoom: 1,
@@ -36,11 +36,11 @@ var MBAViewer = {
             helpPanelViewer.toggle();
         });
         if($('filmstrip')) {
-	    this.initSectionNav(iip,nSections, sectionId, sectionOrder, showNissl, screen);
+	    this.initSectionNav(iip,image, nSections, sectionId, sectionOrder, showNissl, screen);
         }
     },
 
-    initSectionNav: function(iip, nSections, sectionId, sectionOrder, showNissl, screen) {
+    initSectionNav: function(iip, image, nSections, sectionId, sectionOrder, showNissl, screen) {
         var filmstrip = new slideGallery($('filmstrip'), {
                     steps: 4,
                     mode: "line"
@@ -87,10 +87,14 @@ var MBAViewer = {
                                 $('panel_content').empty().adopt(response);
                             }
                         }).send();
-                //var path = elem.get('src');
-                //var file = path.split('/').pop();
-                //var pieces = file.split('_');
-                //iip.changeImage(imageBase + pieces[0] + '/' + pieces[0] + '_' + pieces[1] + '.jp2');
+                var imageParts = image.split("/");
+                var imageParts2 = imageParts[1].split("_");
+                var sectionOrderVal = parts[2] + '';
+		while(sectionOrderVal.length < 4) {
+		    sectionOrderVal  = "0" + sectionOrderVal;
+		}
+                var imageName = 'PMD/'+ imageParts2[0]+ "_"+sectionOrderVal;
+		iip.changeImage(imageName);
             });
         });
     },

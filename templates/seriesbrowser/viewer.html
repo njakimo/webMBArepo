@@ -17,8 +17,8 @@
 //alert(" {{ sections.count }}  + {{section.id}} + {{section.sectionOrder}} + {{showNissl}} + {{screen}}");
 window.addEvent('domready', function() {
     MBAViewer.init({
-        server: 'http://localhost:8080/adore-djatoka/resolver',
-        image: 'brainimg:64/0068',
+        server: 'http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver',
+        image: 'PMD/PMD31_0200',
         nSections: {{ numSections }},
         bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1,
         sectionId: {{section.id}},
