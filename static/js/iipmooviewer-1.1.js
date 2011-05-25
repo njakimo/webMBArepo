@@ -177,7 +177,8 @@ var IIP = new Class({
 
     this.crossSiteTest = options['crossSiteTest'] || false;
 
-    this.colorRanges = [0,options['bitDepth'],0,options['bitDepth'],0,options['bitDepth']];
+    this.bitDepth = options['bitDepth'];
+    this.colorRanges = [0,this.bitDepth,0,this.bitDepth,0,this.bitDepth];
     this.gamma = 1.0;
 
     this.images = new Array(options['image'].length);
@@ -764,6 +765,7 @@ var IIP = new Class({
     // Calculate some sizes and create the navigation window
     this.calculateMinSizes();
     this.createNavigationWindow();
+    this.initColorSliders();
 
     // Create our main window target div, add our events and inject inside the frame
     var el = new Element('div', {
@@ -1167,8 +1169,74 @@ var IIP = new Class({
   reload: function() {
       this.reloadNavImage();
       this.requestImages();
-  }
+  },
+
+  initColorSliders: function() {
+        var bitDepth = this.bitDepth;
+        var colors = ['r','g','b'];
+        var low_sliders = [0,0,0];
+        var high_sliders = [0,0,0];
+        $$('.value input').each(function (elem) {
+            elem.addEvent('change', function() {
+                var new_step = elem.value;
+                var re = /^\d*$/;
+                if(!re.test(new_step) || new_step < 0 || new_step == '') {
+                    new_step = elem.value = 0;
+                }
+                if(new_step > bitDepth) {
+                    new_step = elem.value = bitDepth;
+                }
+                var id = elem.id;
+                var color = id.substring(0,1);
+                var group = id.substring(1);
+
+                if (group == 'min') {
+                    low_sliders[colors.indexOf(color)].set(new_step);
+                }
+                else if (group == 'max') {
+                    high_sliders[colors.indexOf(color)].set(new_step);
+                }
+            });
+        });
+
+        var updateColorRange = function(group, index, step) {
+            $(colors[index]+group).value = step;
+        };
+
+        $$('.slider.low').each(function(slider, i){
+            low_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
+                        range: [0,bitDepth],
+                        onChange: function() {
+                            if(this.step >= high_sliders[i].step) {
+                                high_sliders[i].set(this.step);
+                            }
+                            updateColorRange('min',i,this.step);
+                        }
+                    });
+        });
+
+        $$('.slider.high').each(function(slider, i){
+            high_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
+                        range: [0,bitDepth],
+                        initialStep: bitDepth,
+                        onChange: function(){
+                            if(this.step <= low_sliders[i].step) {
+                                low_sliders[i].set(this.step);
+                            }
+                            updateColorRange('max',i,this.step);
+                        }
+                    });
+        });
+
+        var gamma = $('gamma_slider');
+        new Slider(gamma, gamma.getElement('.knob'), {
+                    range: [1, 20],
+                    initialStep: 10,
+                    steps: 22,
+                    onChange: function() {
+                        $('gamma').value = this.step/10;
+                    }
+                });
+    }
 
 });
-
-

@@ -6,9 +6,9 @@ var MBAViewer = {
 
         var sectionId = options['sectionId'];
         var sectionOrder = options['sectionOrder'];
-	var showNissl = options['showNissl'];
-	var screen = options['screen'];
-	var image = options['image'];
+        var showNissl = options['showNissl'];
+        var screen = options['screen'];
+        var image = options['image'];
         var iip = new IIP( "targetframe", {
                     image: image,
                     server: options['server'],
@@ -16,10 +16,8 @@ var MBAViewer = {
                     zoom: 1,
                     bitDepth: bitDepth,
                     render: 'random',
-                    showNavButtons: true,
-                    crossSiteTest: true
+                    showNavButtons: true
                 });
-        this.initColorSliders(iip, bitDepth);
 
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
         panel.hide();
@@ -36,7 +34,7 @@ var MBAViewer = {
             helpPanelViewer.toggle();
         });
         if($('filmstrip')) {
-	    this.initSectionNav(iip,image, nSections, sectionId, sectionOrder, showNissl, screen);
+            this.initSectionNav(iip,image, nSections, sectionId, sectionOrder, showNissl, screen);
         }
     },
 
@@ -50,36 +48,41 @@ var MBAViewer = {
         };
         var highlightSection = function(elem) {
             elem.getSiblings().setStyle('border-top','');
-            elem.setStyle('border-top','3px solid #FFFFFF');
+            elem.setStyle('border-top','3px solid #FF4500');
         };
-        // position for any offset
-        var offsetValue = 0;
-	if (showNissl == '0') 
-	    offsetValue = 10 + Math.round(sectionOrder-1)/ (2*nSections) * 200;
-	else
-             offsetValue = 10 + Math.round(sectionOrder-1)/ (nSections) * 200;
-	setSagittalX(offsetValue);
-	 var y_pos = Math.round((sectionOrder-10) / 200 * nSections) + 1;
-         filmstrip.jump(y_pos);
-        //  highlightSection( $('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen ).getParent('li'));
+
         $('sagittal').addEvent('click', function(event) {
+
+            /*
+            // position for any offset
+            var offsetValue = 0;
+            if (showNissl == '0')
+                offsetValue = 10 + Math.round(sectionOrder-1)/ (2*nSections) * 200;
+            else
+                offsetValue = 10 + Math.round(sectionOrder-1)/ (nSections) * 200;
+            setSagittalX(offsetValue);
+            var y_pos = Math.round((sectionOrder-10) / 200 * nSections) + 1;
+            filmstrip.jump(y_pos);
+            //  highlightSection( $('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen ).getParent('li'));
+            */
             setSagittalX(event.page.x);
             //y_pos = 5.762 - 0.067*(event.page.x-10);
-            var y_pos = Math.round((event.page.x-10) / 200 * nSections) + 1;
-            filmstrip.jump(y_pos);
-            var section = $$('img[id$='+y_pos+']');
+            var y_pos = Math.ceil((event.page.x-10) / 180 * nSections);
+            var section = $$('img[id*=-'+y_pos+'-]');
             highlightSection(section[0].getParent('li'));
+            filmstrip.jump(y_pos);
         });
+
         $$('#filmstrip img').each(function(elem) {
             elem.addEvent('click', function(){
                 var parts = elem.id.split('-');
                 highlightSection(elem.getParent('li'));
-		if (parts[3] == '0') {
-		    setSagittalX(10 + Math.round((parts[2]-1) / (2*nSections) * 200));
-		}
-		else{ 
-		    setSagittalX(10 + Math.round((parts[2]-1) / nSections * 200));
-		}
+                if (parts[3] == '0') {
+                    setSagittalX(10 + Math.round((parts[2]-1) / nSections * 180));
+                }
+                else{
+                    setSagittalX(10 + Math.round((parts[2]-1) / (2*nSections) * 180));
+                }
                 new Request.HTML({
                             url: '/seriesbrowser/ajax/section/' + parts[1] + '/' + parts[3] + '/' + parts[4] + '/',
                             method: 'get',
@@ -90,78 +93,18 @@ var MBAViewer = {
                 var imageParts = image.split("/");
                 var imageParts2 = imageParts[1].split("_");
                 var sectionOrderVal = parts[2] + '';
-		while(sectionOrderVal.length < 4) {
-		    sectionOrderVal  = "0" + sectionOrderVal;
-		}
+                while(sectionOrderVal.length < 4) {
+                    sectionOrderVal  = "0" + sectionOrderVal;
+                }
                 var imageName = 'PMD/'+ imageParts2[0]+ "_"+sectionOrderVal;
-		//                alert(imageName);
-		iip.changeImage(imageName);
+                //                alert(imageName);
+                iip.changeImage(imageName);
                 iip.requestImages();
             });
         });
-    },
-    initColorSliders: function(iip, bitDepth) {
-        var colors = ['r','g','b'];
-        var low_sliders = [0,0,0];
-        var high_sliders = [0,0,0];
-        $$('.value input').each(function (elem) {
-            elem.addEvent('change', function() {
-                var new_step = elem.value;
-                var re = /^\d*$/;
-                if(!re.test(new_step) || new_step < 0 || new_step == '') {
-                    new_step = elem.value = 0;
-                }
-                if(new_step > bitDepth) {
-                    new_step = elem.value = bitDepth;
-                }
-                var id = elem.id;
-                var color = id.substring(0,1);
-                var group = id.substring(1);
 
-                if (group == 'min') {
-                    low_sliders[colors.indexOf(color)].set(new_step);
-                }
-                else if (group == 'max') {
-                    high_sliders[colors.indexOf(color)].set(new_step);
-                }
-            });
-        });
-
-        var updateColorRange = function(group, index, step) {
-            $(colors[index]+group).value = step;
-        };
-        $$('.slider.low').each(function(slider, i){
-            low_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
-                        range: [0,bitDepth],
-                        onChange: function() {
-                            if(this.step >= high_sliders[i].step) {
-                                high_sliders[i].set(this.step);
-                            }
-                            updateColorRange('min',i,this.step);
-                        }
-                    });
-        });
-        $$('.slider.high').each(function(slider, i){
-            high_sliders[i] = new Slider(slider, slider.getElement('.knob'), {
-                        range: [0,bitDepth],
-                        initialStep: bitDepth,
-                        onChange: function(){
-                            if(this.step <= low_sliders[i].step) {
-                                low_sliders[i].set(this.step);
-                            }
-                            updateColorRange('max',i,this.step);
-                        }
-                    });
-        });
-        var gamma = $('gamma_slider');
-        new Slider(gamma, gamma.getElement('.knob'), {
-                    range: [1, 20],
-                    initialStep: 10,
-                    steps: 22,
-                    onChange: function() {
-                        $('gamma').value = this.step/10;
-                    }
-                });
+        var initSection = $$('img[id*=-1-]');
+        highlightSection(initSection[0].getParent('li'));
     }
 };
 

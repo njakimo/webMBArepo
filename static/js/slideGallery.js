@@ -77,7 +77,7 @@ var slideGallery = new Class({
 		
 		if(this.options.direction == "horizontal") {
 			this.direction = "margin-left";
-			this.size = this.items[0].getWidth();
+			this.size = this.items[0].getWidth() + 1;
 			this.visible = Math.round(this.holder.getWidth()/this.size);
 		}
 		else {
@@ -225,8 +225,10 @@ var slideGallery = new Class({
 		return this;
 	},
     jump: function(slide) {
+        if (this.items.length - slide < this.visible) slide = this.items.length - this.visible + 1;
         var temp = this.options.steps;
-        var jump = slide - this.current;
+        var jump = (slide - this.current) - 1;
+
         if(jump > 0) {
             this.options.steps = jump;
             this.nextSlide();
@@ -269,7 +271,7 @@ var slideGallery = new Class({
 		var pagingHold = this.gallery.getElement(this.options.pagingHolder);
 		if(pagingHold != null) this.paging.injectInside(pagingHold);
 		else this.paging.injectInside(this.gallery).addClass("paging");
-		
+
 		var length = Math.ceil((this.items.length-this.visible)/this.options.steps)+1;
 		var str = "";
 		for(var i=0; i<length; i++) {

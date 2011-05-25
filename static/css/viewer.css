@@ -82,13 +82,12 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     height: 90px;
     margin-left: 10px;
     width: 200px;
- }
+}
 #sagittal_pos {
     position: absolute;
     height: 90px;
     border-left: 3px solid #FFFFFF;
-    left: 10px; 
-    background-color: transparent;
+    left: 10px;
 }
 #sagittal_gallery {
     float: left;
@@ -107,13 +106,11 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 #filmstrip {
     position: fixed;
     right: 10px;
-    width: 968px;
-    height: 90px;
+    width: 967px;
     background-color: #000000;
 	overflow: hidden;
 }
 #filmstrip .holder {
-	height:90px;
 	width: 100%;
 	position: relative;
 	overflow: hidden;
@@ -172,13 +169,13 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 	outline: none;
 	cursor: pointer;
 }
-.next-disable { background: url(/static/img/arrow_right.png) no-repeat; }
+.next-disable { background: url(/static/img/arrow_right_disabled.png) no-repeat; }
 .prev {
 	background: url(/static/img/arrow_left.png) no-repeat;
 	right: auto;
 	left: 10px;
 }
-.prev-disable { background: url(/static/img/arrow_left.png) no-repeat; }
+.prev-disable { background: url(/static/img/arrow_left_disabled.png) no-repeat; }
 .control {
 	font-size: 18px;
 	line-height: 21px;
