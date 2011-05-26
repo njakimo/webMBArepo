@@ -10,6 +10,12 @@ from PIL import Image
 import json, os
 import datetime
 import reportlab
+import urllib2
+from PIL import Image
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+from urllib2 import Request
+from cStringIO import StringIO
 
 class FilterForm(forms.Form):
     tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
@@ -388,7 +394,7 @@ def injections(request):
         'yCoord' : secYCoord, # the y coordinates for each atlas section
         'closestSec' : closestSec}) # section to draw each injection on
 
-def downloadPDF(request, id):
+def downloadPDF(request, id, imageUrl):
      response = HttpResponse(mimetype='application/pdf')
      try:
         section = Section.objects.get(pk=id)
@@ -399,8 +405,12 @@ def downloadPDF(request, id):
         p = canvas.Canvas(buffer)
         # Draw things on the PDF. Here's where the PDF generation happens.
         p.drawString(100, 100, section.name)
-        im = Image.open(section.pngPathLow)
-        p.drawImage(self, im, 100,100, width=90,height=120,mask=None) 
+        # Draw the image onto the PDF 
+        file = urllib2.urlopen(Request(imageUrl))
+#      file = urllib2.urlopen(Request("http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver?url_ver=Z39.88-2004&rft_id=PMD/PMD29_0002&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=4&svc.rotate=0&svc.region=0,0,928,1084&svc.crange=0-255,0-255,0-255&svc.gamma=1"))
+        im = StringIO(file.read())
+        regionArray = url[url.find("svc.region="):url.find("&svc.crange=")].split(",")
+        p.drawImage( ImageReader(im), 25, 25, width=regionArray[2], height=regionArray[3] )
         # Close the PDF object cleanly, and we're done.
         p.showPage()
         p.save()

@@ -463,7 +463,12 @@ var IIP = new Class({
         + "&svc.crange=" + this.colorRanges[0]+"-"+this.colorRanges[1]+","+this.colorRanges[2]+"-"+this.colorRanges[3]+","+this.colorRanges[4]+"-"+this.colorRanges[5]
         + "&svc.gamma=" + this.gamma;
    },
-
+  /*
+   * Create the OpenURL for the current viewport
+   */
+    /*  getOpenURL : function() {
+	    return this.openUrl;
+  }*/
   /*
    * Open the OpenURL for the current viewport in a new window
    */

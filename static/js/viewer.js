@@ -1,4 +1,4 @@
-
+//var pdfImageUrl = "";		
 var MBAViewer = {
     init: function(options) {
         var bitDepth = options['bitDepth'];
@@ -18,7 +18,9 @@ var MBAViewer = {
                     render: 'random',
                     showNavButtons: true
                 });
-
+        //alert("**********YYYYYYYYYYYY");
+        //pdfImageUrl = iip.getOpenUrl();
+        //alert(pdfImageUrl);
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
         panel.hide();
         $('panel').setStyle('z-index','1');
@@ -50,21 +52,17 @@ var MBAViewer = {
             elem.getSiblings().setStyle('border-top','');
             elem.setStyle('border-top','3px solid #FF4500');
         };
-
+	// position for any offset
+	var offsetValue = 0;
+	if (showNissl == '0')
+	    offsetValue = 10 + Math.round(sectionOrder-1)/ (2*nSections) * 200;
+	else
+	    offsetValue = 10 + Math.round(sectionOrder-1)/ (nSections) * 200;
+	setSagittalX(offsetValue);
+	var y_pos = Math.round((sectionOrder-10) / 200 * nSections) + 1;
+	filmstrip.jump(y_pos);
         $('sagittal').addEvent('click', function(event) {
-
-            /*
-            // position for any offset
-            var offsetValue = 0;
-            if (showNissl == '0')
-                offsetValue = 10 + Math.round(sectionOrder-1)/ (2*nSections) * 200;
-            else
-                offsetValue = 10 + Math.round(sectionOrder-1)/ (nSections) * 200;
-            setSagittalX(offsetValue);
-            var y_pos = Math.round((sectionOrder-10) / 200 * nSections) + 1;
-            filmstrip.jump(y_pos);
             //  highlightSection( $('section-' + sectionId + '-'+ sectionOrder +'-' + showNissl + '-' + screen ).getParent('li'));
-            */
             setSagittalX(event.page.x);
             //y_pos = 5.762 - 0.067*(event.page.x-10);
             var y_pos = Math.ceil((event.page.x-10) / 180 * nSections);
