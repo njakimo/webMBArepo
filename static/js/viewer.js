@@ -16,7 +16,8 @@ var MBAViewer = {
                     zoom: 1,
                     bitDepth: bitDepth,
                     render: 'random',
-                    showNavButtons: true
+                    showNavButtons: true,
+                    crossSiteTest: true
                 });
         //alert("**********YYYYYYYYYYYY");
         //pdfImageUrl = iip.getOpenUrl();

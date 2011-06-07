@@ -20,6 +20,7 @@ urlpatterns = patterns('',
 #    (r'^seriesbrowser/downloadPDF/(?P<id>\d+)/(?P<imageUrl>\.)/$', 'seriesbrowser.views.downloadPDF'),
     (r'^seriesbrowser/login/$', 'django.contrib.auth.views.login', {'template_name': 'seriesbrowser/login.html'}),
     (r'^seriesbrowser/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/seriesbrowser/'}),
+    (r'^seriesbrowser/metadata/$', 'seriesbrowser.views.metadata'),
     (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_DOC_ROOT}),
     # Example:
     # (r'^webMBA/', include('webMBA.foo.urls')),

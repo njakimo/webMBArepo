@@ -81,7 +81,8 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
     float: left;
     height: 90px;
     margin-left: 10px;
-    width: 200px;
+    width: 180px;
+    cursor: pointer;
 }
 #sagittal_pos {
     position: absolute;

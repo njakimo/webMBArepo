@@ -203,7 +203,17 @@ def viewer(request, seriesId):
               break
     except ObjectDoesNotExist:
         sections = None
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
+        
+    return render_to_response('seriesbrowser/viewer.html', {
+        'sections' : sections,
+        'section' : section,
+        'series' : series,
+        'nslist' : nslist,
+        'region' : region,
+        'numSections' : numSections,
+        'screen' : screen,
+        'showNissl' : showNissl
+    })
 
 def gallery(request, seriesId):
     try:
@@ -422,3 +432,6 @@ def downloadPDF(request, id, imageUrl):
        pass
      return response
 
+def metadata(request):
+    response = urllib2.urlopen('http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver?' + request.GET.urlencode())
+    return HttpResponse(response)
