@@ -98,7 +98,6 @@ var MBAViewer = {
                 var imageName = 'PMD/'+ imageParts2[0]+ "_"+sectionOrderVal;
                 //                alert(imageName);
                 iip.changeImage(imageName);
-                iip.requestImages();
             });
         });
 
