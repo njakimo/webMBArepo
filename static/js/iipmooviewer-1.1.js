@@ -607,7 +607,7 @@ var IIP = new Class({
 
     /* Zoom in by a factor of 2
      */
-    zoomIn: function (){
+    zoomIn: function (init){
 
         if( (this.wid <= (this.max_width/2)) && (this.hei <= (this.max_height/2)) ){
 
@@ -635,16 +635,17 @@ var IIP = new Class({
             if( this.rgn_y > this.hei ) this.rgn_y = this.hei - this.rgn_h;
             if( this.rgn_y < 0 ) this.rgn_y = 0;
 
-            this.requestImages();
-            this.positionZone();
-            if( this.scale ) this.setScale();
-
+            if (!init) {
+                this.requestImages();
+                this.positionZone();
+                if( this.scale ) this.setScale();
+            }
         }
     },
 
     /* Zoom out by a factor of 2
      */
-    zoomOut: function(){
+    zoomOut: function(init){
 
         if( (this.wid > this.rgn_w) || (this.hei > this.rgn_h) ){
 
@@ -672,9 +673,11 @@ var IIP = new Class({
             }
             else this.yfit = 0;
 
-            this.requestImages();
-            this.positionZone();
-            if( this.scale ) this.setScale();
+            if (!init) {
+                this.requestImages();
+                this.positionZone();
+                if( this.scale ) this.setScale();
+            }
         }
     },
 
@@ -790,8 +793,8 @@ var IIP = new Class({
         }
 
         // Zoom in by the desired level
-        for(var i=0;i<this.initialZoom;i++) this.zoomIn();
-        this.zoomOut();
+        for(var i=0;i<this.initialZoom;i++) this.zoomIn(true);
+        this.zoomOut(true);
         this.requestImages();
         this.positionZone();
     },
@@ -927,8 +930,8 @@ var IIP = new Class({
 
         navcontainer.makeDraggable( {container:this.source, handle:toolbar} );
 
-        $('zoomIn').addEvent( 'click', this.zoomIn.bindWithEvent(this) );
-        $('zoomOut').addEvent( 'click', this.zoomOut.bindWithEvent(this) );
+        $('zoomIn').addEvent( 'click', function(){ this.zoomIn() }.bind(this) );
+        $('zoomOut').addEvent( 'click', function(){ this.zoomOut() }.bind(this) );
         $('reset').addEvent( 'click', function(){ window.location=window.location; }  );
         $('snapshot').addEvent('click', function() { this.openOpenURL();}.bind(this));
         $('shiftLeft').addEvent( 'click', function(){ this.scrollTo(-this.rgn_w/3,0); }.bind(this) );
