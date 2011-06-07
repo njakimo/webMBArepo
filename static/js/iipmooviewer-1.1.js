@@ -638,8 +638,8 @@ var IIP = new Class({
             if (!init) {
                 this.requestImages();
                 this.positionZone();
-                if( this.scale ) this.setScale();
             }
+            if( this.scale ) this.setScale();
         }
     },
 
@@ -676,8 +676,8 @@ var IIP = new Class({
             if (!init) {
                 this.requestImages();
                 this.positionZone();
-                if( this.scale ) this.setScale();
             }
+            if( this.scale ) this.setScale();
         }
     },
 
@@ -984,7 +984,19 @@ var IIP = new Class({
     setScale: function() {
         var pixels = 1000 * this.scale * this.wid / this.max_width; // x1000 because we want per m
         var label = '1m';
-        if( pixels > 1000 ){
+        if (pixels > 5000000) {
+          pixels = pixels/100000;
+          label = '10um';
+        }
+        else if (pixels > 1000000) {
+          pixels = pixels/10000;
+          label = '100um';
+        }
+        else if (pixels > 10000) {
+          pixels = pixels/1000;
+          label = '1mm';
+        }
+        else if( pixels > 1000 ){
             pixels = pixels/100;
             label = '1cm';
         }
