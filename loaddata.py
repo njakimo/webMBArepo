@@ -128,7 +128,7 @@ slist = os.listdir('/mnt/data001/MBAProcessingResults/PMD')
 
 for sr in slist:
 
-    if sr.startswith('PMD'):
+    if sr.startswith('PMD17'):
        brain = Brain(name=sr)
        brain.save()
 
@@ -174,6 +174,7 @@ for sr in slist:
        for sc in sclist:
           if sc.startswith('meta'):
                 scOrder = sc[sc.rfind("_")+1:sc.find(".txt")]
+                scImage = sc[sc.find("_")+1:sc.find(".txt")]
 
       #          sampleSection = False
       #          if sampleSectionNum == int(scOrder) :
@@ -189,15 +190,15 @@ for sr in slist:
                   metal = metaf.readline()
 
                   if metal.find(' N ') != -1:
-                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
+                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg',  pngPathLow='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
                      section.save()
 
                   elif metal.find(' F ') != -1:
-                     section = Section(series_id=series_f.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',  pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=16, isSampleSection = firstSection)
+                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg',  pngPathLow='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2'), jp2BitDepth=16, isSampleSection = firstSection)
                      section.save()
                 
                   elif metal.find(' IHC ') != -1:
-                     section = Section(series_id=series_ihc.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail.png',        pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'_thumbnail_smallest.png', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
+                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg',  pngPathLow='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
                      section.save()
                 except:
                    errorf.write('File not found : ' + metaName + '\n')
