@@ -10,7 +10,7 @@
 <script type="text/javascript" src="/static/js/slideGallery.js"></script>
 <script type="text/javascript">
   window.addEvent("domready", function() {
-  
+
     var ARA_gallery = new slideGallery($("ARAgallery"), {
       steps: 3,
       mode: "circle",
@@ -26,27 +26,85 @@
       $('overlayImg').set('opacity',value/10);
     }
   });
-
+  {% for f in tn_list %}
+  $('{{f}}').addEvents({mouseover: function(event){ reportInjections(event,'{{f}}'); },
+		       mouseleave: function() { cleanupInjReport(); }});
+  {% endfor %}
 });
 
 var tnFiles = [{% for f in tn_list %}'{{f}}',{% endfor %}];
-
 var secYCoord = [{% for y in yCoord %}{{y}},{% endfor %}];
-
 var injSecNum = [{% for c in closestSec %}{{c}},{% endfor %}];
-
 var injX = [{% for i in injection_list %}{{i.x_coord}},{% endfor %}];
 var injY = [{% for i in injection_list %}{{i.y_coord}},{% endfor %}];
 var injZ = [{% for i in injection_list %}{{i.z_coord}},{% endfor %}];
-
 var seriesNum = [{% for i in injection_list %}{{i.series.id}},{% endfor %}];
+var tracer = [{% for i in injection_list %}'{{i.tracer.name}}',{% endfor %}];
 </script>
 
 <script type="text/javascript">
+function injectionSelect(e,xx,yy,zz) {
+// Allow the user to choose the injection series to view following a mouseover
+// Find all the injections matching these coords (yy is approx and allow a bit of jitter)
+  myThresh = 0.01;
+  myYThresh = 0.2;
+  myHTML = "";
+ 
+  var temp = $('injPopUp');
+  var mouseX, mouseY;
+
+  if (temp) {
+    temp.dispose(); } // erase any old popup
+  
+  for (i=0; i<injX.length; i++) {
+    if ((Math.abs(injX[i]-xx)<myThresh) && (Math.abs(injZ[i]-zz)<myThresh) && (Math.abs(injY[i]-yy)<myYThresh)) {
+      myURL = '/seriesbrowser/viewer/' + seriesNum[i];
+      myHTML = myHTML + "<p><a href="+myURL+">" + tracer[i] + " injection</a>: (" + injX[i] + ", " + injY[i] + ", " + injZ[i] + ")</p>";
+    }
+  }
+  mouseX = $(e.target.id).getPosition().x+20;
+  mouseY = $(e.target.id).getPosition().y+20;
+  popUp = new Element('div',{'html':myHTML, 'id':'injPopUp', 'class':'tool-tip','style':'position: absolute; top:'+mouseY+'px; left:'+mouseX+'px;'});
+  var myFx = new Fx.Tween(popUp, {duration: 250});
+  myFx.start('opacity',0.0,0.8);
+  popUp.injectInside($('main'));
+}
+
+function reportInjections(e,fname) {
+  
+   var popup = $('injReport');
+   var mouseX, mouseY;
+
+   if (popup) { popup.dispose(); }
+   idx = tnFiles.indexOf(fname);
+   firstIdx = injSecNum.indexOf(idx);
+   if (firstIdx != -1) {
+       lastIdx = firstIdx;
+       while (injSecNum[lastIdx] == idx) { lastIdx = lastIdx + 1;}
+       nInjections = lastIdx-firstIdx+1;
+   }
+   else { nInjections = 0 };
+   coord = secYCoord[idx].toFixed(2);
+   if (coord>0) { coord = '+' + coord; }
+   var myHTML = "<p>Bregma "+ coord + "<br/>" + nInjections + " injections</p>";
+   mouseX = $(e.target.id).getPosition().x+114;
+   mouseY = $(e.target.id).getPosition().y+80;
+   popUp = new Element('div',{'html':myHTML, 'id':'injReport', 'class':'tool-tip2','style':'position:absolute; top:' +mouseY+ 'px; left:' + mouseX + 'px;'});
+   popUp.injectInside($(document.body));
+}
+
+function cleanupInjReport() {
+   var temp=$('injReport');
+   if (temp) { temp.dispose();}
+}
+
 function updateMain(fname) {
    // Find any injections marked in the current atlas view and erase!
    var children = $('atlasWindow').getChildren('.injTarget');
    children.dispose();
+
+   var popup = $('injPopUp');
+   if (popup) { popup.dispose(); }
  
    // Set the nissl image and the overlay image for the chosen section
    imgPath = '/static/img/jpgSections/';
@@ -54,6 +112,7 @@ function updateMain(fname) {
    legendName = 'legend_' + fname.substr(6);
    $('mainImg').set('src',imgPath + nisslName);
    $('overlayImg').set('src',imgPath + legendName);
+   $('overlayImg').set('events',{'click': function() { temp=$('injPopUp'); if (temp) { temp.dispose(); }}});
 
    // Display the approximate y coordinate of the atlas section
    idx = tnFiles.indexOf(fname);
@@ -74,9 +133,8 @@ function updateMain(fname) {
 				'class':'injTarget',
 				'id': i,
 			        'style':'position:absolute; top:150px; left:400px;',
-				'title': 'Injection: (' + injX[i] + ',' + injY[i] + ',' + injZ[i] + ')',      
 				'events': {
-				           'click': function() { open(myURL+seriesNum[this.id],'_blank'); }
+					   'mouseover': function(event) { injectionSelect(event,injX[this.id],injY[this.id],injZ[this.id])}
 					  }
 		                });
        x = Math.round((5.7 + injX[i])/(11.4) * 456);
@@ -94,19 +152,12 @@ function updateMain(fname) {
 
 {% block content %}
 <div id="wrapper">
-<p>
- Each plate shows the series that have been registered
- corresponding to the injection site locations. The overlay opacity for each
- plate can be adjusted using the slider shown below. Click on a specific seri\
-es
- coresponding to a mark on the injection view to navigate to the view screen
- for the series.
-</p>
   <div id="ARAgallery" class="gallery gallery-vert">
-    <div class="holder">
+    <div class="holder" id="holder">
       <ul>
 	{% for fname in tn_list %}
-	<li><a href = "javascript:updateMain('{{fname}}')"><img src="/static/img/jpgSections/tn/{{fname}}" alt="image" width="228" height="160" /></a></li>
+	<!--<li><a href = "javascript:updateMain('{{fname}}')"><img id="{{fname}}" title="" src="/static/img/jpgSections/tn/{{fname}}" width="228" height="160" onmouseover="javascript:reportInjections(event,'{{fname}}');" onmouseout="javascript:cleanupInjReport()" /></a></li>-->
+	<li><a href = "javascript:updateMain('{{fname}}')"><img id="{{fname}}" title="" src="/static/img/jpgSections/tn/{{fname}}" width="228" height="160"/></a></li>
 	{% endfor %}
       </ul>
       <div class="control">
@@ -127,5 +178,21 @@ es
    </div>  <!-- slider -->
   </div> <!-- atlasWindow -->
   </div> <!-- gallery -->
+    <!-- Atlas legend -->
+    <div style="position: absolute; right:40px; top: 100px; text-align: left;">
+       <div style="border-left: 20px solid #B0FFB8; padding:0 0 5px 10px; margin:2px;">Cerebral Cortex</div>
+       <div style="border-left: 20px solid #90FF90; padding:0 0 5px 10px; margin:2px;">Olfactory Areas</div>
+       <div style="border-left: 20px solid #79FF80; padding:0 0 5px 10px; margin:2px;">Hippocampal Region</div>
+       <div style="border-left: 20px solid #90FFB0; padding:0 0 5px 10px; margin:2px;">Retrohippocampal Region</div>
+       <div style="border-left: 20px solid #A0C8E8; padding:0 0 5px 10px; margin:2px;">Striatum</div>
+       <div style="border-left: 20px solid #A0C8B0; padding:0 0 5px 10px; margin:2px;">Pallidum</div>
+       <div style="border-left: 20px solid #FF7080; padding:0 0 5px 10px; margin:2px;">Thalamus</div>
+       <div style="border-left: 20px solid #FF5050; padding:0 0 5px 10px; margin:2px;">Hypothalamus</div>
+       <div style="border-left: 20px solid #FFB0FF; padding:0 0 5px 10px; margin:2px;">Midbrain</div>
+       <div style="border-left: 20px solid #FF9B88; padding:0 0 5px 10px; margin:2px;">Pons</div>
+       <div style="border-left: 20px solid #FFA0B0; padding:0 0 5px 10px; margin:2px;">Medulla</div>
+       <div style="border-left: 20px solid #F0FFA0; padding:0 0 5px 10px; margin:2px;">Cerebellum</div>
+
+    </div> <!-- atlas legend -->
 </div> <!-- wrapper -->
 {% endblock %}
