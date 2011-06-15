@@ -134,7 +134,7 @@ for sr in slist:
 
        numSections = (len(os.listdir('/mnt/data001/MBAProcessingResults/PMD/'+sr))-1)/2
 
-       sampleSectionNum = random.randrange(1,numSections)
+       #sampleSectionNum = random.randrange(1,numSections)
 
        errorf.write(' sample section num ' + str(sampleSectionNum) + '\n')
 
@@ -160,11 +160,11 @@ for sr in slist:
                except:
                  pass
                if l.labelMethod.find("Flou") != -1:
-                  injection = Injection(series_id = series_f.id, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
-                  injection.save()
+                 idSeries = series_f.id
                elif l.labelMethod.find("IHC") != -1:
-                  injection = Injection(series_id = series_ihc.id, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
-                  injection.save()
+                 idSeries = series_ihc.id
+               injection = Injection(series_id = idSeries, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
+               injection.save()
                break
              except:
                errorf.write('Cannot save ' + sr + ' - ' + tn + '\n')
