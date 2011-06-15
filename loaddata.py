@@ -170,7 +170,11 @@ for sr in slist:
                errorf.write('Cannot save ' + sr + ' - ' + tn + '\n')
 
        sclist = os.listdir('/mnt/data001/MBAProcessingResults/PMD/'+sr)
-       firstSection = True 
+
+       firstN = True
+       firstF = True
+       firstIHC = True
+
        for sc in sclist:
           if sc.startswith('meta'):
                 scOrder = sc[sc.rfind("_")+1:sc.find(".txt")]
@@ -190,18 +194,33 @@ for sr in slist:
                   metal = metaf.readline()
 
                   if metal.find(' N ') != -1:
-                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg',  pngPathLow='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
-                     section.save()
+                     idSeries = series_n.id
+                     bitDepth = 8
 
                   elif metal.find(' F ') != -1:
-                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg',  pngPathLow='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2'), jp2BitDepth=16, isSampleSection = firstSection)
-                     section.save()
+                     idSeries = series_f.id
+                     bitDepth = 16
                 
                   elif metal.find(' IHC ') != -1:
-                     section = Section(series_id=series_n.id, name=scName, sectionOrder=scOrder, pngPathHigh='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg',  pngPathLow='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_SmallImage.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+scImage+ '.bin_LargeImage.jp2'), jp2BitDepth=8, isSampleSection = firstSection)
-                     section.save()
+                     idSeries = series_ihc.id
+                     bitDepth = 8
+
+                  section = Section(series_id=idSeries, name=scName, sectionOrder=scOrder, jpgPath='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth)
+
+                  section.save()
+
+                  if metal.find(' N ') != -1 and firstN:
+                     series_n.sampleSection = section
+                     series_n.save()
+
+                  elif metal.find(' F ') != -1 and firstF:
+                     series_f.sampleSection = section
+                     series_f.save()
+                
+                  elif metal.find(' IHC ') != -1 and firstIHC:
+                     series_ihc.sampleSection = section
+                     series_ihc.save()
+
                 except:
                    errorf.write('File not found : ' + metaName + '\n')
                    #erirorf.write('File not found: \n')
-                firstSection = False
-
