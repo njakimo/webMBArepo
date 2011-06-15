@@ -54,6 +54,9 @@ class SectioningPlane(models.Model):
         return self.desc
 
 class Series(models.Model):
+    isAuxiliary = models.BooleanField(default='false')
+    sampleSection = models.ForeignKey('Section')
+    pixelResolution = models.DecimalField(max_digits=5, decimal_places=2, default=0.46)
     labelMethod = models.ForeignKey(LabelMethod)
     imageMethod = models.ForeignKey(ImageMethod)
     desc = models.CharField('description', max_length=200)
@@ -75,6 +78,7 @@ class NearestSeries(models.Model):
     nearestSeriesId = models.IntegerField(Series)
 
 class Section(models.Model):
+    isVisible = models.BooleanField(default='true')
     series = models.ForeignKey(Series)
     name = models.CharField(max_length=200)
     sectionOrder = models.IntegerField()
@@ -83,7 +87,6 @@ class Section(models.Model):
     jp2Path = models.URLField(verify_exists=False)
     jp2FileSize = models.BigIntegerField(null=True)
     jp2BitDepth = models.IntegerField(null=True)
-    isSampleSection = models.BooleanField(default='false')
     y_coord = models.IntegerField(null=True)
     def __unicode__(self):
         return self.name
