@@ -82,7 +82,7 @@ class Section(models.Model):
     series = models.ForeignKey(Series)
     name = models.CharField(max_length=200)
     sectionOrder = models.IntegerField()
-    jpgPath = models.CharField(max_length=200)
+    pngPathLow = models.CharField(max_length=200)
     jp2Path = models.URLField(verify_exists=False)
     jp2FileSize = models.BigIntegerField(null=True)
     jp2BitDepth = models.IntegerField(null=True)
