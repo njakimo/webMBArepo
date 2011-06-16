@@ -187,40 +187,44 @@ for sr in slist:
                 scName = sc[5:len(sc)-4]
                 metaName = ''
 
-                try:
-                  metaName = '/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sc 
-                  metaf=open(metaName)
+                #try:
+                metaName = '/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sc 
+                metaf=open(metaName)
 
-                  metal = metaf.readline()
+                metal = metaf.readline()
 
-                  if metal.find(' N ') != -1:
-                     idSeries = series_n.id
-                     bitDepth = 8
+                if metal.find(' N ') != -1:
+                   idSeries = series_n.id
+                   bitDepth = 8
 
-                  elif metal.find(' F ') != -1:
-                     idSeries = series_f.id
-                     bitDepth = 16
+                elif metal.find(' F ') != -1:
+                   idSeries = series_f.id
+                   bitDepth = 16
+		          
+                elif metal.find(' IHC ') != -1:
+                   idSeries = series_ihc.id
+                   bitDepth = 8
                 
-                  elif metal.find(' IHC ') != -1:
-                     idSeries = series_ihc.id
-                     bitDepth = 8
+                if os.path.exists('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'):
+              		section = Section(series_id=idSeries, name=scName, sectionOrder=scOrder, pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth)
 
-                  section = Section(series_id=idSeries, name=scName, sectionOrder=scOrder, pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth)
+              		section.save()
 
-                  section.save()
+              		if metal.find(' N ') != -1 and firstN:
+              		   series_n.sampleSection = section
+              		   series_n.save()
+              		   firstN = False
 
-                  if metal.find(' N ') != -1 and firstN:
-                     series_n.sampleSection = section
-                     series_n.save()
+              		elif metal.find(' F ') != -1 and firstF:
+              		   series_f.sampleSection = section
+              		   series_f.save()
+              		   firstF = False
+							  
+              		elif metal.find(' IHC ') != -1 and firstIHC:
+              		   series_ihc.sampleSection = section
+              		   series_ihc.save()
+              		   firstIHC = False
 
-                  elif metal.find(' F ') != -1 and firstF:
-                     series_f.sampleSection = section
-                     series_f.save()
-                
-                  elif metal.find(' IHC ') != -1 and firstIHC:
-                     series_ihc.sampleSection = section
-                     series_ihc.save()
-
-                except:
-                   errorf.write('File not found : ' + metaName + '\n')
-                   #erirorf.write('File not found: \n')
+                else:
+                    errorf.write('File not found : ' +sr+'_'+scOrder+'.jp2'+ '\n')
+                #   erirorf.write('File not found: \n')
