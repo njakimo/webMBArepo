@@ -55,8 +55,8 @@ class SectioningPlane(models.Model):
 
 class Series(models.Model):
     isAuxiliary = models.BooleanField(default='false')
-    sampleSection = models.ForeignKey('Section')
-    pixelResolution = models.DecimalField(max_digits=5, decimal_places=2, default=0.46)
+    sampleSection = models.ForeignKey('Section', related_name='+', null=True)
+    pixelResolution = models.FloatField(default=0.46)
     labelMethod = models.ForeignKey(LabelMethod)
     imageMethod = models.ForeignKey(ImageMethod)
     desc = models.CharField('description', max_length=200)
