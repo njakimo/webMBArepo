@@ -86,7 +86,7 @@ class Section(models.Model):
     jp2Path = models.URLField(verify_exists=False)
     jp2FileSize = models.BigIntegerField(null=True)
     jp2BitDepth = models.IntegerField(null=True)
-    y_coord = models.IntegerField(null=True)
+    y_coord = models.FloatField(null=True)
     def __unicode__(self):
         return self.name
 
