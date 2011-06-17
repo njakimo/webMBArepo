@@ -209,19 +209,20 @@ for sr in slist:
               		section = Section(series_id=idSeries, name=scName, sectionOrder=scOrder, pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth)
 
               		section.save()
+              		idSection = section.id
 
               		if metal.find(' N ') != -1 and firstN:
-              		   series_n.sampleSection = section
+              		   series_n.sampleSection_id = idSection
               		   series_n.save()
               		   firstN = False
 
               		elif metal.find(' F ') != -1 and firstF:
-              		   series_f.sampleSection = section
+              		   series_f.sampleSection_id = idSection
               		   series_f.save()
               		   firstF = False
 							  
               		elif metal.find(' IHC ') != -1 and firstIHC:
-              		   series_ihc.sampleSection = section
+              		   series_ihc.sampleSection_id = idSection
               		   series_ihc.save()
               		   firstIHC = False
 
