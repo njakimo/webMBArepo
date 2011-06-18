@@ -1,54 +1,52 @@
-<h3>{{ series.desc }}</h3>
+<h3>{{ series.desc }} ({{series.numQCSections}} sections)</h3>
 <br/>
-<p>Section: {{section.name}}</p>
+<p><strong>Section:</strong>&nbsp;{{section.name}} <br />
+<!-- Provide the y coordinate if it is not null -->
+{% if section.y_coord %}(Bregma&nbsp;
+{% if section.y_coord > 0%}+{% endif %}{{section.y_coord}}&nbsp;mm){% endif %}</p>
+<p><strong>Slice thickness:</strong>&nbsp; {{series.sectionThickness}} {{series.sectionThicknessUnit}}</p> 
 <br/>
-<p>Num QC sections: {{series.numQCSections}}</p>
+<p><strong>Injection region:</strong>&nbsp;{{ region.desc}} ({{region.code}})</p>
 <br/>
-<p>5 Nearest Series:
-<br/><br/>
+<h4>Series with nearby injections:</h4>
 <div id = "button">
-<ul>
+<ul style="list-style-type:square; color:#fff;">
 {% for s in nslist %}
 <li>
- <a href="/seriesbrowser/viewer/{{s.id}}">{{s.desc}}</a></p>
+ <a href="/seriesbrowser/viewer/{{s.id}}" target="_blank">{{s.desc}}</a>
 </li>
 {% endfor %}
 </ul>
 </div>
-<br/>
-<p>Injection region:&nbsp;{{region.code}} - {{ region.desc}}</p>
-<br/>
-<p>Search the literature on <a href="http://brainarchitecture.org:8080/neuro_nlp/index.jsp?query='{{region.desc}}'&docsPerPage=5&category0=connectivity&sentsPerDoc=5&twoBrains=yes&sentsToSort=1000">
-region</a>
+<p>Search <a href="http://mbaimages.cshl.edu/?page_id=595" target="_blank">text mining</a> engine for region {{region.code}} (<a href="http://brainarchitecture.org:8080/neuro_nlp/index.jsp?query='{{region.desc}}'&docsPerPage=5&category0=connectivity&sentsPerDoc=5&twoBrains=yes&sentsToSort=1000">Link</a>)
 </p>
 <br/>
-<p><a href="/seriesbrowser/?region_filter={{region.id}}">Show</a> all injection series for the region</p>
+<p><a href="/seriesbrowser/?region_filter={{region.id}}" target="_blank">Show</a> all injection series for region {{region.code}}</p>
 <br/>
-<p>Pedagogical unit info.</p>
-<p>Bams efferent <a href="http://brancusi.usc.edu/bkms/brain/show-conef.php?aidi={{region.bamsRatId}}&publi=1">link.</a></p>
-<p>Bams afferent <a href="http://brancusi.usc.edu/bkms/brain/show-conaf.php?aidi={{region.bamsRatId}}&publi=1">link.</a></p>
+
+<!-- This should list an educational unit URL if appropriate -->
+{% if series.pedagogicalUnit.url %}
+<p<a href="{{series.pedagogicalUnit.url}}">See related teaching unit</a></p>
+{% endif %}
+
+<p>View <a href="http://brancusi.usc.edu/bkms" target="_blank">BAMS</a> efferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conef.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
+<p>View <a href="http://brancusi.usc.edu/bkms" target="_blank">BAMS</a> afferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conaf.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
 <!--<p>Enter notes <input type="textarea" id="sectionNote" style="height:10px;width:70px;overflow:auto;" value="{{sectionNote.comment}}"> </p>
 <input type="hidden"id = "sectionId" value="{{section.id}}"/>
 <div id = "noteSubmit">
  <p><input type="button" id = "submitButton" name = "Update" value = "Update" style="width:60px;" ></p>
 </div>-->
-<!--<form id = "showNisslForm" action="showNissl" method="get">
-<input type="hidden" id="seriesId" name="seriesId" value="{{series.id}}"/>-->
+
+<input type="hidden" id="seriesId" name="seriesId" value="{{series.id}}"/>
 <br/>
 <div id = "showNissls" >
 {% if screen == "1"   %}
-<p> <a onclick ="javascript:window.open('/seriesbrowser/showOnlyNissl/{{series.id}}/{{section.id}}/','_blank','toolbar=1');" href = "#"> Show Nissl in
+<p> <a onclick ="javascript:window.open('/seriesbrowser/showOnlyNissl/{{series.id}}/{{section.id}}/','_blank','toolbar=1');" href = "#"> Show Nissl series in
     new window</a>  </p>
 <br/>
 {% endif %}
-{% if screen != "2"   %}
-<p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/1/{{screen}}/"> Show
-    interleaved Nissl </a>  </p>
-<p> <a href =  "/seriesbrowser/showNissl/{{series.id}}/0/{{screen}}/"> Hide
-    interleaved Nissl </a>  </p>
-<br/>
-{% endif %}
-<p>
-<a href =  "/seriesbrowser/downloadPDF/{{section.id}}/url"> Download PDF </a>  </p>
+
+<!-- Provide a link to the Allen Reference Atlas; eventually need to check if this is a coronal series.  To be completed.-->
+
 </div>
-<!--</form>-->
+
