@@ -636,9 +636,11 @@ var IIP = new Class({
             if( this.rgn_y < 0 ) this.rgn_y = 0;
 
             if (!init) {
-                this.requestImages();
-                this.positionZone();
-            }
+		this.requestImages();
+            	this.positionZone();
+	    }
+		//this.requestImages();
+		//this.positionZone();
             if( this.scale ) this.setScale();
         }
     },
@@ -674,9 +676,11 @@ var IIP = new Class({
             else this.yfit = 0;
 
             if (!init) {
-                this.requestImages();
-                this.positionZone();
-            }
+		this.requestImages();
+            	this.positionZone();
+	    }
+		//this.requestImages();
+		//this.positionZone();
             if( this.scale ) this.setScale();
         }
     },
@@ -761,25 +765,24 @@ var IIP = new Class({
             window.addEvent( 'resize', function(){ window.location=window.location; } );
             document.addEvent( 'keydown', this.key.bindWithEvent(this) );
 
-            /*
+            
             // Add our logo and a tooltip explaining how to use the viewer
-            new Element( 'a', {href: 'http://iipimage.sourceforge.net', id:'logo'} ).injectInside(this.source);
-            new Element('img', {src: '/static/djatoka/images/djatoka.32x32.png', id: 'info', styles: { opacity: 0.8 } } ).injectInside('logo');
+            new Element( 'a', {href: 'http://mbaimages.cshl.edu/?page_id=973', target:'_blank', id:'logo'} ).injectInside(this.source);
+            new Element('img', {src: '/static/djatoka/images/help.png', id: 'info', styles: { opacity:0.8 } } ).injectInside('logo');
 
             // Fix IE7 PNG transparency problem
             if( Browser.Engine.trident5 ){
-            $('info').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="/static/djatoka/images/djatoka.32x32.png",sizingMethod=scale)' );
+            $('info').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="/static/djatoka/images/help.png",sizingMethod=scale)' );
             }
 
             new Tips( '#info, #toolbar', {
             className: 'tip', // We need this to force the tip in front of nav window
             // We have to first set opacity to zero to fix a bug in mootools 1.2
             // where the tip appears without any fade in the first time it is loaded
-            onShow: function(t){ t.setStyle('opacity',0); t.fade(0.7); },
+            onShow: function(t){ t.setStyle('opacity',0); t.fade(1.0); },
             onHide: function(t){ t.fade(0); }
             });
-            $('info').store('tip:text', '<h2><img src="/static/djatoka/images/djatoka.32x32.png"/>djatoka IIPViewer</h2>djatoka Viewer - an IIPImage High Resolution Ajax Image Viewer<ul><li>To navigate within image:<ul><li>drag image within main window or</li><li>drag zone within the navigation window</li><li>click an area within navigation window</li></ul><li>To zoom in:<ul><li>double click with the mouse or</li><li>use the mouse scroll wheel or</li><li>or simply press the "+" key</li></ul><li>To zoom out:<ul><li>shift double click with the mouse or</li><li>use the mouse wheel or</li><li>press the "-" key</li></ul></li><li>To move the navigation window:<ul><li>drag navigation window toolbar</li></ul><li>To show / hide navigation buttons:</li><ul><li>double click navigation window toolbar</li></ul></ul>Written by Ruven Pillay, Modified for use with djatoka by Ryan Chute<br/>For more information visit http://iipimage.sf.net & http://djatoka.sf.net');
-            */
+            $('info').store('tip:text', '<div style="width:400px;"><div style="display: table-cell;"><img style="vertical-align:text-top;" src="/static/img/bap_logo_tr.png" width="53" height="60" /></div><div style="display: table-cell; padding:20px; vertical-align:middle; color:#fff; line-height:120%; font-size:18px;">Mouse Brain Architecture Project<br />Image Viewer</div><h3>Based on djatoka IIPViewer<br /><br /></h3>Scroll through image gallery using the left/right arrows in the "filmstrip" at bottom or click the sagittal view (lower left) to choose images from a different brain location <br /><br />Click a thumbnail image to view in hi-resolution.<br /><br />Zoom by using the controls at right or by double clicking, pressing +/- buttons, or using the mouse scroll wheel.<br /><br />To adjust image dynamic range, set the RGB sliders for max and min thresholds and/or set the gamma slider (white) to adjust image gamma, then press resample (may take a moment to reload your image).<br /><br /><h3>For more information click the <b>?</b> icon to go to the Web Help page.</h3></div>');
 
             // Add some info
             if( this.credit ){
@@ -893,7 +896,7 @@ var IIP = new Class({
         // Create our nav buttons
         var navbuttons = new Element('div', {
             id: 'navbuttons',
-            html: '<img id="shiftLeft" src="/static/djatoka/images/left.png"/><img id="shiftUp" src="/static/djatoka/images/up.png"/><img id="shiftRight" src="/static/djatoka/images/right.png"/><br/><img id="shiftDown" src="/static/djatoka/images/down.png"/><br/><img id="zoomIn" src="/static/djatoka/images/zoomIn.png"/><img id="zoomOut" src="/static/djatoka/images/zoomOut.png"/><img id="reset" src="/static/djatoka/images/reset.png"/>&nbsp;&nbsp;<img id="snapshot" width="24" height="24" src="/static/djatoka/images/djatoka.32x32.png"/>'
+            html: '<img id="shiftLeft" src="/static/djatoka/images/left.png"/><img id="shiftUp" src="/static/djatoka/images/up.png"/><img id="shiftRight" src="/static/djatoka/images/right.png"/><br/><img id="shiftDown" src="/static/djatoka/images/down.png"/><br/><img id="zoomIn" src="/static/djatoka/images/zoomIn.png"/><img id="zoomOut" src="/static/djatoka/images/zoomOut.png"/><img id="reset" src="/static/djatoka/images/reset.png"/>&nbsp;&nbsp;<img id="snapshot" width="24" height="24" src="/static/img/pdf_icon.png"/>'
         });
         navbuttons.injectInside(navcontrols);
         //navbuttons.injectInside(navcontainer);
@@ -930,7 +933,7 @@ var IIP = new Class({
 
         navcontainer.makeDraggable( {container:this.source, handle:toolbar} );
 
-        $('zoomIn').addEvent( 'click', function(){ this.zoomIn() }.bind(this) );
+        $('zoomIn').addEvent( 'click', function() { this.zoomIn() }.bind(this) );
         $('zoomOut').addEvent( 'click', function(){ this.zoomOut() }.bind(this) );
         $('reset').addEvent( 'click', function(){ window.location=window.location; }  );
         $('snapshot').addEvent('click', function() { this.openOpenURL();}.bind(this));
@@ -995,7 +998,7 @@ var IIP = new Class({
         else if (pixels > 10000) {
           pixels = pixels/1000;
           label = '1mm';
-        }
+        }    
         else if( pixels > 1000 ){
             pixels = pixels/100;
             label = '1cm';

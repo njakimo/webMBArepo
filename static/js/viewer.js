@@ -17,7 +17,8 @@ var MBAViewer = {
                     bitDepth: bitDepth,
                     render: 'random',
                     showNavButtons: true,
-                    crossSiteTest: true
+                    crossSiteTest: false,
+		    scale: 2174 
                 });
         //alert("**********YYYYYYYYYYYY");
         //pdfImageUrl = iip.getOpenUrl();
@@ -29,13 +30,13 @@ var MBAViewer = {
             event.stop();
             panel.toggle();
         });
-        var helpPanelViewer = new Fx.Slide('helpPanelViewer', {mode: 'horizontal'});
+        /*var helpPanelViewer = new Fx.Slide('helpPanelViewer', {mode: 'horizontal'});
         helpPanelViewer.hide();
         $('helpPanelViewer').setStyle('z-index','1');
         $('helpTriggerViewer').addEvent('click', function(event) {
             event.stop();
             helpPanelViewer.toggle();
-        });
+        });*/
         if($('filmstrip')) {
             this.initSectionNav(iip,image, nSections, sectionId, sectionOrder, showNissl, screen);
         }
@@ -77,7 +78,7 @@ var MBAViewer = {
                 var parts = elem.id.split('-');
                 highlightSection(elem.getParent('li'));
                 if (parts[3] == '0') {
-                    setSagittalX(10 + Math.round((parts[2]-1) / nSections * 180));
+                    setSagittalX(10 + Math.round((parts[2]-1) / (2*nSections) * 180));
                 }
                 else{
                     setSagittalX(10 + Math.round((parts[2]-1) / (2*nSections) * 180));
