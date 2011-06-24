@@ -8,9 +8,9 @@ class SeriesAdmin(admin.ModelAdmin):
 admin.site.register(Series, SeriesAdmin)
 
 class SectionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'series','isSampleSection') 
+    list_display = ('name', 'series')
     list_filter = ('series',)
-    fields = ('name', 'series','isSampleSection') 
+    fields = ('name', 'series')
     readonly_fields = ('name', 'series') 
 admin.site.register(Section, SectionAdmin)
 

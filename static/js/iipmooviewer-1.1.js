@@ -55,7 +55,7 @@
 
 
 // Global instance of our IIP object for use by the TargetDrag class
-var iip;
+//var iip;
 
 /* Create our own class inherited from Drag for constrained dragging of
  the main target window
@@ -65,7 +65,8 @@ var TargetDrag = new Class({
     Extends: Drag,
 
     // Simply copy the parent class initialize function
-    initialize: function(){
+    initialize: function(id,options){
+        this.iip = options['iip'];
         var params = Array.link(arguments, {'options': Object.type, 'element': $defined});
         this.element = $(params.element);
         this.document = this.element.getDocument();
@@ -101,13 +102,13 @@ var TargetDrag = new Class({
             this.value.now[z] = this.mouse.now[z] - this.mouse.pos[z];
 
             if( z == 'x' ){
-                if( iip.rgn_x - this.value.now[z] < 0 ){
-                    this.value.now[z] = iip.rgn_x;
+                if( this.iip.rgn_x - this.value.now[z] < 0 ){
+                    this.value.now[z] = this.iip.rgn_x;
                     this.out = true;
                 }
-                if( iip.wid > iip.rgn_w ){
-                    if( iip.rgn_x - this.value.now[z] > iip.wid - iip.rgn_w ){
-                        this.value.now[z] = -(iip.wid - iip.rgn_w - iip.rgn_x);
+                if( this.iip.wid > this.iip.rgn_w ){
+                    if( this.iip.rgn_x - this.value.now[z] > this.iip.wid - this.iip.rgn_w ){
+                        this.value.now[z] = -(this.iip.wid - this.iip.rgn_w - this.iip.rgn_x);
                         this.out = true;
                     }
                 }
@@ -117,13 +118,13 @@ var TargetDrag = new Class({
                 }
             }
             if( z == 'y' ){
-                if( iip.rgn_y - this.value.now[z] < 0 ){
-                    this.value.now[z] = iip.rgn_y;
+                if( this.iip.rgn_y - this.value.now[z] < 0 ){
+                    this.value.now[z] = this.iip.rgn_y;
                     this.out = true;
                 }
-                if( iip.hei > iip.rgn_h ){
-                    if( iip.rgn_y - this.value.now[z] > iip.hei - iip.rgn_h ){
-                        this.value.now[z] = -(iip.hei - iip.rgn_h - iip.rgn_y);
+                if( this.iip.hei > this.iip.rgn_h ){
+                    if( this.iip.rgn_y - this.value.now[z] > this.iip.hei - this.iip.rgn_h ){
+                        this.value.now[z] = -(this.iip.hei - this.iip.rgn_h - this.iip.rgn_y);
                         this.out = true;
                     }
                 }
@@ -750,7 +751,7 @@ var IIP = new Class({
                     onComplete: this.requestImages.bind(this)
                 }
             });
-            new TargetDrag( el, {onComplete: this.scroll.bind(this)} );
+            new TargetDrag( el, {iip: this, onComplete: this.scroll.bind(this)} );
 
             el.injectInside( this.source );
             el.addEvent( 'mousewheel', this.zoom.bind(this) );
