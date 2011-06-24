@@ -763,7 +763,7 @@ var IIP = new Class({
 
             this.reCenter();
 
-            window.addEvent( 'resize', function(){ window.location=window.location; } );
+            //window.addEvent( 'resize', function(){ window.location=window.location; } );
             document.addEvent( 'keydown', this.key.bindWithEvent(this) );
 
             
