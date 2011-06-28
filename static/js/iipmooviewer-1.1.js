@@ -173,6 +173,7 @@ var IIP = new Class({
         this.bitDepth = options['bitDepth'];
         this.colorRanges = [0,this.bitDepth,0,this.bitDepth,0,this.bitDepth];
         this.gamma = 1.0;
+        this.sectionId = options['sectionId'] || alert( 'No section ID given to IIP constructor' );
 
         this.images = new Array(options['image'].length);
         options['image'] || alert( 'Image location not set in IIP constructor options');
@@ -460,6 +461,11 @@ var IIP = new Class({
     openOpenURL : function() {
         window.open(this.openUrl,'Snapshot URI','toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,scrollbars=yes,copyhistory=yes,resizable=yes');
     },
+
+    renderPdf : function() {
+        window.location.href='/seriesbrowser/pdf/' + this.sectionId + '/?image_url=' + encodeURIComponent(this.openUrl);
+    },
+
     // end djatoka mods
 
     /* Refresh function to avoid the problem of tiles not loading
@@ -937,7 +943,7 @@ var IIP = new Class({
         $('zoomIn').addEvent( 'click', function() { this.zoomIn() }.bind(this) );
         $('zoomOut').addEvent( 'click', function(){ this.zoomOut() }.bind(this) );
         $('reset').addEvent( 'click', function(){ window.location=window.location; }  );
-        $('snapshot').addEvent('click', function() { this.openOpenURL();}.bind(this));
+        $('snapshot').addEvent('click', function() { this.renderPdf();}.bind(this));
         $('shiftLeft').addEvent( 'click', function(){ this.scrollTo(-this.rgn_w/3,0); }.bind(this) );
         $('shiftUp').addEvent( 'click', function(){ this.scrollTo(0,-this.rgn_h/3); }.bind(this) );
         $('shiftDown').addEvent( 'click', function(){ this.scrollTo(0,this.rgn_h/3); }.bind(this) );
@@ -1133,8 +1139,9 @@ var IIP = new Class({
         $('navigation').set('src',newSrc);
     },
 
-    changeImage: function(image) {
+    changeImage: function(image, sectionId) {
         this.images = [{ src:image, sds:"0,90" }];
+        this.sectionId = sectionId;
         this.load();
     },
 

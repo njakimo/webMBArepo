@@ -1,21 +1,19 @@
 var MBAViewer = {
     init: function(options) {
-        var bitDepth = options['bitDepth'];
-        var nSections = options['nSections'];
-        var sectionId = options['sectionId'];
-        var sectionOrder = options['sectionOrder'];
         var image = options['image'];
+        var nSections = options['nSections'];
 
         var iip = new IIP("targetframe", {
             image: image,
+            sectionId: options['sectionId'],
             server: options['server'],
             credit: '',
             zoom: 1,
-            bitDepth: bitDepth,
+            scale: options['scale'],
+            bitDepth: options['bitDepth'],
             render: 'random',
             showNavButtons: true,
-            crossSiteTest: false,
-            scale: 2174
+            crossSiteTest: true
         });
 
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});
@@ -27,11 +25,11 @@ var MBAViewer = {
         });
 
         if($('filmstrip')) {
-            this.initSectionNav(iip,image, nSections, sectionId, sectionOrder);
+            this.initSectionNav(iip, image, nSections);
         }
     },
 
-    initSectionNav: function(iip, image, nSections, sectionId, sectionOrder) {
+    initSectionNav: function(iip, image, nSections) {
         var filmstrip = new slideGallery($('filmstrip'), {
             steps: 4,
             mode: "line"
@@ -73,7 +71,7 @@ var MBAViewer = {
                     sectionOrderVal  = "0" + sectionOrderVal;
                 }
                 var imageName = 'PMD/'+ imageParts[0]+ "_"+sectionOrderVal;
-                iip.changeImage(imageName);
+                iip.changeImage(imageName, parts[1]);
             });
         });
 

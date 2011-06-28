@@ -5,16 +5,16 @@ from django.shortcuts import render_to_response
 from django import forms
 from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries, Injection, Updater, SectionNote, LabelMethod, Brain
 from settings import STATIC_DOC_ROOT
-from django.http import HttpResponse
-from PIL import Image
-import json, os
-import datetime
-import reportlab
-import urllib2
-from PIL import Image
+from django.http import HttpResponse, Http404
+import json
+import os
+import re
+from urllib import unquote
+from urllib2 import urlopen, URLError
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
-from urllib2 import Request
+from reportlab.lib.units import inch
+
 from cStringIO import StringIO
 
 class FilterForm(forms.Form):
@@ -40,9 +40,8 @@ def index(request):
          LEFT OUTER JOIN seriesbrowser_tracer tracer ON (injection.tracer_id = tracer.id) 
          LEFT OUTER  JOIN seriesbrowser_region region ON (injection.region_id = region.id) 
          INNER JOIN seriesbrowser_section section ON (section.id = series.sampleSection_id)
-         LEFT OUTER JOIN seriesbrowser_labelmethod lm ON (series.labelMethod_id = lm.id)  
+         INNER JOIN seriesbrowser_labelmethod lm ON (series.labelMethod_id = lm.id AND lm.name <> 'Nissl')
          LEFT OUTER JOIN seriesbrowser_imagemethod im ON (series.imageMethod_id = im.id)
-         AND lm.name <> 'Nissl'        
     '''
 
     try:
@@ -96,9 +95,9 @@ def index(request):
         field = 'tracer.name'
     order = ' '.join([field, dir, extra])
     if where != '':
-            sql = ' '.join([sql,' AND ',where])
+            sql = ' '.join([sql,' WHERE ',where])
     sql = ' '.join([sql,'ORDER BY',order])
-#    sql1 = ' '.join([sql,' AND ',where,'ORDER BY',order])
+
     cursor = connection.cursor()
     cursor.execute(sql)
     rs = cursor.fetchall()
@@ -120,7 +119,6 @@ def index(request):
         'dir'         : dir,
         'filters'     : filters,
         'form'        : form,})
-#        'sql'           :sql,})
 
 def tree(request):
     try:
@@ -132,86 +130,29 @@ def tree(request):
         'user' : request.user,
         'tree' : json.dumps(tree)})
 
-def sectionViewer(request, seriesId, sectionId):
+def viewer(request, seriesId, sectionId=None):
     try:
         series = Series.objects.get(pk=seriesId)
-        # in case the user comes in by clicking on a Nissl series, show the corresponding IHC or flourescent series
-        lm = LabelMethod.objects.get(pk=series.labelMethod_id)
-        if lm.name == 'Nissl':
-           slist = Series.objects.filter(brain=series.brain)
-           for sr in slist:
-                if sr.id != series.id:
-                    lm1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
-                    if lm1.name != 'Nissl':
-                        series = sr
-                        break
+        # preload the list of sections for generating filmstrip nav
+        # TODO: this should order by y_coord descending
         sections = series.section_set.order_by('sectionOrder').all()
-        numSections = len(sections)
-        screen = '1'
-        showNissl = '0'
-        if sectionId != 0: 
-            section = Section.objects.get(pk=sectionId)
-        else: 
-            section = sections[0]    
-            section = Section.objects.get(pk=1)    
-        inj  = Injection.objects.filter(series=series)
-        region = ''         
-        for i in inj:
-           region  = Region.objects.get(pk=i.region.id)
-           break
-        ns = NearestSeries.objects.filter(series=series)
-        nslist = []
-        for n in ns:
-           s = Series.objects.get(pk=n.nearestSeriesId)
-           nslist.append(s)
-           if len(nslist) >= 5:
-              break
+        nSections = len(sections)
+        if not nSections:
+            raise Http404
+        # load specific section, otherwise use default
+        if sectionId:
+            try:
+                section = series.section_set.get(pk=sectionId)
+            except ObjectDoesNotExist:
+                raise Http404
+        else:
+            section = sections[0]
     except ObjectDoesNotExist:
-        sections = None
-    return render_to_response('seriesbrowser/viewer.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
-
-def viewer(request, seriesId):
-    try:
-        series = Series.objects.get(pk=seriesId)
-        # in case the user comes in by clicking on a Nissl series, show the corresponding IHC or flourescent series
-        lm = LabelMethod.objects.get(pk=series.labelMethod_id)
-        if lm.name == 'Nissl':
-           slist = Series.objects.filter(brain=series.brain)
-           for sr in slist:
-                if sr.id != series.id:
-                    lm1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
-                    if lm1.name != 'Nissl':
-                        series = sr
-                        break
-        sections = series.section_set.order_by('sectionOrder').all()
-        numSections = len(sections)
-        section = sections[0]    
-        inj  = Injection.objects.filter(series=series)
-        region = ''         
-        screen = '1'
-        showNissl = '0'
-        for i in inj:
-           region  = Region.objects.get(pk=i.region.id)
-           break
-        ns = NearestSeries.objects.filter(series=series)
-        nslist = []
-        for n in ns:
-           s = Series.objects.get(pk=n.nearestSeriesId)
-           nslist.append(s)
-           if len(nslist) >= 5:
-              break
-    except ObjectDoesNotExist:
-        sections = None
-        
+        raise Http404
     return render_to_response('seriesbrowser/viewer.html', {
         'sections' : sections,
         'section' : section,
-        'series' : series,
-        'nslist' : nslist,
-        'region' : region,
-        'numSections' : numSections,
-        'screen' : screen,
-        'showNissl' : showNissl
+        'nSections' : nSections
     })
 
 def gallery(request, seriesId):
@@ -239,23 +180,10 @@ def gallery(request, seriesId):
         section = None
     return render_to_response('seriesbrowser/gallery.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
 
-def section(request,id, showNissl, screen):
+def section(request, id):
     try:
         section = Section.objects.get(pk=id)
         series  = Series.objects.get(pk=section.series.id)
-        # if this is a Nissl series, get the corresponding flourescent or IHC series and set that as the series
-        lm = LabelMethod.objects.get(pk=series.labelMethod_id)
-        try:
-          if lm.name == 'Nissl':
-             slist = Series.objects.filter(brain=series.brain)
-             for sr in slist:
-                if sr.id != series.id:
-                    lm1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
-                    if lm1.name != 'Nissl':
-                        series = sr
-                        break
-        except:
-          pass
         inj  = Injection.objects.filter(series=series)
         region = ''         
         showNissl='0'
@@ -271,109 +199,8 @@ def section(request,id, showNissl, screen):
               break
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'showNissl':showNissl, 'screen':screen})
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'showNissl':showNissl })
 
-#def addNote(request,id):
-#    try:
-#        section = Section.objects.get(pk=id)
-#        series  = Series.objects.get(pk=section.series.id)
-#        inj  = Injection.objects.filter(series=series)
-#        region = ''         
-#        for i in inj:
-#           region  = Region.objects.get(pk=i.region.id)
-#           break
-#        ns = NearestSeries.objects.filter(series=series)
-#        nslist = []
-#        for n in ns:
-#           s = Series.objects.get(pk=n.nearestSeriesId)
-#           nslist.append(s)
-#           if len(nslist) >= 5:
-#              break
-    #   add notes and comment
-#        u = Updater.objects.get(pk=1)    
-#        sc = request.GET.get('score','')
-#        nt = request.GET.get('note','')
-#        sn = request.GET.get('showNissl','')
-#        sNote = SectionNote(section_id=section.id, updater_id = u.id, score = sc , comment = nt, write_date = datetime.datetime.now())        
-#        sNote.save() 
-#    except ObjectDoesNotExist:
-#        section = None
-#    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region,'sectionNote':sNote, 'showNissl':sn})
-
-def showNissl(request, id, showNissl, screen):
-    series  = Series.objects.get(pk=id)
-    sections = series.section_set.order_by('sectionOrder').all()
-    section = sections[0]
-    if screen == '0':
-        forward = "gallery"
-    elif screen == '1': 
-        forward = "viewer"
-    inj  = Injection.objects.filter(series=series)
-    region = ''         
-    for i in inj:
-        region  = Region.objects.get(pk=i.region.id)
-        break
-    ns = NearestSeries.objects.filter(series=series)
-    nslist = []
-    for n in ns:
-        s = Series.objects.get(pk=n.nearestSeriesId)
-        nslist.append(s)
-        if len(nslist) >= 5:
-           break
-    l_method = LabelMethod.objects.get(pk=series.labelMethod_id)
-    scFinalList = sections
-    if showNissl == '1':
-      scList = []
-      try:
-        if l_method.name != 'Nissl':
-            slist = Series.objects.filter(brain=series.brain)
-            for sr in slist:
-                if sr.id != series.id:
-                    l_m1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
-                    if l_m1.name == 'Nissl':
-                        scList = Section.objects.filter(series=sr)
-                        finalList = list(scList)+list(sections)
-                        scFinalList =  sorted(finalList, key=lambda x: x.sectionOrder )
-                        break
-      except:
-        pass
-    numSections = len(scFinalList)
-    return render_to_response('seriesbrowser/' + forward + '.html',{'sections':scFinalList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
-
-def showOnlyNissl(request, id, sectionId):
-    series  = Series.objects.get(pk=id)
-    sections = series.section_set.order_by('sectionOrder').all()
-    section  = Section.objects.get(pk=sectionId)
-    inj  = Injection.objects.filter(series=series)
-    region = ''         
-    for i in inj:
-        region  = Region.objects.get(pk=i.region.id)
-        break
-    ns = NearestSeries.objects.filter(series=series)
-    nslist = []
-    for n in ns:
-        s = Series.objects.get(pk=n.nearestSeriesId)
-        nslist.append(s)
-        if len(nslist) >= 5:
-           break
-    l_method = LabelMethod.objects.get(pk=series.labelMethod_id)
-    scList = []
-    try:
-        if l_method.name != 'Nissl':
-            slist = Series.objects.filter(brain=series.brain)
-            for sr in slist:
-                if sr.id != series.id:
-                    l_m1 = LabelMethod.objects.get(pk=sr.labelMethod_id)
-                    if l_m1.name == 'Nissl':
-                        scList = Section.objects.filter(series=sr)
-                        break
-    except:
-        pass
-    numSections = len(scList)
-    screen = "2"
-    showNissl = "2"
-    return render_to_response('seriesbrowser/viewer.html',{'sections':scList, 'section':section,'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'showNissl':showNissl,'screen':screen})
-   
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
     injection_list = Injection.objects.order_by('-y_coord')
@@ -393,7 +220,7 @@ def injections(request):
     closestSec = []
     for y in injection_list:
         while secYCoord[curSec]>float(y.y_coord):
-            curSec = curSec + 1
+            curSec += 1
         closestSec.append(curSec)
         
     return render_to_response('seriesbrowser/injections.html', {
@@ -403,34 +230,45 @@ def injections(request):
         'yCoord' : secYCoord, # the y coordinates for each atlas section
         'closestSec' : closestSec}) # section to draw each injection on
 
-def downloadPDF(request, id, imageUrl):
-     response = HttpResponse(mimetype='application/pdf')
-     try:
-        section = Section.objects.get(pk=id)
-        series  = Series.objects.get(pk=section.series.id)
-        response['Content-Disposition'] = 'attachment; filename=section'+str(section.name)+'.pdf'
+def pdf(request, sectionId):
+    section = None
+    pdf = None
+    image_url = None
+    try:
+        section = Section.objects.get(pk=sectionId)
+        image_url = unquote(request.GET.get('image_url'))
+        resp = urlopen(image_url)
+        image = StringIO(resp.read())
+
         buffer = StringIO()
-        # Create the PDF object, using the buffer 
         p = canvas.Canvas(buffer)
-        # Draw things on the PDF. Here's where the PDF generation happens.
-        p.drawString(100, 100, section.name)
-        # Draw the image onto the PDF 
-        file = urllib2.urlopen(Request(imageUrl))
-#      file = urllib2.urlopen(Request("http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver?url_ver=Z39.88-2004&rft_id=PMD/PMD29_0002&svc_id=info:lanl-repo/svc/getRegion&svc_val_fmt=info:ofi/fmt:kev:mtx:jpeg2000&svc.format=image/jpeg&svc.level=4&svc.rotate=0&svc.region=0,0,928,1084&svc.crange=0-255,0-255,0-255&svc.gamma=1"))
-        im = StringIO(file.read())
-        regionArray = url[url.find("svc.region="):url.find("&svc.crange=")].split(",")
-        p.drawImage( ImageReader(im), 25, 25, width=regionArray[2], height=regionArray[3] )
-        # Close the PDF object cleanly, and we're done.
+        p.setFont('Helvetica',16)
+        p.setStrokeColor((0,0,0))
+        p.drawString(0.375*inch,10.5*inch,'Series: ' + section.series.desc)
+        p.drawString(0.375*inch,10.25*inch,'Section: ' + section.name)
+        p.drawString(0.375*inch,10.0*inch,'Zoom Level: ' + re.search('(?<=svc\.level=)\d+', image_url).group(0))
+        p.drawString(0.375*inch,9.75*inch,'Region: ' + re.search('(?<=svc\.region=)\d+,\d+,\d+,\d+', image_url).group(0))
+        p.drawString(0.375*inch,9.5*inch,'Color Range (RGB): ' + re.search('(?<=svc\.crange=)\d+-\d+,\d+-\d+,\d+-\d+', image_url).group(0))
+        p.drawString(0.375*inch,9.25*inch,'Gamma: ' + re.search('(?<=svc\.gamma=)\d+\.*\d*', image_url).group(0))
+        p.drawImage(ImageReader(image), 0.375*inch, 3.375*inch, 7.5*inch, 5.625*inch, preserveAspectRatio=True, anchor='nw')
         p.showPage()
         p.save()
-        # Get the value of the StringIO buffer and write it to the response.
         pdf = buffer.getvalue()
         buffer.close()
-        response.write(pdf)
-     except:
-       pass
-     return response
+    except ObjectDoesNotExist:
+        raise Http404
+    except URLError:
+        raise Http404
+
+    response = HttpResponse(mimetype='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=section'+str(section.name)+'.pdf'
+    response.write(pdf)
+    return response
 
 def metadata(request):
-    response = urllib2.urlopen('http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver?' + request.GET.urlencode())
+    response = None
+    try:
+        response = urlopen('http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver?' + request.GET.urlencode())
+    except URLError:
+        raise Http404
     return HttpResponse(response)

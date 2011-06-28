@@ -17,12 +17,10 @@ window.addEvent('domready', function() {
     MBAViewer.init({
         server: 'http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver',
         image: 'PMD/{{section.name}}',
-        nSections: {{ numSections }},
+        nSections: {{ nSections }},
         bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1,
         sectionId: {{section.id}},
-       sectionOrder: {{section.sectionOrder}},
-       showNissl: {{showNissl}},
-       screen:{{screen}}
+        scale: 2174
     });
 });
 </script>
@@ -37,7 +35,7 @@ window.addEvent('domready', function() {
       <div class="holder">
         <ul>
           {% for section in sections %}
-          <li><img id="section-{{ section.id }}-{{ section.sectionOrder }}-{{showNissl}}-{{screen}}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
+          <li><img id="section-{{ section.id }}" src="{{ section.pngPathLow }}" alt="brain slice" width="120" height="90" /></li>
           {% endfor %}
         </ul>
       </div>
