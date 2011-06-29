@@ -67,7 +67,7 @@ class Series(models.Model):
     sectionThicknessUnit = models.CharField(max_length=2) 
     sectioningPlane = models.ForeignKey(SectioningPlane)
     pedagogicalUnit = models.ManyToManyField(PedagogicalUnit, blank=True, null=True)
-    numQCSections = models.IntegerField()
+    numQCSections = models.IntegerField(null=True)
     #indicate sample section
     def __unicode__(self):
         return self.desc
