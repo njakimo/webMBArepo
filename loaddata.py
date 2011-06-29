@@ -175,6 +175,9 @@ for sr in slist:
        firstN = True
        firstF = True
        firstIHC = True
+       countN = 0
+       countF = 0
+       countIHC = 0
 
        ydict = {}
        with open('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/ydist.txt') as f:
@@ -203,14 +206,17 @@ for sr in slist:
                 if metal.find(' N ') != -1:
                    idSeries = series_n.id
                    bitDepth = 8
+                   countN += 1
 
                 elif metal.find(' F ') != -1:
                    idSeries = series_f.id
                    bitDepth = 16
+                   countF += 1
 		          
                 elif metal.find(' IHC ') != -1:
                    idSeries = series_ihc.id
                    bitDepth = 8
+                   countIHC += 1
                 
                 if os.path.exists('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'):
               		section = Section(series_id=idSeries, name=sr+'_'+scOrder, sectionOrder=scOrder, pngPathLow='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth, y_coord=ydict[sc])
@@ -236,3 +242,10 @@ for sr in slist:
                 else:
                     errorf.write('File not found : ' +sr+'_'+scOrder+'.jp2'+ '\n')
                 #   erirorf.write('File not found: \n')
+
+       series_n.numQCSections = countN
+       series_f.numQCSections = countF
+       series_ihc.numQCSections = countIHC
+       series_n.save()
+       series_f.save()
+       series_ihc.save()
