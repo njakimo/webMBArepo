@@ -206,7 +206,7 @@ for sr in slist:
                    bitDepth = 8
                 
                 if os.path.exists('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'):
-              		section = Section(series_id=idSeries, name=scName, sectionOrder=scOrder, pngPathLow='/mnt/data001/MBAProcessingResults/MaskOverview/PMD/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth)
+              		section = Section(series_id=idSeries, name=sr+'_'+scOrder, sectionOrder=scOrder, pngPathLow='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth)
 
               		section.save()
               		idSection = section.id
