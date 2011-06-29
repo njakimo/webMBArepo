@@ -2,6 +2,7 @@ import django
 import seriesbrowser
 import os
 import random
+import re
 
 from seriesbrowser.models import Brain
 from seriesbrowser.models import Laboratory
@@ -128,7 +129,7 @@ slist = os.listdir('/mnt/data001/MBAProcessingResults/PMD')
 
 for sr in slist:
 
-    if sr.startswith('PMD17'):
+    if sr.startswith('PMD17') or sr.startswith('PMD18'):
        brain = Brain(name=sr)
        brain.save()
 
@@ -136,7 +137,7 @@ for sr in slist:
 
        #sampleSectionNum = random.randrange(1,numSections)
 
-       errorf.write(' sample section num ' + str(sampleSectionNum) + '\n')
+       #errorf.write(' sample section num ' + str(sampleSectionNum) + '\n')
 
        series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id, numQCSections = numSections)
        series_n.save()
@@ -175,6 +176,12 @@ for sr in slist:
        firstF = True
        firstIHC = True
 
+       ydict = {}
+       with open('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/ydist.txt') as f:
+          for line in f:
+                m = re.match(r"(meta_.*txt)\:\s+(-?\d+.\d+)", line)
+                ydict[m.group(1)] = m.group(2)
+
        for sc in sclist:
           if sc.startswith('meta'):
                 scOrder = sc[sc.rfind("_")+1:sc.find(".txt")]
@@ -206,7 +213,7 @@ for sr in slist:
                    bitDepth = 8
                 
                 if os.path.exists('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'):
-              		section = Section(series_id=idSeries, name=sr+'_'+scOrder, sectionOrder=scOrder, pngPathLow='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth)
+              		section = Section(series_id=idSeries, name=sr+'_'+scOrder, sectionOrder=scOrder, pngPathLow='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth, y_coord=ydict[sc])
 
               		section.save()
               		idSection = section.id
