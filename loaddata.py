@@ -14,6 +14,7 @@ from seriesbrowser.models import LabelMethod
 from seriesbrowser.models import ImageMethod
 from seriesbrowser.models import Region
 from seriesbrowser.models import SectioningPlane
+from seriesbrowser.models import DataResolver
 
 class Mouse:
    def __init__(self, Name,Injdate,Tracer,LabelMethod,Injvolume,Injvolunits, Xcoord, Ycoord, Zcoord):
@@ -129,7 +130,7 @@ slist = os.listdir('/mnt/data001/MBAProcessingResults/PMD')
 
 for sr in slist:
 
-    if sr.startswith('PMD17') or sr.startswith('PMD18'):
+    if sr.startswith('PMD17') or sr.startswith('PMD18') or sr.startswith('PMD113'):
        brain = Brain(name=sr)
        brain.save()
 
@@ -139,13 +140,13 @@ for sr in slist:
 
        #errorf.write(' sample section num ' + str(sampleSectionNum) + '\n')
 
-       series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id, numQCSections = numSections)
+       series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id)#, numQCSections = numSections)
        series_n.save()
 
-       series_f = Series(desc=brain.name + ' Flourescent Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu', lab_id=lab_m.id, labelMethod_id = lm_f.id, imageMethod_id = im_f.id, sectioningPlane_id=sp_s.id, numQCSections = numSections)
+       series_f = Series(desc=brain.name + ' Flourescent Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu', lab_id=lab_m.id, labelMethod_id = lm_f.id, imageMethod_id = im_f.id, sectioningPlane_id=sp_s.id)#, numQCSections = numSections)
        series_f.save()
 
-       series_ihc = Series(desc=brain.name + ' IHC Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_ihc.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id, numQCSections = numSections)
+       series_ihc = Series(desc=brain.name + ' IHC Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_ihc.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id)#, numQCSections = numSections)
        series_ihc.save()
 
       
@@ -220,8 +221,10 @@ for sr in slist:
                 
                 if os.path.exists('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'):
               		section = Section(series_id=idSeries, name=sr+'_'+scOrder, sectionOrder=scOrder, pngPathLow='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth, y_coord=ydict[sc])
+              		dataresolver = DataResolver(identifier='PMD/'+sr+'_'+scOrder , imageFile='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2')
 
               		section.save()
+              		dataresolver.save()
               		idSection = section.id
 
               		if metal.find(' N ') != -1 and firstN:
