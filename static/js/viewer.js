@@ -70,7 +70,8 @@ var MBAViewer = {
                 while(sectionOrderVal.length < 4) {
                     sectionOrderVal  = "0" + sectionOrderVal;
                 }
-                var imageName = 'PMD/'+ imageParts[0]+ "_"+sectionOrderVal;
+                //var imageName = 'PMD/'+ imageParts[0]+ "_"+sectionOrderVal;
+		var imageName = 'PMD/' + sectionOrderVal;
                 iip.changeImage(imageName, parts[1]);
             });
         });

@@ -185,8 +185,14 @@ def section(request, id):
         section = Section.objects.get(pk=id)
         series  = Series.objects.get(pk=section.series.id)
         inj  = Injection.objects.filter(series=series)
+        if section.series.labelMethod.name != "Nissl":
+            nissl = Series.objects.get(brain=section.series.brain,labelMethod=1)
+            nisslID = nissl.id
+        else:
+            nisslID = 0
+        
         region = ''         
-        showNissl='0'
+
         for i in inj:
            region  = Region.objects.get(pk=i.region.id)
            break
@@ -197,9 +203,11 @@ def section(request, id):
            nslist.append(s)
            if len(nslist) >= 5:
               break
+        atlasID = int((7.905 + section.y_coord)/13.25*131 + 130879)
+        atlasID = min(131010,max(atlasID,130879))
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'showNissl':showNissl })
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'nisslID':nisslID, 'atlasID':atlasID})
 
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
@@ -236,21 +244,35 @@ def pdf(request, sectionId):
     image_url = None
     try:
         section = Section.objects.get(pk=sectionId)
+        inj  = Injection.objects.filter(series=section.series.id)
         image_url = unquote(request.GET.get('image_url'))
         resp = urlopen(image_url)
         image = StringIO(resp.read())
 
+        bapResp = urlopen('http://mbaimages.cshl.edu/wp-content/uploads/2011/01/mouse-header7.png');
+        bapImg = StringIO(bapResp.read())
+
         buffer = StringIO()
         p = canvas.Canvas(buffer)
-        p.setFont('Helvetica',16)
+        p.setFont('Helvetica',10)
         p.setStrokeColor((0,0,0))
         p.drawString(0.375*inch,10.5*inch,'Series: ' + section.series.desc)
-        p.drawString(0.375*inch,10.25*inch,'Section: ' + section.name)
-        p.drawString(0.375*inch,10.0*inch,'Zoom Level: ' + re.search('(?<=svc\.level=)\d+', image_url).group(0))
-        p.drawString(0.375*inch,9.75*inch,'Region: ' + re.search('(?<=svc\.region=)\d+,\d+,\d+,\d+', image_url).group(0))
-        p.drawString(0.375*inch,9.5*inch,'Color Range (RGB): ' + re.search('(?<=svc\.crange=)\d+-\d+,\d+-\d+,\d+-\d+', image_url).group(0))
-        p.drawString(0.375*inch,9.25*inch,'Gamma: ' + re.search('(?<=svc\.gamma=)\d+\.*\d*', image_url).group(0))
+        if section.y_coord > 0:
+            position = "Bregma +" + str(round(section.y_coord,2)) + "mm"
+        else:
+            position = "Bregma " + str(round(section.y_coord,2)) + "mm"
+        p.drawString(0.375*inch,10.2*inch,'Approximate Section Location: ' + position)
+        p.drawString(0.375*inch,10.0*inch,'Imaging Method: ' + section.series.imageMethod.name)
+        p.drawString(0.375*inch,9.8*inch,'Label Method: ' + section.series.labelMethod.name)
+        if inj:
+            p.drawString(0.375*inch,9.6*inch,'Injection: '+inj[0].tracer.name + ' ('+str(inj[0].x_coord)+','+str(inj[0].y_coord)+','+str(inj[0].z_coord)+')')
+        p.drawString(0.375*inch,9.4*inch,'Color Range (RGB): ' + re.search('(?<=svc\.crange=)\d+-\d+,\d+-\d+,\d+-\d+', image_url).group(0) + ', Gamma: ' + re.search('(?<=svc\.gamma=)\d+\.*\d*', image_url).group(0))
+        p.drawString(0.375*inch,9.2*inch,'Direct link to this section: http://mouse.brainarchitecture.org/seriesbrowser/viewer/'+str(section.series.id)+'/'+str(section.id))
         p.drawImage(ImageReader(image), 0.375*inch, 3.375*inch, 7.5*inch, 5.625*inch, preserveAspectRatio=True, anchor='nw')
+        p.drawImage(ImageReader(bapImg),0.25*inch,0.25*inch,0.5*inch,0.5*inch,preserveAspectRatio=True,anchor='sw')
+
+        p.setFont('Helvetica',14)
+        p.drawString(0.75*inch,0.4*inch,'Brain Architecture Project (http://mouse.brainarchitecture.org)');
         p.showPage()
         p.save()
         pdf = buffer.getvalue()
