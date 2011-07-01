@@ -4,8 +4,9 @@
 <!-- Provide the y coordinate if it is not null -->
 {% if section.y_coord %}(Bregma&nbsp;&#8764;
 {% if section.y_coord > 0%}+{% endif %}{{section.y_coord|floatformat:2}}&nbsp;mm)
-<!-- Provide a link to the Allen Reference Atlas; eventually need to check if this is a coronal series.  To be completed.-->
-<br />Approx. <a target="_blank" href="http://mouse.brain-map.org/viewImage.do?imageId={{atlasID}}">Allen Reference Atlas section</a><br /><br />{% endif %}</p>
+{% if section.series.sectioningPlane.desc == "Coronal" %}
+<br />Approx. <a onclick ="javascript:window.open('http://mouse.brain-map.org/viewImage.do?imageId={{atlasID}}','_blank','toolbar=1');" href="#">Allen Reference Atlas section</a><br /><br />
+{% endif %}{% endif %}</p>
 <p><strong>Section thickness:</strong>&nbsp; {{section.series.sectionThickness}} {{section.series.sectionThicknessUnit}}</p> 
 <p><strong>Imaging Method:</strong>&nbsp; {{section.series.imageMethod.name}}</p>
 {% if section.series.imageMethod.name != "Fluorescent" %}

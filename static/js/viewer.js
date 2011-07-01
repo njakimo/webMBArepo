@@ -13,7 +13,7 @@ var MBAViewer = {
             bitDepth: options['bitDepth'],
             render: 'random',
             showNavButtons: true,
-            crossSiteTest: true
+            crossSiteTest: false
         });
 
         var panel = new Fx.Slide('panel', {mode: 'horizontal'});

@@ -81,7 +81,7 @@ function reportInjections(e,fname) {
    if (firstIdx != -1) {
        lastIdx = firstIdx;
        while (injSecNum[lastIdx] == idx) { lastIdx = lastIdx + 1;}
-       nInjections = lastIdx-firstIdx+1;
+       nInjections = lastIdx-firstIdx;
    }
    else { nInjections = 0 };
    coord = secYCoord[idx].toFixed(2);

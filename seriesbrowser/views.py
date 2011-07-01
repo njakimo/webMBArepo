@@ -146,7 +146,7 @@ def viewer(request, seriesId, sectionId=None):
             except ObjectDoesNotExist:
                 raise Http404
         else:
-            section = sections[0]
+            section = series.sampleSection
     except ObjectDoesNotExist:
         raise Http404
     return render_to_response('seriesbrowser/viewer.html', {
@@ -265,7 +265,7 @@ def pdf(request, sectionId):
         p.drawString(0.375*inch,10.0*inch,'Imaging Method: ' + section.series.imageMethod.name)
         p.drawString(0.375*inch,9.8*inch,'Label Method: ' + section.series.labelMethod.name)
         if inj:
-            p.drawString(0.375*inch,9.6*inch,'Injection: '+inj[0].tracer.name + ' ('+str(inj[0].x_coord)+','+str(inj[0].y_coord)+','+str(inj[0].z_coord)+')')
+            p.drawString(0.375*inch,9.6*inch,'Injection: '+inj[0].tracer.name + ' ('+str(inj[0].x_coord)+' mm, '+str(inj[0].y_coord)+' mm, '+str(inj[0].z_coord)+' mm)')
         p.drawString(0.375*inch,9.4*inch,'Color Range (RGB): ' + re.search('(?<=svc\.crange=)\d+-\d+,\d+-\d+,\d+-\d+', image_url).group(0) + ', Gamma: ' + re.search('(?<=svc\.gamma=)\d+\.*\d*', image_url).group(0))
         p.drawString(0.375*inch,9.2*inch,'Direct link to this section: http://mouse.brainarchitecture.org/seriesbrowser/viewer/'+str(section.series.id)+'/'+str(section.id))
         p.drawImage(ImageReader(image), 0.375*inch, 3.375*inch, 7.5*inch, 5.625*inch, preserveAspectRatio=True, anchor='nw')
