@@ -3,6 +3,7 @@ import seriesbrowser
 import os
 import random
 import re
+import pickle
 
 from seriesbrowser.models import Brain
 from seriesbrowser.models import Laboratory
@@ -44,6 +45,13 @@ dsf = open('../csvfiles/datasummary.csv', 'r')
 araf = open('../csvfiles/allen_reference_atlas.csv', 'r')
 errorf = open('../csvfiles/load_error.txt', 'w')
 bamsf = open('../csvfiles/bams.csv', 'r')
+
+ara25umFile = open("../pckfiles/ara25um.pck", "r")
+ara25um = pickle.load(ara25umFile)
+#labelsFile = open("../pckfiles/labelsLookup.pck", "r")
+#labelLookup = pickle.load(labelsFile)
+
+orgn = {'x':228, 'y':221, 'z':36}
 
 r = random.seed()
 
@@ -130,7 +138,7 @@ slist = os.listdir('/mnt/data001/MBAProcessingResults/PMD')
 
 for sr in slist:
 
-    if sr.startswith('PMD17') or sr.startswith('PMD18') or sr.startswith('PMD113'):
+    if sr.startswith('PMD17') or sr.startswith('PMD18') or sr.startswith('PMD113') or sr.startswith('PMD114'):
        brain = Brain(name=sr)
        brain.save()
 
@@ -140,13 +148,13 @@ for sr in slist:
 
        #errorf.write(' sample section num ' + str(sampleSectionNum) + '\n')
 
-       series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id)#, numQCSections = numSections)
+       series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
        series_n.save()
 
-       series_f = Series(desc=brain.name + ' Flourescent Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu', lab_id=lab_m.id, labelMethod_id = lm_f.id, imageMethod_id = im_f.id, sectioningPlane_id=sp_s.id)#, numQCSections = numSections)
+       series_f = Series(desc=brain.name + ' Flourescent Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu', lab_id=lab_m.id, labelMethod_id = lm_f.id, imageMethod_id = im_f.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
        series_f.save()
 
-       series_ihc = Series(desc=brain.name + ' IHC Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_ihc.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_s.id)#, numQCSections = numSections)
+       series_ihc = Series(desc=brain.name + ' IHC Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_ihc.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
        series_ihc.save()
 
       
@@ -165,7 +173,8 @@ for sr in slist:
                  idSeries = series_f.id
                elif l.labelMethod.find("IHC") != -1:
                  idSeries = series_ihc.id
-               injection = Injection(series_id = idSeries, region_id = aralist[random.randrange(1,len(aralist)-1)].id, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
+               injectionID = ara25um[orgn['x']+round(float(l.xcoord)*1000/25),orgn['z']+round(float(l.zcoord)*1000/25),orgn['y']+round(float(l.ycoord)*1000/25)]
+               injection = Injection(series_id = idSeries, region_id = injectionID, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
                injection.save()
                break
              except:
@@ -173,12 +182,9 @@ for sr in slist:
 
        sclist = os.listdir('/mnt/data001/MBAProcessingResults/PMD/'+sr)
 
-       firstN = True
-       firstF = True
-       firstIHC = True
-       countN = 0
-       countF = 0
-       countIHC = 0
+       dist2injN = 100
+       dist2injF = 100
+       dist2injIHC = 100
 
        ydict = {}
        with open('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/ydist.txt') as f:
@@ -191,10 +197,6 @@ for sr in slist:
                 scOrder = sc[sc.rfind("_")+1:sc.find(".txt")]
                 scImage = sc[sc.find("_")+1:sc.find(".txt")]
 
-      #          sampleSection = False
-      #          if sampleSectionNum == int(scOrder) :
-      #             sampleSection = True
-      #             errorf.write(" ******* sample section for " + sc + " is " + str(sampleSectionNum) + "\n")
                 scName = sc[5:len(sc)-4]
                 metaName = ''
 
@@ -207,17 +209,17 @@ for sr in slist:
                 if metal.find(' N ') != -1:
                    idSeries = series_n.id
                    bitDepth = 8
-                   countN += 1
+                   series_n.numQCSections += 1
 
                 elif metal.find(' F ') != -1:
                    idSeries = series_f.id
                    bitDepth = 16
-                   countF += 1
+                   series_f.numQCSections += 1
 		          
                 elif metal.find(' IHC ') != -1:
                    idSeries = series_ihc.id
                    bitDepth = 8
-                   countIHC += 1
+                   series_ihc.numQCSections += 1
                 
                 if os.path.exists('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'):
               		section = Section(series_id=idSeries, name=sr+'_'+scOrder, sectionOrder=scOrder, pngPathLow='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth, y_coord=ydict[sc])
@@ -226,29 +228,24 @@ for sr in slist:
               		section.save()
               		dataresolver.save()
               		idSection = section.id
+              		dist2injSec = abs(float(ydict[sc])-float(l.ycoord))
 
-              		if metal.find(' N ') != -1 and firstN:
+              		if metal.find(' N ') != -1 and dist2injSec < dist2injN:
               		   series_n.sampleSection_id = idSection
-              		   series_n.save()
-              		   firstN = False
+              		   dist2injN = dist2injSec
 
-              		elif metal.find(' F ') != -1 and firstF:
+              		elif metal.find(' F ') != -1 and dist2injSec < dist2injF:
               		   series_f.sampleSection_id = idSection
-              		   series_f.save()
-              		   firstF = False
+              		   dist2injF = dist2injSec
 							  
-              		elif metal.find(' IHC ') != -1 and firstIHC:
+              		elif metal.find(' IHC ') != -1 and dist2injSec < dist2injIHC:
               		   series_ihc.sampleSection_id = idSection
-              		   series_ihc.save()
-              		   firstIHC = False
+              		   dist2injIHC = dist2injSec
 
                 else:
                     errorf.write('File not found : ' +sr+'_'+scOrder+'.jp2'+ '\n')
                 #   erirorf.write('File not found: \n')
 
-       series_n.numQCSections = countN
-       series_f.numQCSections = countF
-       series_ihc.numQCSections = countIHC
        series_n.save()
        series_f.save()
        series_ihc.save()
