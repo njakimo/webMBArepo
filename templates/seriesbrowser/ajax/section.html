@@ -1,4 +1,4 @@
-<h3>{{ section.series.desc }} ({{section.series.numQCSections}} sections)</h3>
+<h3>{{ section.series.desc }} ({{nSections}} sections)</h3>
 <br/>
 <p><strong>Section:</strong>&nbsp;{{section.name}} <br />
 <!-- Provide the y coordinate if it is not null -->
@@ -32,8 +32,8 @@
 <p><a href="/seriesbrowser/?region_filter={{region.id}}" target="_blank">Show</a> all injection series for region {{region.code}}</p>
 <br/>
 
-<p>View <a href="http://brancusi.usc.edu/bkms" target="_blank">BAMS</a> efferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conef.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
-<p>View <a href="http://brancusi.usc.edu/bkms" target="_blank">BAMS</a> afferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conaf.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
+<p>View BAMS efferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conef.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
+<p>View BAMS afferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conaf.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
 {% endif %}
 
 <!-- This should list an educational unit URL if appropriate -->

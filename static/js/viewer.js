@@ -25,11 +25,11 @@ var MBAViewer = {
         });
 
         if($('filmstrip')) {
-            this.initSectionNav(iip, image, nSections);
+            this.initSectionNav(iip, image, nSections, options['sectionId']);
         }
     },
 
-    initSectionNav: function(iip, image, nSections) {
+    initSectionNav: function(iip, image, nSections, sampleSection) {
         var filmstrip = new slideGallery($('filmstrip'), {
             steps: 4,
             mode: "line"
@@ -52,10 +52,14 @@ var MBAViewer = {
         });
 
         var sections = [];
+	var sampleSectionIdx = 0;
         $$('#filmstrip img').each(function(elem, i) {
             sections.push(elem.getParent('li'));
+            var parts = elem.id.split('-');
+	    if (parts[1]==sampleSection) {
+		sampleSectionIdx = i;
+	    }
             elem.addEvent('click', function(){
-                var parts = elem.id.split('-');
                 highlightSection(sections[i]);
                 setSagittalX(10 + Math.round(i / nSections * 180));
                 new Request.HTML({
@@ -70,13 +74,15 @@ var MBAViewer = {
                 while(sectionOrderVal.length < 4) {
                     sectionOrderVal  = "0" + sectionOrderVal;
                 }
-                //var imageName = 'PMD/'+ imageParts[0]+ "_"+sectionOrderVal;
 		var imageName = 'PMD/' + sectionOrderVal;
                 iip.changeImage(imageName, parts[1]);
             });
         });
+//	alert(sampleSectionIdx);
+        highlightSection(sections[sampleSectionIdx]);
+	filmstrip.jump(sampleSectionIdx);
+//	setSagittalX(10 + Math.round(50 / nSections * 180));
 
-        highlightSection(sections[0]);
     }
 };
 

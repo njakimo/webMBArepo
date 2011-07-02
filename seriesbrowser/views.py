@@ -135,7 +135,7 @@ def viewer(request, seriesId, sectionId=None):
         series = Series.objects.get(pk=seriesId)
         # preload the list of sections for generating filmstrip nav
         # TODO: this should order by y_coord descending
-        sections = series.section_set.order_by('sectionOrder').all()
+        sections = series.section_set.filter(isVisible=1).order_by('sectionOrder').all()
         nSections = len(sections)
         if not nSections:
             raise Http404
@@ -205,9 +205,10 @@ def section(request, id):
               break
         atlasID = int((7.905 + section.y_coord)/13.25*131 + 130879)
         atlasID = min(131010,max(atlasID,130879))
+        nSections = series.section_set.filter(isVisible=1).count()
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'nisslID':nisslID, 'atlasID':atlasID})
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'nisslID':nisslID, 'atlasID':atlasID,'nSections':nSections})
 
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
