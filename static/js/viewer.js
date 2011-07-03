@@ -78,10 +78,20 @@ var MBAViewer = {
                 iip.changeImage(imageName, parts[1]);
             });
         });
-//	alert(sampleSectionIdx);
+
+	// Need to send an AJAX request even for the first section
+        new Request.HTML({
+            url: '/seriesbrowser/ajax/section/' + sampleSection + '/',
+                 method: 'get',
+                 onSuccess: function(response) {
+                     $('panel_content').empty().adopt(response);
+                 }
+            }).send();
+
+	// And make the filmstrip / sagittal section reflect initial section
         highlightSection(sections[sampleSectionIdx]);
 	filmstrip.jump(sampleSectionIdx);
-//	setSagittalX(10 + Math.round(50 / nSections * 180));
+	setSagittalX(10 + Math.round(sampleSectionIdx / nSections * 180));
 
     }
 };
