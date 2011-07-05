@@ -138,7 +138,7 @@ slist = os.listdir('/mnt/data001/MBAProcessingResults/PMD')
 
 for sr in slist:
 
-    if sr.startswith('PMD17') or sr.startswith('PMD18') or sr.startswith('PMD113') or sr.startswith('PMD114'):
+    if sr.startswith('PMD17') or sr.startswith('PMD18') or sr.startswith('PMD113') or sr.startswith('PMD114') or sr.startswith('PMD29') or sr.startswith('PMD70') or sr.startswith('PMD52'):
        brain = Brain(name=sr)
        brain.save()
 
@@ -173,7 +173,7 @@ for sr in slist:
                  idSeries = series_f.id
                elif l.labelMethod.find("IHC") != -1:
                  idSeries = series_ihc.id
-               injectionID = ara25um[orgn['x']+round(float(l.xcoord)*1000/25),orgn['z']+round(float(l.zcoord)*1000/25),orgn['y']+round(float(l.ycoord)*1000/25)]
+               injectionID = ara25um[orgn['x']+round(float(l.xcoord)*1000/25),orgn['z']+round(float(l.zcoord)*1000/25),orgn['y']-round(float(l.ycoord)*1000/25)]
                injection = Injection(series_id = idSeries, region_id = injectionID, tracer_id = Tracer.objects.get(name=tn).id, volume=l.injvolume, volumeUnits=l.injvolunits, x_coord = l.xcoord, y_coord = l.ycoord, z_coord = l.zcoord)
                injection.save()
                break
@@ -213,7 +213,7 @@ for sr in slist:
 
                 elif metal.find(' F ') != -1:
                    idSeries = series_f.id
-                   bitDepth = 16
+                   bitDepth = 8
                    series_f.numQCSections += 1
 		          
                 elif metal.find(' IHC ') != -1:
