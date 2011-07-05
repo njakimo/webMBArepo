@@ -2,6 +2,7 @@
 
 {% block css %}
  <link rel="stylesheet" type="text/css" media="screen" href="/static/css/tree.css" />
+ <link rel="stylesheet" type="text/css" media="screen" href="/static/css/injections.css" />
 {% endblock%}
 
 {% block js %}
@@ -24,16 +25,27 @@ window.addEvent('domready',function(){
     tree.addEvent('select', function(node) {
 		window.location.href = '/seriesbrowser/?region_filter=' + node.property.id;
 	});
+
+  // Add help icon and help text on mouseover
+  new Element( 'a', {href: 'http://mbaimages.cshl.edu/?page_id=973', target:'_blank', id:'logo'} ).injectInside('helpSection');
+  $('logo').position({relativeTo: $('helpSection'), position: 'upperLeft'});
+  new Element('img', {src: '/static/djatoka/images/help.png', id: 'help', styles: { opacity:0.8 } } ).injectInside('logo');
+
+  $('help').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="/static/djatoka/images/help.png",sizingMethod=scale)' );
+
+  new Tips( '#help, #toolbar', {
+     className: 'tool-tip2',
+     onShow: function(t){ t.setStyle('opacity',0.2); t.fade(0.9); },
+     onHide: function(t){ t.fade(0); }
+  });
+   $('help').store('tip:text', '<div style="display: table-cell;"><img style="vertical-align:text-top;" src="/static/img/bap_logo_tr.png" width="53" height="60" /></div><div style="width: 500px; display: table-cell; padding:20px; vertical-align:top; color:#fff; line-height:110%; font-size:13px;"><li>This page displays the Allen Reference Atlas region hierarchy.</li><li>Click the <strong>+</strong> symbols to expand a branch of the hierarchy and the <strong>-</strong> symbols to contract a branch.</li><li>The number indicated at each node of the tree corresponds to the number of image series available in the MBA data set for injections into that region <i>or its sub-regions</i>.</li><li>Click the name of any region to browse the images corresponding to injections within that region or its subregions.</li><br /><strong>Click the ? icon for addition help</strong>');
 });
 </script>
 {% endblock%}
 
 {% block content %}
-<p>
- Click a brain region to navigate to the series list corresponding to
- injections given in the region. The number at each node of the tree below
- corresponds to number of series having injections administered to that site.  
-</p>
+<div id="helpSection"><br /><br /><br /></div>
+
 <h1>Select a brain region:</h1>
 <div id="tree_container"></div>
 {% endblock %}

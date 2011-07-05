@@ -1,9 +1,33 @@
 {% extends "base.html" %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="/static/css/injections.css">
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  window.addEvent("domready", function() {
+
+  // Add help icon and help text on mouseover
+  new Element( 'a', {href: 'http://mbaimages.cshl.edu/?page_id=973', target:'_blank', id:'logo'} ).injectInside('filter');
+  $('logo').position({relativeTo: $('filter'), position: 'upperLeft'});
+  new Element('img', {src: '/static/djatoka/images/help.png', id: 'help', styles: { opacity:0.8 } } ).injectInside('logo');
+
+  $('help').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="/static/djatoka/images/help.png",sizingMethod=scale)' );
+
+  new Tips( '#help, #toolbar', {
+     className: 'tool-tip2',
+     onShow: function(t){ t.setStyle('opacity',0.2); t.fade(0.9); },
+     onHide: function(t){ t.fade(0); }
+  });
+   $('help').store('tip:text', '<div style="display: table-cell;"><img style="vertical-align:text-top;" src="/static/img/bap_logo_tr.png" width="53" height="60" /></div><div style="width: 500px; display: table-cell; padding:20px; vertical-align:top; color:#fff; line-height:110%; font-size:13px;"><li>This page displays a table of the various image series (a group of sections from the same experiment) available in the MBA project web page</li><li>To view the hi-res images for any image series, <strong>click the thumbnail image</strong> under the "View" column of the table.</li><li>To view all of the thumbnails for an image series, clikc the <strong>Section Gallery</strong> link in a chosen row.</li><li>Sort this series table by clicking the hyperlinks at the top of each column (click twice to reverse sort order)</li><li>Limit the series in the table by a specific tracer type and/or a target (injected) anatomical region (and its subregions) using the <strong>Filter</strong> functionality at top.</li><br /><strong>Click the ? icon for additional help</strong>');
+});
+</script>
+{% endblock %}
 
 {% block content %}
     <div id="filter">
         <form action="/seriesbrowser/" method="get">
-        <div class="fieldWrapper">
+        <div class="fieldWrapper" style="margin-left: 42px;">
         {{ form.subject.errors }}
             <ul>
             <li>Tracer: {{ form.tracer_filter }}</li>
@@ -12,29 +36,13 @@
         <label for="id_tracer_filter">Tracer:</label>{{ form.tracer_filter }}
         <label for="id_region_filter">Region:</label>{{ form.region_filter }}
         {% endcomment %}
-        <li><input type="submit" value="Filter" /></li>
+        <li><input type="submit" value="Filter" style="border: 1px solid #555; margin-top: 5px;" /></li>
                 </ul>
         </div>
         </form>
     </div>
-<p>
- To view the sections for each brain listed below, please click on the thumbnail
- image under the "View" column or the "Section Gallery" link under the "Preview" column. Clicking on the
- thumbnail for the "View" column will take you to the main image viewer page
- where you will be able to navigate through the sections by scrolling through a
- filmstrip provided at the bottom of the screen. The main image will be shown
- in the central panel of that screen. Clicking on the "Section Gallery" link
- under the "Preview" column will
- take you to an intermediary preview page, which will have a larger gallery of
- section thumbnails to choose from. Clicking on a thumbnail from the preview
- page will navigate you to the main viewer page with the section selected in
- the filmstrip and the sagittal view marker positioned accordingly.
-</p>
-<!--<br/>
-<p>
-{{sql}}
-</p>
-<br/>-->
+
+<br />
 {% if series_page.object_list %}
     <div class="pagination">
     <span class="step-links">
