@@ -8,10 +8,10 @@ class SeriesAdmin(admin.ModelAdmin):
 admin.site.register(Series, SeriesAdmin)
 
 class SectionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'series')
+    list_display = ('name', 'series', 'isVisible', 'y_coord')
     list_filter = ('series',)
-    fields = ('name', 'series')
-    readonly_fields = ('name', 'series') 
+    fields = ('name', 'series', 'isVisible','y_coord')
+    readonly_fields = ('series','y_coord') 
 admin.site.register(Section, SectionAdmin)
 
 class InjectionAdmin(admin.ModelAdmin):

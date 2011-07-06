@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<h2>Please login below:</h2>
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
@@ -19,7 +19,7 @@
 </tr>
 </table>
 
-<input type="submit" value="login" />
+<input type="submit" value="login" style="border: 1px solid #555;"/>
 <input type="hidden" name="next" value="/seriesbrowser/" />
 </form>
 

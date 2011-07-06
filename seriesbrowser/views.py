@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django import forms
 from seriesbrowser.models import Tracer, Region, Series, Section, NearestSeries, Injection, Updater, SectionNote, LabelMethod, Brain
 from settings import STATIC_DOC_ROOT
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 import json
 import os
 import re
@@ -14,6 +14,7 @@ from urllib2 import urlopen, URLError
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
+from django.contrib.auth.forms import UserCreationForm
 
 from cStringIO import StringIO
 
@@ -65,7 +66,7 @@ def index(request):
         else:
             where = ' '.join([where,'AND injection.region_id IN (', ','.join(map(str,region.descendant_ids())), ')'])
 
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated() or not request.user.is_staff:
         if where == '':
            where += ' series.isRestricted = 0'
         else:
@@ -123,7 +124,7 @@ def index(request):
 def tree(request):
     try:
         root = Region.objects.get(pk=1)
-        tree = root.generate_tree(2,request.user.is_authenticated())
+        tree = root.generate_tree(2,request.user.is_authenticated() and request.user.is_staff)
     except ObjectDoesNotExist:
         tree = {}
     return render_to_response('seriesbrowser/tree.html', {
@@ -214,7 +215,6 @@ def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
     injection_list = Injection.objects.order_by('-y_coord')
     tnDir = STATIC_DOC_ROOT + '/img/jpgSections/tn'
-#    tn_list = os.listdir('X:/MBAPortal/njakimo-webMBArepo-80d5844/static/img/jpgSections/TN')
     tn_list = os.listdir(tnDir)
     tn_list.sort()  
     nSections = len(tn_list)
@@ -228,9 +228,14 @@ def injections(request):
     curSec = 0
     closestSec = []
     for y in injection_list:
-        while secYCoord[curSec]>float(y.y_coord):
-            curSec += 1
-        closestSec.append(curSec)
+        if not y.series.isRestricted or (request.user.is_authenticated() and request.user.is_staff):
+            while secYCoord[curSec]>float(y.y_coord):
+                curSec += 1
+            if abs(secYCoord[curSec]-float(y.y_coord)) > abs(secYCoord[curSec-1]-float(y.y_coord)):
+                curSec -= 1
+            closestSec.append(curSec)
+        else:
+            injection_list = injection_list.exclude(id=y.id)
         
     return render_to_response('seriesbrowser/injections.html', {
         'user' : request.user,
@@ -295,3 +300,16 @@ def metadata(request):
     except URLError:
         raise Http404
     return HttpResponse(response)
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return HttpResponseRedirect("/seriesbrowser/")
+    else:
+        form = UserCreationForm()
+    return render_to_response("seriesbrowser/register.html", {
+        'form': form,
+    })
+    
