@@ -69,6 +69,7 @@
         <td>Image Type</td>
         <td><a href="?sort=qc_{% if sort == 'qc' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Sections</a></td>
         <td>Preview</td>
+        <td>Comments</td>
     </tr>
     {% for series in series_page.object_list %}
         <tr>
@@ -80,8 +81,16 @@
             <td>{{ series.5 }}</td>
             <td>{{ series.10}}</td>
             <td>{{ series.6 }}</td>
-            <td><a href="/seriesbrowser/gallery/{{series.8}}/"
-            id="imageSize">Section Gallery</a></td> 
+            <td>
+	      <a href="/seriesbrowser/gallery/{{series.8}}/"
+            id="imageSize">Section Gallery
+	      </a>
+	    </td> 
+            <td>
+	      <a href="/seriesbrowser/showComments/{{series.8}}/">
+		Show Comments
+	      </a>
+	    </td> 
         </tr>
     {% endfor %}
     </table>

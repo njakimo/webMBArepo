@@ -9,6 +9,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 import json
 import os
 import re
+import datetime
 from urllib import unquote
 from urllib2 import urlopen, URLError
 from reportlab.pdfgen import canvas
@@ -21,6 +22,10 @@ from cStringIO import StringIO
 class FilterForm(forms.Form):
     tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
     region_filter = forms.ModelChoiceField(Region.objects.order_by('code').all())
+
+# class CommentFilterForm(forms.Form):
+#     section_filter = forms.ModelChoiceField(SectionTracer.objects.order_by('name').all())
+#     updater_filter = forms.ModelChoiceField(UpdaterRegion.objects.order_by('name').all())
 
 def index(request):
     sql = '''
@@ -312,4 +317,133 @@ def register(request):
     return render_to_response("seriesbrowser/register.html", {
         'form': form,
     })
+
+def addNote(request):
+   try:
+       try:
+           sectionId = int(request.GET.get('sectionId','0'))
+       except ValueError:
+           sectionId = 0
+       try:
+           comment = request.GET.get('sectionCommentVal','')
+       except ValueError:
+           comment = ''
+       section = Section.objects.get(pk = sectionId)
+       series = Series.objects.get(pk = section.series_id)
+       sections = series.section_set.filter(isVisible=1).order_by('sectionOrder').all()
+       nSections = len(sections)
+       if not nSections:
+           raise Http404
+       inj  = Injection.objects.filter(series=series)
+       region = ''         
+       for i in inj:
+          region  = Region.objects.get(pk=i.region.id)
+          break
+       ns = NearestSeries.objects.filter(series=series)
+       nslist = []
+       for n in ns:
+          s = Series.objects.get(pk=n.nearestSeriesId)
+          nslist.append(s)
+          if len(nslist) >= 5:
+             break
+      # add notes and comment
+       user = ''
+       userName = request.user
+       # to be commented out in prod, only for testing
+       userName = 'admin'
+       if userName != '':
+           user = Updater.objects.filter(name=userName)[0]
+           note = SectionNote( section=section, updater = user, score=0,  comment = comment, write_date = datetime.datetime.now())        
+           note.save() 
+   except ObjectDoesNotExist:
+       section = None
+       series = None
+       nslist = None
+       region = None
+       nSections = None
+       comment = None 
+   return render_to_response('seriesbrowser/viewer.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'nSections' : nSections,'comment':comment})
     
+def showComments(request, seriesId):
+    try:
+        series = Series.objects.get(pk=seriesId)
+        sql = '''
+         SELECT
+            series.desc as series,
+            section.name as section,
+            sectionNote.comment as comment,
+            updater.name as commentedBy,
+            sectionNote.write_date as commentDate
+         FROM seriesbrowser_series series     
+         INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)
+         INNER JOIN seriesbrowser_sectionnote sectionNote ON (sectionNote.section_id = section.id )
+         INNER JOIN seriesbrowser_updater updater  ON (updater.id = sectionNote.updater_id )
+         where series.id = 
+        ''' + seriesId 
+
+    # try:
+    #     section_filter = int(request.GET.get('section_filter','0'))
+    # except ValueError:
+    #     section_filter = 0
+
+    # try:
+    #     updater_filter = int(request.GET.get('updater_filter','0'))
+    # except ValueError:
+    #     updater_filter = 0
+
+    # andClause = ''
+    # if section_filter > 0:
+    #     andClause = ' and  '.join(['section.id =',str(section_filter)])
+    # if updater_filter > 0:
+    #     andClause = ' andClause  '.join(['updater.id =',str(updater_filter)])
+
+    # sort = request.GET.get('sort','name_asc')
+    # sort, dir = sort.split('_')
+
+    # if dir != 'asc' and dir != 'desc':
+    #     dir = 'asc'
+
+#     field = 'series.desc'
+#     extra = ''
+#     if sort == 'coordx':
+#         field = 'injection.x_coord'
+#         extra = ' '.join([',injection.y_coord',dir,',injection.z_coord',dir])
+#     elif sort == 'coordy':
+#         field = 'injection.y_coord'
+#         extra = ' '.join([',injection.x_coord',dir,',injection.z_coord',dir])
+#     elif sort == 'coordz':
+#         field = 'injection.z_coord'
+#         extra = ' '.join([',injection.x_coord',dir,',injection.y_coord',dir])
+#     elif sort == 'region':
+#         field = 'region.code'
+#     elif sort == 'tracer':
+#         field = 'tracer.name'
+#     order = ' '.join([field, dir, extra])
+#     if where != '':
+#             sql = ' '.join([sql,' WHERE ',where])
+#     sql = ' '.join([sql,'ORDER BY',order])
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        rs = cursor.fetchall()
+        paginator = Paginator(rs, 25)
+        try:
+            page = int(request.GET.get('page', '1'))
+        except ValueError:
+            page = 1
+        try:
+            comments_page = paginator.page(page)
+        except (EmptyPage, InvalidPage):
+            comments_page = paginator.page(paginator.num_pages)
+    except ():
+         pass
+    # form = FilterForm(initial={'tracer_filter' : tracer_filter, 'region_filter' : region_filter})
+    # filters = '&'.join(["tracer_filter=" + str(tracer_filter),"region_filter=" + str(region_filter)])
+    return render_to_response('seriesbrowser/comments.html', {
+        'user'        : request.user,
+        'comments_page' : comments_page,
+        'series' : series,
+        # 'sort'        : sort,
+        # 'dir'         : dir,
+        # 'filters'     : filters,
+        # 'form'        : form,
+         })

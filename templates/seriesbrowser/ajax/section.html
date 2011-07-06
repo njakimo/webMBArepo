@@ -1,3 +1,23 @@
+<script>
+function submitCommentForm(){
+//  alert(document.getElementById('sectionComment').value);
+  document.getElementById('sectionCommentVal').value = document.getElementById('sectionComment').value;
+  document.getElementById('commentForm').submit();
+}
+function limitText(limitField) {
+fldValue = limitField.value;
+var limitNum = 200;
+var chars = limitNum - fldValue.length;
+if (chars <= 0) {
+alert ("You are trying to enter more than the limit of " + limitNum + " characters! ");
+fldValue = fldValue.substring(0,limitNum-1)
+document.myform.limitedtextarea.value = fldValue;
+}
+if (chars == 10) {
+alert ("You are approaching the limit of " + limitNum + " characters and have only 10 characters left! ")
+}
+}
+</script> 
 <h3>{{ section.series.desc }} ({{nSections}} sections)</h3>
 <br/>
 <p><strong>Section:</strong>&nbsp;{{section.name}} <br />
@@ -41,12 +61,6 @@
 <p<a href="{{series.pedagogicalUnit.url}}">See related teaching unit</a></p>
 {% endif %}
 
-<!--<p>Enter notes <input type="textarea" id="sectionNote" style="height:10px;width:70px;overflow:auto;" value="{{sectionNote.comment}}"> </p>
-<input type="hidden"id = "sectionId" value="{{section.id}}"/>
-<div id = "noteSubmit">
- <p><input type="button" id = "submitButton" name = "Update" value = "Update" style="width:60px;" ></p>
-</div>-->
-
 <input type="hidden" id="seriesId" name="seriesId" value="{{series.id}}"/>
 <br/>
 {% if nisslID %}
@@ -55,6 +69,23 @@
 <br/>
 </div>
 {% endif %}
+<div id="commentDiv">
+  <form action="/seriesbrowser/addNote" method="get" id = "commentForm">
+    Comments (Max 200 characters):
+
+    <textarea id = "sectionComment" name = "sectionComment"
+    style="height:40px;width:220px;overflow:wrap;text-align:top;margin-top:10px;" value=""
+    onKeyDown="limitText(this);"
+onKeyUp="limitText(this);"> </textarea>
+    <input type="hidden" name = "sectionId" value="{{section.id}}"/>
+    <input type="hidden" name = "sectionCommentVal" id = "sectionCommentVal" value=""/>
+    <br/>
+    <input type="button" value="Submit"
+    style="margin-top:10px;"
+    onclick="javascript:submitCommentForm();" />
+  </form>
+</div>
+
 
 
 
