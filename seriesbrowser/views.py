@@ -23,9 +23,9 @@ class FilterForm(forms.Form):
     tracer_filter = forms.ModelChoiceField(Tracer.objects.order_by('name').all())
     region_filter = forms.ModelChoiceField(Region.objects.order_by('code').all())
 
-# class CommentFilterForm(forms.Form):
-#     section_filter = forms.ModelChoiceField(SectionTracer.objects.order_by('name').all())
-#     updater_filter = forms.ModelChoiceField(UpdaterRegion.objects.order_by('name').all())
+class CommentFilterForm(forms.Form):
+    section_filter = forms.ModelChoiceField(Section.objects.order_by('name').all())
+    updater_filter = forms.ModelChoiceField(Updater.objects.order_by('name').all())
 
 def index(request):
     sql = '''
@@ -76,7 +76,6 @@ def index(request):
            where += ' series.isRestricted = 0'
         else:
            where += ' AND series.isRestricted = 0'
-
 
     sort = request.GET.get('sort','name_asc')
     sort, dir = sort.split('_')
@@ -156,6 +155,7 @@ def viewer(request, seriesId, sectionId=None):
     except ObjectDoesNotExist:
         raise Http404
     return render_to_response('seriesbrowser/viewer.html', {
+        'series' : series,
         'sections' : sections,
         'section' : section,
         'nSections' : nSections
@@ -381,47 +381,47 @@ def showComments(request, seriesId):
          where series.id = 
         ''' + seriesId 
 
-    # try:
-    #     section_filter = int(request.GET.get('section_filter','0'))
-    # except ValueError:
-    #     section_filter = 0
+        try:
+            section_filter = int(request.GET.get('section_filter','0'))
+        except ValueError:
+            section_filter = 0
 
-    # try:
-    #     updater_filter = int(request.GET.get('updater_filter','0'))
-    # except ValueError:
-    #     updater_filter = 0
+        try:
+            updater_filter = int(request.GET.get('updater_filter','0'))
+        except ValueError:
+            updater_filter = 0
 
-    # andClause = ''
-    # if section_filter > 0:
-    #     andClause = ' and  '.join(['section.id =',str(section_filter)])
-    # if updater_filter > 0:
-    #     andClause = ' andClause  '.join(['updater.id =',str(updater_filter)])
+        andClause = ''
+        if section_filter > 0:
+            andClause = ' '.join(['section.id =',str(section_filter)])
+        if updater_filter > 0:
+            andClause = ' '.join(['updater.id =',str(updater_filter)])
 
-    # sort = request.GET.get('sort','name_asc')
-    # sort, dir = sort.split('_')
+        if andClause != '':
+            sql = ' '.join([sql,' AND ', andClause])
 
-    # if dir != 'asc' and dir != 'desc':
-    #     dir = 'asc'
+        # sort = request.GET.get('sort','name_asc')
+        # sort, dir = sort.split('_')
 
-#     field = 'series.desc'
-#     extra = ''
-#     if sort == 'coordx':
-#         field = 'injection.x_coord'
-#         extra = ' '.join([',injection.y_coord',dir,',injection.z_coord',dir])
-#     elif sort == 'coordy':
-#         field = 'injection.y_coord'
-#         extra = ' '.join([',injection.x_coord',dir,',injection.z_coord',dir])
-#     elif sort == 'coordz':
-#         field = 'injection.z_coord'
-#         extra = ' '.join([',injection.x_coord',dir,',injection.y_coord',dir])
-#     elif sort == 'region':
-#         field = 'region.code'
-#     elif sort == 'tracer':
-#         field = 'tracer.name'
-#     order = ' '.join([field, dir, extra])
-#     if where != '':
-#             sql = ' '.join([sql,' WHERE ',where])
-#     sql = ' '.join([sql,'ORDER BY',order])
+        # if dir != 'asc' and dir != 'desc':
+        #     dir = 'asc'
+
+        # field = 'series.desc'
+        # extra = ''
+        # if sort == 'coordx':
+        #     field = 'injection.x_coord'
+        #     extra = ' '.join([',injection.y_coord',dir,',injection.z_coord',dir])
+        # elif sort == 'coordy':
+        #     field = 'injection.y_coord'
+        #     extra = ' '.join([',injection.x_coord',dir,',injection.z_coord',dir])
+        # elif sort == 'coordz':
+        #     field = 'injection.z_coord'
+        #     extra = ' '.join([',injection.x_coord',dir,',injection.y_coord',dir])
+        # order = ' '.join([field, dir, extra])
+        # if where != '':
+        #         sql = ' '.join([sql,' WHERE ',where])
+        # sql = ' '.join([sql,'ORDER BY',order])
+
         cursor = connection.cursor()
         cursor.execute(sql)
         rs = cursor.fetchall()
@@ -436,14 +436,14 @@ def showComments(request, seriesId):
             comments_page = paginator.page(paginator.num_pages)
     except ():
          pass
-    # form = FilterForm(initial={'tracer_filter' : tracer_filter, 'region_filter' : region_filter})
-    # filters = '&'.join(["tracer_filter=" + str(tracer_filter),"region_filter=" + str(region_filter)])
+    form = CommentFilterForm(initial={'section_filter' : section_filter, 'updater_filter' : updater_filter})
+    filters = '&'.join(["section_filter=" + str(section_filter),"updater_filter=" + str(updater_filter)])
     return render_to_response('seriesbrowser/comments.html', {
         'user'        : request.user,
         'comments_page' : comments_page,
         'series' : series,
         # 'sort'        : sort,
         # 'dir'         : dir,
-        # 'filters'     : filters,
-        # 'form'        : form,
+        'filters'     : filters,
+        'form'        : form,
          })

@@ -84,6 +84,9 @@ onKeyUp="limitText(this);"> </textarea>
     style="margin-top:10px;"
     onclick="javascript:submitCommentForm();" />
   </form>
+   <p><a onclick
+   ="javascript:window.open('/seriesbrowser/showComments/{{series.id}}/?section_filter={{section.id}}&updater_filter=','_blank','toolbar=1');"
+   href = "#"> Show comments</a></p>
 </div>
 
 

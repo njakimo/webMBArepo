@@ -25,22 +25,23 @@
 {% endblock %}
 
 {% block content %}
-     <!-- <div id="filter">  -->
-     <!--     <form action="/seriesbrowser/showComments" method="get">  -->
-     <!--     <div class="fieldWrapper" style="margin-left: 42px;">  -->
-     <!--     {{ form.subject.errors }}  -->
-     <!--         <ul>  -->
-     <!--         <li>Section: {{ form.section_filter }}</li>  -->
-     <!--         <li>Commented By: {{ form.updater_filter }}</li>  -->
-     <!--     {% comment %}  -->
-     <!--     <label for="id_section_filter">Tracer:</label>{{ form.section_filter }}  -->
-     <!--     <label for="id_updater_filter">Region:</label>{{ form.updater_filter }}  -->
-     <!--     {% endcomment %}  -->
-     <!--     <li><input type="submit" value="Filter" style="border: 1px solid #555; margin-top: 5px;" /></li>  -->
-     <!--             </ul>  -->
-     <!--     </div>  -->
-     <!--     </form>  -->
-     <!-- </div>  -->
+
+      <div id="filter">  
+          <form action="/seriesbrowser/showComments/{{series.id}}/" method="get">  
+          <div class="fieldWrapper" style="margin-left: 42px;">  
+          {{ form.subject.errors }}  
+              <ul>  
+              <li>Section: {{ form.section_filter }}</li>  
+              <li>Commented By: {{ form.updater_filter }}</li>  
+          {% comment %}  
+          <label for="id_section_filter">Tracer:</label>{{ form.section_filter }}  
+          <label for="id_updater_filter">Region:</label>{{ form.updater_filter }}  
+          {% endcomment %}  
+          <li><input type="submit" value="Filter" style="border: 1px solid #555; margin-top: 5px;" /></li>  
+                  </ul>  
+          </div>  
+          </form>  
+      </div>  
 <br />
 {% if comments_page.object_list %}
     <div class="pagination">
@@ -58,6 +59,7 @@
         {% endif %}
     </span>
     </div>
+
     <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
         <!-- <td><a href="?sort=name_{% if sort == 'name' and dir == 'asc'%}desc{% -->
@@ -79,6 +81,7 @@
     {% endfor %}
     </table>
     <div class="pagination">
+{{sql2}}
     <span class="step-links">
         {% if comments_page.has_previous %}
             <!-- <a href="?page={{ comments_page.previous_page_number }}&sort={{ -->
