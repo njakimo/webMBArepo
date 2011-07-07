@@ -5,22 +5,21 @@
 
 {% block js %}
 <script type="text/javascript">
-<!--   window.addEvent("domready", function() { -->
+  window.addEvent("domready", function() {
+  // Add help icon and help text on mouseover
+  new Element( 'a', {href: 'http://mbaimages.cshl.edu/?page_id=973', target:'_blank', id:'logo'} ).injectInside('filter');
+  $('logo').position({relativeTo: $('filter'), position: 'upperLeft'});
+  new Element('img', {src: '/static/djatoka/images/help.png', id: 'help', styles: { opacity:0.8 } } ).injectInside('logo');
 
-<!--   // Add help icon and help text on mouseover -->
-<!--   new Element( 'a', {href: 'http://mbaimages.cshl.edu/?page_id=973', target:'_blank', id:'logo'} ).injectInside('filter'); -->
-<!--   $('logo').position({relativeTo: $('filter'), position: 'upperLeft'}); -->
-<!--   new Element('img', {src: '/static/djatoka/images/help.png', id: 'help', styles: { opacity:0.8 } } ).injectInside('logo'); -->
+  $('help').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="/static/djatoka/images/help.png",sizingMethod=scale)' );
 
-<!--   $('help').setStyle( 'filter', 'progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,src="/static/djatoka/images/help.png",sizingMethod=scale)' ); -->
-
-<!--   new Tips( '#help, #toolbar', { -->
-<!--      className: 'tool-tip2', -->
-<!--      onShow: function(t){ t.setStyle('opacity',0.2); t.fade(0.9); }, -->
-<!--      onHide: function(t){ t.fade(0); } -->
-<!--   }); -->
-<!--    $('help').store('tip:text', '<div style="display: table-cell;"><img style="vertical-align:text-top;" src="/static/img/bap_logo_tr.png" width="53" height="60" /></div><div style="width: 500px; display: table-cell; padding:20px; vertical-align:top; color:#fff; line-height:110%; font-size:13px;"><li>This page displays a table of the various image series (a group of sections from the same experiment) available in the MBA project web page</li><li>To view the hi-res images for any image series, <strong>click the thumbnail image</strong> under the "View" column of the table.</li><li>To view all of the thumbnails for an image series, clikc the <strong>Section Gallery</strong> link in a chosen row.</li><li>Sort this series table by clicking the hyperlinks at the top of each column (click twice to reverse sort order)</li><li>Limit the series in the table by a specific tracer type and/or a target (injected) anatomical region (and its subregions) using the <strong>Filter</strong> functionality at top.</li><br /><strong>Click the ? icon for additional help</strong>'); -->
-<!-- }); -->
+  new Tips( '#help, #toolbar', {
+     className: 'tool-tip2',
+     onShow: function(t){ t.setStyle('opacity',0.2); t.fade(0.9); },
+     onHide: function(t){ t.fade(0); }
+  });
+    $('help').store('tip:text', '<div style="display:table-cell;"><img style="vertical-align:text-top;" src="/static/img/bap_logo_tr.png" width="53" height="60" /></div><div style="width: 500px; display: table-cell; padding:20px;vertical-align:top; color:#fff; line-height:110%;font-size:13px;"><li>This page displays a table of the various comments for an image series (a group of sections from the same experiment) available in the MBA project web page</li><li>To view individual sections, click on a <strong>section</strong>.</li><li>To view all of the thumbnails for an image series, click on the <strong >series</strong>.</li><li>Sort this comments table by clicking the hyperlinks at the top of each column (click twice to reverse sort order)</li><li>Limit the comments in the table by a specific section and/or a user name using the <strong>Filter</strong> functionality at top.</li><br /><strong>Click the ? icon for additional help</strong>'); 
+});
 </script>
 {% endblock %}
 
@@ -42,38 +41,32 @@
           </div>  
           </form>  
       </div>  
-<br />
+<p>Comments for <a href="/seriesbrowser/viewer/{{series.id}}/"  > {{series.desc}}</a></p>
 {% if comments_page.object_list %}
     <div class="pagination">
     <span class="step-links">
         {% if comments_page.has_previous %}
-            <!-- <a href="?page={{ comments_page.previous_page_number }}&sort={{sort }}_{{ dir }}&{{ filters }}">prev</a>  -->
-            <a href="?page={{ comments_page.previous_page_number }}">prev</a> 
+            <a href="?page={{ comments_page.previous_page_number }}&sort={{sort }}_{{ dir }}&{{ filters }}">prev</a>
         {% endif %}
         <span class="current">
             Page {{ comments_page.number }} of {{ comments_page.paginator.num_pages }}
         </span>
         {% if comments_page.has_next %}
-            <!-- <a href="?page={{ comments_page.next_page_number }}&sort={{ sort  }}_{{ dir }}&{{ filters }}">next</a>  -->
-            <a href="?page={{ comments_page.next_page_number }}">next</a> 
+            <a href="?page={{ comments_page.next_page_number }}&sort={{ sort  }}_{{ dir }}&{{ filters }}">next</a>
         {% endif %}
     </span>
     </div>
 
     <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
-        <!-- <td><a href="?sort=name_{% if sort == 'name' and dir == 'asc'%}desc{% -->
-        <!-- else %}asc{% endif %}&{{ filters }}">Series Name</a></td> -->
-        <td>Series Name</td>
-        <td>Section</td>
-        <td>Comment</td>
-        <td>Commented By</td>
-        <td>Comment Date</td>
+        <td><a href="?sort=name_{% if sort == 'name' and dir == 'asc'%}desc{%else%}asc{% endif %}&{{ filters }}">Section Name</a></td>
+        <td><a href="?sort=comment_{% if sort == 'comment' and dir == 'asc'%}desc{%else%}asc{% endif %}&{{ filters }}">Comment</a></td>
+        <td><a href="?sort=by_{% if sort == 'by' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Commented By</a></td>
+        <td><a href="?sort=date_{% if sort == 'date' and dir == 'asc'%}desc{% else %}asc{% endif %}&{{ filters }}">Comment Date</a></td>
     </tr>
     {% for comments in comments_page.object_list %}
         <tr>
-            <td>{{ comments.0 }}</td>
-            <td>{{ comments.1 }}</td>
+            <td><a href="/seriesbrowser/viewer/{{series.id}}/{{comments.0}}/"  >{{ comments.1 }}</a></td>
             <td>{{ comments.2 }}</td>
             <td>{{ comments.3 }}</td>
             <td>{{ comments.4 }}</td>
@@ -81,20 +74,15 @@
     {% endfor %}
     </table>
     <div class="pagination">
-{{sql2}}
     <span class="step-links">
         {% if comments_page.has_previous %}
-            <!-- <a href="?page={{ comments_page.previous_page_number }}&sort={{ -->
-            <!-- sort }}_{{ dir }}&{{ filters }}">prev</a> -->
-            <a href="?page={{ comments_page.previous_page_number }}">prev</a>
+            <a href="?page={{ comments_page.previous_page_number }}&sort={{sort }}_{{dir}}&{{filters}}">prev</a>
         {% endif %}
         <span class="current">
             Page {{ comments_page.number }} of {{ comments_page.paginator.num_pages }}
         </span>
         {% if comments_page.has_next %}
-            <!-- <a href="?page={{ comments_page.next_page_number }}&sort={{ sort -->
-            <!-- }}_{{ dir }}&{{ filters }}">next</a> -->
-            <a href="?page={{ comments_page.next_page_number }}">next</a>
+            <a href="?page={{ comments_page.next_page_number }}&sort={{sort}}_{{dir}}&{{filters}}">next</a>
         {% endif %}
     </span>
     </div>

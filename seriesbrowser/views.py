@@ -369,8 +369,8 @@ def showComments(request, seriesId):
         series = Series.objects.get(pk=seriesId)
         sql = '''
          SELECT
-            series.desc as series,
-            section.name as section,
+            section.id as id,
+            section.name as name,
             sectionNote.comment as comment,
             updater.name as commentedBy,
             sectionNote.write_date as commentDate
@@ -400,32 +400,29 @@ def showComments(request, seriesId):
         if andClause != '':
             sql = ' '.join([sql,' AND ', andClause])
 
-        # sort = request.GET.get('sort','name_asc')
-        # sort, dir = sort.split('_')
+        sort = request.GET.get('sort','name_asc')
+        sort, dir = sort.split('_')
 
-        # if dir != 'asc' and dir != 'desc':
-        #     dir = 'asc'
+        if dir != 'asc' and dir != 'desc':
+            dir = 'asc'
 
-        # field = 'series.desc'
-        # extra = ''
-        # if sort == 'coordx':
-        #     field = 'injection.x_coord'
-        #     extra = ' '.join([',injection.y_coord',dir,',injection.z_coord',dir])
-        # elif sort == 'coordy':
-        #     field = 'injection.y_coord'
-        #     extra = ' '.join([',injection.x_coord',dir,',injection.z_coord',dir])
-        # elif sort == 'coordz':
-        #     field = 'injection.z_coord'
-        #     extra = ' '.join([',injection.x_coord',dir,',injection.y_coord',dir])
-        # order = ' '.join([field, dir, extra])
-        # if where != '':
-        #         sql = ' '.join([sql,' WHERE ',where])
-        # sql = ' '.join([sql,'ORDER BY',order])
+        field = 'section.name'
+        order = ' '.join([field, dir])
+
+        if sort == 'comment':
+            field = 'sectionNote.comment'
+        elif sort == 'by':
+            field = 'updater.name'
+        elif sort == 'date':
+            field = 'sectionNote.write_date'
+        
+        order = ' '.join([field, dir])
+        sql = ' '.join([sql,' ORDER BY ',order])
 
         cursor = connection.cursor()
         cursor.execute(sql)
         rs = cursor.fetchall()
-        paginator = Paginator(rs, 25)
+        paginator = Paginator(rs, 5)
         try:
             page = int(request.GET.get('page', '1'))
         except ValueError:
@@ -442,8 +439,8 @@ def showComments(request, seriesId):
         'user'        : request.user,
         'comments_page' : comments_page,
         'series' : series,
-        # 'sort'        : sort,
-        # 'dir'         : dir,
+        'sort'        : sort,
+        'dir'         : dir,
         'filters'     : filters,
         'form'        : form,
          })
