@@ -17,6 +17,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from django.contrib.auth.forms import UserCreationForm
 from django.template import RequestContext
+from django.contrib.auth.models import User
 
 from cStringIO import StringIO
 
@@ -26,7 +27,7 @@ class FilterForm(forms.Form):
 
 class CommentFilterForm(forms.Form):
     section_filter = forms.ModelChoiceField(Section.objects.order_by('name').all())
-    updater_filter = forms.ModelChoiceField(Updater.objects.order_by('name').all())
+    updater_filter = forms.ModelChoiceField(User.objects.order_by('username').all())
 
 def index(request):
     sql = '''
