@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if user.is_authenticated %}
+<p>User "{{ user }}" is currently logged in.  Click <a href="/logout/">here</a> to logout.</p><br /><br />
+{% else %}
 <h2>Please login below:</h2>
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
@@ -23,4 +26,6 @@
 <input type="hidden" name="next" value="/seriesbrowser/" />
 </form>
 
+<p>If you do not have an account, <a href="/register/">register</a> here.</p>
+{% endif %}
 {% endblock %}

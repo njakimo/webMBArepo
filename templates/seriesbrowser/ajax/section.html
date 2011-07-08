@@ -69,7 +69,9 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 <br/>
 </div>
 {% endif %}
+
 <div id="commentDiv">
+{% if user.is_authenticated %}
   <form action="/seriesbrowser/addNote" method="get" id = "commentForm">
     Comments (Max 200 characters):
 
@@ -84,10 +86,12 @@ onKeyUp="limitText(this);"> </textarea>
     style="margin-top:10px;"
     onclick="javascript:submitCommentForm();" />
   </form>
-   <p><a onclick
-   ="javascript:window.open('/seriesbrowser/showComments/{{series.id}}/?section_filter={{section.id}}&updater_filter=','_blank','toolbar=1');"
-   href = "#"> Show comments</a></p>
+{% endif %}
+   <p><a onclick ="javascript:window.open('/seriesbrowser/showComments/{{series.id}}/?section_filter={{section.id}}&updater_filter=','_blank','toolbar=1');"
+   href = "#"> View section/series comments</a></p>
+
 </div>
+
 
 
 

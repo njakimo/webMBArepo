@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class DataResolver(models.Model):
     identifier = models.CharField(max_length=200)
@@ -67,7 +68,7 @@ class Series(models.Model):
     sectionThicknessUnit = models.CharField(max_length=2) 
     sectioningPlane = models.ForeignKey(SectioningPlane)
     pedagogicalUnit = models.ManyToManyField(PedagogicalUnit, blank=True, null=True)
-    numQCSections = models.IntegerField(null=True)
+    numQCSections = models.IntegerField()
     #indicate sample section
     def __unicode__(self):
         return self.desc
@@ -154,7 +155,7 @@ class Updater(models.Model):
 
 class SeriesNote(models.Model):
     series = models.ForeignKey(Series)
-    updater = models.ForeignKey(Updater)
+    updater = models.ForeignKey(User)
     score = models.IntegerField()
     comment = models.CharField(max_length=200)
     write_date = models.DateTimeField()
@@ -164,7 +165,7 @@ class SeriesNote(models.Model):
 
 class SectionNote(models.Model):
     section = models.ForeignKey(Section)
-    updater = models.ForeignKey(Updater)
+    updater = models.ForeignKey(User)
     score = models.IntegerField()
     comment = models.CharField(max_length=200)
     write_date = models.DateTimeField()

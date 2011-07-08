@@ -16,6 +16,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from django.contrib.auth.forms import UserCreationForm
+from django.template import RequestContext
 
 from cStringIO import StringIO
 
@@ -214,7 +215,7 @@ def section(request, id):
         nSections = series.section_set.filter(isVisible=1).count()
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'nisslID':nisslID, 'atlasID':atlasID,'nSections':nSections})
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'nisslID':nisslID, 'atlasID':atlasID,'nSections':nSections},context_instance=RequestContext(request))
 
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context
@@ -347,13 +348,9 @@ def addNote(request):
           if len(nslist) >= 5:
              break
       # add notes and comment
-       user = ''
        userName = request.user
-       # to be commented out in prod, only for testing
-       userName = 'admin'
-       if userName != '':
-           user = Updater.objects.filter(name=userName)[0]
-           note = SectionNote( section=section, updater = user, score=0,  comment = comment, write_date = datetime.datetime.now())        
+       if userName.is_authenticated():
+           note = SectionNote( section=section, updater = userName, score=0,  comment = comment, write_date = datetime.datetime.now())        
            note.save() 
    except ObjectDoesNotExist:
        section = None
@@ -372,12 +369,12 @@ def showComments(request, seriesId):
             section.id as id,
             section.name as name,
             sectionNote.comment as comment,
-            updater.name as commentedBy,
+            updater.username as commentedBy,
             sectionNote.write_date as commentDate
          FROM seriesbrowser_series series     
          INNER JOIN seriesbrowser_section section ON (section.series_id = series.id)
          INNER JOIN seriesbrowser_sectionnote sectionNote ON (sectionNote.section_id = section.id )
-         INNER JOIN seriesbrowser_updater updater  ON (updater.id = sectionNote.updater_id )
+         INNER JOIN auth_user updater  ON (updater.id = sectionNote.updater_id )
          where series.id = 
         ''' + seriesId 
 
