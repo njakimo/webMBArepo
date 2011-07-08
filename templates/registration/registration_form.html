@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h2>Register for http://mouse.brainarchitecture.org</h2>
+<p>Please complete the form below, and an email will be sent to your supplied address to activate your account.</p>
+<form method="post" action=".">
+  {{ form.as_p }}
+
+  <input type="submit" value="{% trans 'Submit' %}" />
+</form>
+{% endblock %}

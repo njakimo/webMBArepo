@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h2>Please login below:</h2>
+<form method="post" action=".">
+  {{ form.as_p }}
+  <input type="submit" value="{% trans 'Log in' %}" />
+  <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+<p>{% trans "Forgot your password?" %} <a href="{% url auth_password_reset %}">{% trans "Reset it here" %}</a></p>
+<p>{% trans "Need an account?" %} <a href="{% url registration_register %}">{% trans "Register here" %}</a></p>
+{% endblock %}
