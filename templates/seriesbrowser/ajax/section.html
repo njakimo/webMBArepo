@@ -33,8 +33,9 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 <p><strong>Label Method:</strong>&nbsp; {{section.series.labelMethod.name}}</p>
 {% endif %}
 <br/>
-{% if region %}
-<p><strong>Injection region:</strong>&nbsp;{{ region.desc}} ({{region.code}})</p>
+{% if inj.region %}
+<p><strong>Injection region:</strong>&nbsp;{{ inj.region.desc}} ({{inj.region.code}}) ({{inj.x_coord}} mm, {{inj.y_coord}} mm, {{inj.z_coord}} mm)</p>
+<p><strong>Tracer:</strong>&nbsp; {{inj.tracer.name}}</strong></p>
 <br/>
 <h4>Series with nearby injections:</h4>
 <div id = "button">
@@ -46,14 +47,14 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 {% endfor %}
 </ul>
 </div>
-<p>Search <a href="http://mbaimages.cshl.edu/?page_id=595" target="_blank">text mining</a> engine for region {{region.code}} (<a target="_blank" href="http://brainarchitecture.org:8080/neuro_nlp/index.jsp?query='{{region.desc}}'&docsPerPage=5&category0=connectivity&sentsPerDoc=5&twoBrains=yes&sentsToSort=1000">Link</a>)
+<p>Search <a href="http://mbaimages.cshl.edu/?page_id=595" target="_blank">literature</a> for region {{inj.region.code}} (<a target="_blank" href="http://brainarchitecture.org:8080/neuro_nlp/index.jsp?query='{{inj.region.desc}}'&docsPerPage=5&category0=connectivity&sentsPerDoc=5&twoBrains=yes&sentsToSort=1000">Link</a>)
 </p>
 <br/>
-<p><a href="/seriesbrowser/?region_filter={{region.id}}" target="_blank">Show</a> all injection series for region {{region.code}}</p>
+<p><a href="/seriesbrowser/?region_filter={{inj.region.id}}" target="_blank">Show</a> all injection series for region {{inj.region.code}}</p>
 <br/>
 
-<p>View BAMS efferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conef.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
-<p>View BAMS afferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conaf.php?aidi={{region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
+<p>View BAMS efferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conef.php?aidi={{inj.region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
+<p>View BAMS afferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conaf.php?aidi={{inj.region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
 {% endif %}
 
 <!-- This should list an educational unit URL if appropriate -->
@@ -73,7 +74,7 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 <div id="commentDiv">
 {% if user.is_authenticated %}
   <form action="/seriesbrowser/addNote" method="get" id = "commentForm">
-    Comments (Max 200 characters):
+    Add a comment (Max 200 characters):
 
     <textarea id = "sectionComment" name = "sectionComment"
     style="height:40px;width:220px;overflow:wrap;margin-top:10px;" value=""

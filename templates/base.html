@@ -90,6 +90,7 @@
             <div class="logo">  
                          <h2><a href="http://mbaimages.cshl.edu/" title="Filling the gaps in our knowledge of brain circuitry"><img src="http://mbaimages.cshl.edu/wp-content/themes/theme1161/images/logo.png" alt="" /></a></h2>
 
+
                     
          </div>
          
@@ -140,15 +141,22 @@
 
 <li id="menu-item-42" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-42"><a href="http://mbaimages.cshl.edu/?page_id=40">Contact</a></li>
 </ul>            </nav><!--.primary-->
+<div style="position: absolute; top: 0px; right: 0px; width: 180px; height: 20px; background-color:#fff; opacity: 0.9; filter:alpha(opacity=90); text-align:right; color:#000; border-bottom-left-radius:10px;">
+{% if user.is_authenticated %}
+{{ user }} | <a href="/accounts/logout/">Logout</a>
+{% else %}
+Hello Guest! <a href="/accounts/login/">Login</a>|<a href="/accounts/register/">Register</a>
+{% endif %}
+</div>
             <div class="header-sidebar">
                <div id="search-3" class="widget"><form method="get" id="searchform" action="http://mbaimages.cshl.edu">
 	<input type="text"  value="Searching..." onblur="if(this.value=='') this.value='Searching...'" onfocus="if(this.value =='Searching...' ) this.value=''" name="s" id="s" /><input class="submit" type="submit" value="" />
 </form>
-</div><div id="text-3" class="widget">			<div class="textwidget"><div class="phone">Call Center Solutions:<span>1- 800 - 458 - 7856</span></div></div>
-		</div>            </div>
-
+</div><!--<div id="text-3" class="widget">			<div class="textwidget"><div class="phone">Call Center Solutions:<span>1- 800 - 458 - 7856</span></div></div></div> -->
+           </div>
          </div><!--.container-->
       </div>
+
 	</header>
 
   

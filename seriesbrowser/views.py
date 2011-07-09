@@ -198,12 +198,7 @@ def section(request, id):
             nisslID = nissl.id
         else:
             nisslID = 0
-        
-        region = ''         
 
-        for i in inj:
-           region  = Region.objects.get(pk=i.region.id)
-           break
         ns = NearestSeries.objects.filter(series=series)
         nslist = []
         for n in ns:
@@ -216,7 +211,7 @@ def section(request, id):
         nSections = series.section_set.filter(isVisible=1).count()
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'region':region, 'nisslID':nisslID, 'atlasID':atlasID,'nSections':nSections},context_instance=RequestContext(request))
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'inj':inj[0], 'nisslID':nisslID, 'atlasID':atlasID,'nSections':nSections},context_instance=RequestContext(request))
 
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context

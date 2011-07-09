@@ -184,7 +184,7 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 }
 #panel {
 position: fixed;
-top: 10px;
+top: 42px;
 left: 0;
 display: block;
 background: #111111;
@@ -194,7 +194,6 @@ border:1px solid #222222;
 -moz-border-radius-bottomright: 20px;
 -webkit-border-bottom-right-radius: 20px;
 width: 330px;
-height: 500px;
 padding: 30px 30px 30px 130px;
 filter: alpha(opacity=85);
 opacity: .85;
@@ -248,7 +247,7 @@ font-family: verdana, helvetica, arial, sans-serif;
 color:#fff;
 padding: 20px 40px 20px 15px;
 font-weight: 700;
-background:#333333 url(images/plus.png) 85% 55% no-repeat;
+background-color:#333333;
 border:1px solid #444444;
 -moz-border-radius-topright: 20px;
 -webkit-border-top-right-radius: 20px;
