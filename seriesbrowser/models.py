@@ -55,7 +55,7 @@ class SectioningPlane(models.Model):
         return self.desc
 
 class Series(models.Model):
-    isAuxiliary = models.BooleanField(default='false')
+    isAuxiliary = models.BooleanField(default=False)
     sampleSection = models.ForeignKey('Section', related_name='+', null=True)
     pixelResolution = models.FloatField(default=0.46)
     labelMethod = models.ForeignKey(LabelMethod)
@@ -63,7 +63,7 @@ class Series(models.Model):
     desc = models.CharField('description', max_length=200)
     brain = models.ForeignKey(Brain)
     lab = models.ForeignKey(Laboratory)
-    isRestricted = models.BooleanField(default='false')
+    isRestricted = models.BooleanField(default=False)
     sectionThickness = models.IntegerField()
     sectionThicknessUnit = models.CharField(max_length=2) 
     sectioningPlane = models.ForeignKey(SectioningPlane)
@@ -79,7 +79,7 @@ class NearestSeries(models.Model):
     nearestSeriesId = models.IntegerField(Series)
 
 class Section(models.Model):
-    isVisible = models.BooleanField(default='true')
+    isVisible = models.BooleanField(default=True)
     series = models.ForeignKey(Series)
     name = models.CharField(max_length=200)
     sectionOrder = models.IntegerField()
