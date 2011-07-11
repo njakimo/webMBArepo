@@ -4,6 +4,7 @@ import os
 import random
 import re
 import pickle
+import sys
 
 from seriesbrowser.models import Brain
 from seriesbrowser.models import Laboratory
@@ -138,7 +139,12 @@ slist = os.listdir('/mnt/data001/MBAProcessingResults/PMD')
 
 for sr in slist:
 
-    if sr.startswith('PMD17') or sr.startswith('PMD18') or sr.startswith('PMD113') or sr.startswith('PMD114') or sr.startswith('PMD29') or sr.startswith('PMD70') or sr.startswith('PMD52'):
+    if sr.startswith('PMD'):
+       try:
+          Brain.objects.get(name=sr)
+          break
+       except:
+          sys.stdout.write('Adding ' + sr + '\n')
        brain = Brain(name=sr)
        brain.save()
 
@@ -148,13 +154,18 @@ for sr in slist:
 
        #errorf.write(' sample section num ' + str(sampleSectionNum) + '\n')
 
-       series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
+       restrict=False 
+
+       if sr.startswith('PMD18') or sr.startswith('PMD113') or sr.startswith('PMD114') or sr.startswith('PMD29'):
+          restrict=True
+
+       series_n = Series(desc=brain.name + ' Nissl Series', brain_id=brain.id, isRestricted=restrict, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_n.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
        series_n.save()
 
-       series_f = Series(desc=brain.name + ' Flourescent Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu', lab_id=lab_m.id, labelMethod_id = lm_f.id, imageMethod_id = im_f.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
+       series_f = Series(desc=brain.name + ' Flourescent Series', brain_id=brain.id, isRestricted=restrict, sectionThickness = 20, sectionThicknessUnit = 'mu', lab_id=lab_m.id, labelMethod_id = lm_f.id, imageMethod_id = im_f.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
        series_f.save()
 
-       series_ihc = Series(desc=brain.name + ' IHC Series', brain_id=brain.id, isRestricted=False, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_ihc.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
+       series_ihc = Series(desc=brain.name + ' IHC Series', brain_id=brain.id, isRestricted=restrict, sectionThickness = 20, sectionThicknessUnit = 'mu' ,lab_id=lab_m.id, labelMethod_id = lm_ihc.id, imageMethod_id = im_b.id, sectioningPlane_id=sp_c.id, numQCSections = 0)
        series_ihc.save()
 
       
@@ -192,6 +203,25 @@ for sr in slist:
                 m = re.match(r"(meta_.*txt)\:\s+(-?\d+.\d+)", line)
                 ydict[m.group(1)] = m.group(2)
 
+       scores = []
+       visDict = {}
+       try:
+          scores = open('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/web_scores.txt', 'r')
+       except:
+          scores = []
+
+       for score in scores:
+          scoresplit = score.split(",")
+          sc = scoresplit[0]
+          order = int(sc[sc.rfind("_")+1:sc.find(".tif")])
+          if sc.find("N"):
+                order = '%(number)04d' % {"number": (2 * order) - 1}
+          else:
+
+                order = '%(number)04d' % {"number":2 * order}
+          if score.find("NoPublish=TRUE"):
+                visDict[order] = 1
+
        for sc in sclist:
           if sc.startswith('meta'):
                 scOrder = sc[sc.rfind("_")+1:sc.find(".txt")]
@@ -224,6 +254,9 @@ for sr in slist:
                 if os.path.exists('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'):
               		section = Section(series_id=idSeries, name=sr+'_'+scOrder, sectionOrder=scOrder, pngPathLow='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jpg', jp2Path='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2',jp2FileSize=os.path.getsize('/mnt/data001/MBAProcessingResults/PMD/'+sr+'/'+sr+'_'+scOrder+'.jp2'), jp2BitDepth=bitDepth, y_coord=ydict[sc])
               		dataresolver = DataResolver(identifier='PMD/'+sr+'_'+scOrder , imageFile='/brainimg/'+sr+'/'+sr+'_'+scOrder+'.jp2')
+
+              		if visDict.has_key(scOrder):
+              		   section.isVisible = False
 
               		section.save()
               		dataresolver.save()
