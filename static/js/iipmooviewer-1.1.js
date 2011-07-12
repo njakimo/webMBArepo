@@ -971,17 +971,19 @@ var IIP = new Class({
 
         // Update the loaded tiles number, grow the loadbar size
         var w = (this.nTilesLoaded / this.nTilesToLoad) * this.min_x;
+        if(w > this.min_x) w = this.min_x;
         $('loadBar').setStyle( 'width', w );
 
         // Display the % in the progress bar
-        $('loadBar').set( 'html', 'loading&nbsp;:&nbsp;'+Math.round(this.nTilesLoaded/this.nTilesToLoad*100) + '%' );
+        //$('loadBar').set( 'html', 'loading&nbsp;:&nbsp;'+Math.round(this.nTilesLoaded/this.nTilesToLoad*100) + '%' );
+        $('loadBar').set( 'html', 'loading...' );
 
         if( $('loadBarContainer').style.opacity != 0.85 ){
             $('loadBarContainer').setStyle( 'opacity', 0.85 );
         }
 
         // If we're done with loading, fade out the load bar
-        if( this.nTilesLoaded == this.nTilesToLoad ){
+        if( this.nTilesLoaded >= this.nTilesToLoad ){
             // Fade out our progress bar and loading animation in a chain
             $('target').setStyle( 'cursor', 'move' );
             $('loadBarContainer').fade('out');
