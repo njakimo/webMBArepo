@@ -68,7 +68,7 @@
            setSagittalX(23 + Math.round((sectionParts[2]-1) / (nSections) * 200));
            {% endif %}
            new Request.HTML({
-               url: '/seriesbrowser/ajax/section/' + sectionParts[1] + '/{{showNissl}}/{{screen}}',
+               url: '/seriesbrowser/ajax/section/' + sectionParts[1] + '/',
                method: 'get',
                onComplete: function(response) {
                     $('panel_content').empty().adopt(response);

@@ -1,8 +1,23 @@
 <script>
+function trim(s) 
+{ 
+    var l=0; var r=s.length -1; 
+    while(l < s.length && s[l] == ' ') 
+    {     l++; } 
+    while(r > l && s[r] == ' ') 
+    {     r-=1;     } 
+    return s.substring(l, r+1); 
+} 
 function submitCommentForm(){
-//  alert(document.getElementById('sectionComment').value);
-  document.getElementById('sectionCommentVal').value = document.getElementById('sectionComment').value;
-  document.getElementById('commentForm').submit();
+ var sectionComment = document.getElementById('sectionComment').value;
+ var sectionIdVal =  document.getElementById('sectionIdValue').value;
+ new Request.HTML({
+        url: '/seriesbrowser/ajax/section/' + sectionIdVal + '/'+ trim(sectionComment) + '/',
+        method: 'get',
+        onComplete: function(response) {
+           $('panel_content').empty().adopt(response);
+        }
+ }).send();
 }
 function limitText(limitField) {
 fldValue = limitField.value;
@@ -75,13 +90,11 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 {% if user.is_authenticated %}
   <form action="/seriesbrowser/addNote" method="get" id = "commentForm">
     Add a comment (Max 200 characters):
-
     <textarea id = "sectionComment" name = "sectionComment"
     style="height:40px;width:220px;overflow:wrap;margin-top:10px;" value=""
     onKeyDown="limitText(this);"
 onKeyUp="limitText(this);"> </textarea>
-    <input type="hidden" name = "sectionId" value="{{section.id}}"/>
-    <input type="hidden" name = "sectionCommentVal" id = "sectionCommentVal" value=""/>
+    <input type="hidden" id = "sectionIdValue" name = "sectionIdValue" value="{{section.id}}"/>
     <br/>
     <input type="button" value="Submit"
     style="margin-top:10px;"

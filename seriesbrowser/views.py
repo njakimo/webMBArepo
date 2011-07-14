@@ -315,17 +315,9 @@ def register(request):
         'form': form,
     })
 
-def addNote(request):
+def addNote(request, id, comment):
    try:
-       try:
-           sectionId = int(request.GET.get('sectionId','0'))
-       except ValueError:
-           sectionId = 0
-       try:
-           comment = request.GET.get('sectionCommentVal','')
-       except ValueError:
-           comment = ''
-       section = Section.objects.get(pk = sectionId)
+       section = Section.objects.get(pk = id)
        series = Series.objects.get(pk = section.series_id)
        sections = series.section_set.filter(isVisible=1).order_by('sectionOrder').all()
        nSections = len(sections)
