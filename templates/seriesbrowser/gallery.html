@@ -36,7 +36,7 @@
             helpPanelGallery.toggle();
         });
        var setSagittalX = function(x) {
-            $('sagittal_pos_gallery').setStyle('left', x);
+            $('sagittal_pos').setStyle('left', x);
         };
         var highlightSection = function(elem) {
             elem.getSiblings().setStyle('border-top','');
@@ -63,9 +63,11 @@
        elem.addEvent('mouseover', function(){
            var sectionParts = elem.id.split('-');
            {% if showNissl == '0' %}
-           setSagittalX(23 + Math.round((sectionParts[2]-1) / (2*nSections) * 200));
+//           setSagittalX(23 + Math.round((sectionParts[2]-1) / (2*nSections) * 200));
+           setSagittalX(10 + Math.round((sectionParts[2]-1) / (2*nSections) * 180));
            {% else %}
-           setSagittalX(23 + Math.round((sectionParts[2]-1) / (nSections) * 200));
+//           setSagittalX(23 + Math.round((sectionParts[2]-1) / (nSections) * 200));
+           setSagittalX(10 + Math.round((sectionParts[2]-1) / (nSections) * 180));
            {% endif %}
            new Request.HTML({
                url: '/seriesbrowser/ajax/section/' + sectionParts[1] + '/',
@@ -109,7 +111,8 @@
 </script>
 </head>
 <body>
-  <div id="sagittal_gallery"><div id="sagittal_pos_gallery"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
+  <div style="position: fixed; bottom: 0px; height:90px;">
+  <div id="sagittal"><div id="sagittal_pos"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div></div>
   <br/>
     {% if sections %}
 <!-- Photo gallery -->
