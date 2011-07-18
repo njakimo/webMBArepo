@@ -277,10 +277,15 @@ def pdf(request, sectionId):
         p.drawString(0.375*inch,9.4*inch,'Color Range (RGB): ' + re.search('(?<=svc\.crange=)\d+-\d+,\d+-\d+,\d+-\d+', image_url).group(0) + ', Gamma: ' + re.search('(?<=svc\.gamma=)\d+\.*\d*', image_url).group(0))
         p.drawString(0.375*inch,9.2*inch,'Direct link to this section: http://mouse.brainarchitecture.org/seriesbrowser/viewer/'+str(section.series.id)+'/'+str(section.id))
         p.drawImage(ImageReader(image), 0.375*inch, 3.375*inch, 7.5*inch, 5.625*inch, preserveAspectRatio=True, anchor='nw')
-        p.drawImage(ImageReader(bapImg),0.25*inch,0.25*inch,0.5*inch,0.5*inch,preserveAspectRatio=True,anchor='sw')
+        p.drawImage(ImageReader(bapImg),0.25*inch,0.45*inch,0.5*inch,0.5*inch,preserveAspectRatio=True,anchor='sw')
 
         p.setFont('Helvetica',14)
-        p.drawString(0.75*inch,0.4*inch,'Brain Architecture Project (http://mouse.brainarchitecture.org)');
+        p.drawString(0.75*inch,0.55*inch,'Brain Architecture Project (http://mouse.brainarchitecture.org)');
+        p.setFont('Helvetica',8)
+        licenseImg = urlopen('http://i.creativecommons.org/l/by-sa/3.0/88x31.png')
+        licenseImg = StringIO(licenseImg.read())
+        p.drawImage(ImageReader(licenseImg),0.25*inch,0.2*inch,0.5*inch,0.17*inch,preserveAspectRatio=True,anchor='sw')
+        p.drawString(0.75*inch,0.25*inch,'This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License (http://creativecommons.org/licenses/by-sa/3.0/)');
         p.showPage()
         p.save()
         pdf = buffer.getvalue()
