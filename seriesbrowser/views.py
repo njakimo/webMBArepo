@@ -184,9 +184,17 @@ def gallery(request, seriesId):
            if len(nslist) >= 5:
               break
     except ObjectDoesNotExist:
-        sections = None
-        section = None
-    return render_to_response('seriesbrowser/gallery.html',{'sections' : sections, 'section': section, 'series':series, 'nslist':nslist, 'region':region, 'numSections':numSections, 'screen':screen, 'showNissl':showNissl})
+        raise Http404
+    return render_to_response('seriesbrowser/gallery.html', {
+        'sections' : sections,
+        'section': section,
+        'series':series,
+        'nslist':nslist,
+        'region':region,
+        'numSections':numSections,
+        'screen':screen,
+        'showNissl':showNissl
+    })
 
 def section(request, id):
     try:

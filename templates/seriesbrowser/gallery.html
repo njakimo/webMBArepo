@@ -1,143 +1,114 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-{% block title %}<title>{% if title %}{{ title }}{% else %}The Mouse Brain Architecture Project{% endif %}</title>{% endblock title %}
-<link rel="stylesheet" type="text/css" media="screen" href="/static/css/reset.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="/static/css/viewer.css" />
-<link rel="stylesheet" type="text/css" media="all" href="/static/djatoka/css/iip.compressed.css" />
-<link rel="stylesheet" type="text/css"  media="screen" href="/static/css/main.css"  />
-<script type="text/javascript" src="/static/js/mootools-1.2.5-core-yc.js"></script>
-<script type="text/javascript" src="/static/js/mootools-1.2.5.1-more.js"></script>
-<script type="text/javascript" src="/static/js/iipmooviewer-1.1.js"></script>
-<script type="text/javascript" src="/static/js/slideGallery.js"></script>
-<script type="text/javascript">
-    var imageBase = 'http://mbaimages.cshl.edu/data/MBAProcessingResults/PMD/';
-    var server = 'http://mbaimages.cshl.edu:8080/adore-djatoka/resolver';
-    var image = imageBase + 'PMD9/PMD9_0002.jp2';
-    var credit = '';
-    var thumbNails =  [{% for s in sections %}"{{s.pngPathLow}}",{% endfor %}];
-    var thumbNailIds =  [{% for s in sections %}"{{s.series_id}}-{{s.id}}-{{s.sectionOrder}}",{% endfor %}];
-    window.addEvent('domready', function() {
-        var nSections = {{numSections}};
-        var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
-        var panel = new Fx.Slide('panel', {mode: 'horizontal'});
-        panel.show();
-        $('panel').setStyle('z-index','1');
-        $('trigger').addEvent('click', function(event) {
-            event.stop();
-            panel.toggle();
-        });
-        var helpPanelGallery = new Fx.Slide('helpPanelGallery', {mode: 'horizontal'});
-        helpPanelGallery.hide();
-        $('helpPanelGallery').setStyle('z-index','1');
-        $('helpTriggerGallery').addEvent('click', function(event) {
-            event.stop();
-            helpPanelGallery.toggle();
-        });
-       var setSagittalX = function(x) {
-            $('sagittal_pos').setStyle('left', x);
-        };
-        var highlightSection = function(elem) {
-            elem.getSiblings().setStyle('border-top','');
-            elem.setStyle('border-top','3px solid #FFFFFF');
-        };
-       var showGallery = function(){
-       var while_pictures = 0;
-	while(while_pictures < nSections) {
-                var sectionParts = thumbNailIds[while_pictures].split('-');
-	         var image_anchor = new Element('a', {
-		   'href': "/seriesbrowser/viewer/"+sectionParts[0]+"/"+sectionParts[1]+"/",
-		 } );
-		var new_image = new Element('img', {
-			'src': thumbNails[while_pictures],
-			'id': thumbNailIds[while_pictures],
-		});
-		new_image.injectInside(image_anchor);
-		image_anchor.inject($('gallery_inside'));
-		while_pictures++;
-	}
-    };
-    showGallery();
-    $$('#gallery_inside img').each(function(elem) {
-       elem.addEvent('mouseover', function(){
-           var sectionParts = elem.id.split('-');
-           {% if showNissl == '0' %}
-//           setSagittalX(23 + Math.round((sectionParts[2]-1) / (2*nSections) * 200));
-           setSagittalX(10 + Math.round((sectionParts[2]-1) / (2*nSections) * 180));
-           {% else %}
-//           setSagittalX(23 + Math.round((sectionParts[2]-1) / (nSections) * 200));
-           setSagittalX(10 + Math.round((sectionParts[2]-1) / (nSections) * 180));
-           {% endif %}
-           new Request.HTML({
-               url: '/seriesbrowser/ajax/section/' + sectionParts[1] + '/',
-               method: 'get',
-               onComplete: function(response) {
-                    $('panel_content').empty().adopt(response);
-                }
-           }).send();
-       });
-   });
-    var vertical_moves = 0;
-    var rows = Math.ceil(nSections/7);
-    if(rows>10) {
-	$('up').addEvent('click', function(event){
-		if(!$('up').hasClass('deactivated')) {
-			vertical_moves--;
-			$('down').erase('class');
-			$('gallery_inside').tween('margin-top', '-'+ (400 * vertical_moves) +'px');
-			if (vertical_moves==0) {
-				$('up').set('class', 'deactivated');	
-			}
-		}
-	});
-		
-	$('down').addEvent('click', function(event){
-		if(!$('down').hasClass('deactivated')) {
-			vertical_moves++;
-			$('up').erase('class');	
-			$('gallery_inside').tween('margin-top', '-'+ (400 *vertical_moves) +'px');
-			if(vertical_moves*5>= (rows-14)) {
-				$('down').set('class', 'deactivated');	
-			}
-		}
-	});
-   } else {
-	$('up').set('class', 'deactivated');	
-	$('down').set('class', 'deactivated');	
-  }
-});
+{% extends "base.html" %}
 
-</script>
-</head>
-<body>
-  <div style="position: fixed; bottom: 0px; height:90px;">
-  <div id="sagittal"><div id="sagittal_pos"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div></div>
-  <br/>
-    {% if sections %}
-<!-- Photo gallery -->
-   <div id="gallery_container">
-     <h1>Section thumbnails</h1>
-     <div id="picture_section">
-	<div id="gallery_inside">
-	</div>
-     </div>
-     <div id="controls_vert">
-       <div id="up" class="deactivated">Scroll Up</div>
-       <div id="down">Scroll Down</div>
-     </div>
-  <!-- end galley -->
-  {% endif %}
-<div id="panel">
-  <div id="panel_content">{% if section %}{% include 'seriesbrowser/ajax/section.html' %}{% endif %}</div>
-  <div style="clear:both;"></div>
-</div>
-<div><a id="trigger" class="trigger" href="#">Info</a></div>
-<div id="helpPanelGallery">
-  <div id="helpPanelContentGallery">
-    {% include 'seriesbrowser/helpPanelGallery.html' %}
-  </div>
-</div>
-<div><a id="helpTriggerGallery" class="helpTriggerGallery" href="#">Help</a></div>
-</body>
-</html>
+{% block css %}
+<link rel="stylesheet" type="text/css" media="screen" href="/static/css/main.css" />
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="/static/js/slideGallery.js"></script>
+    <script type="text/javascript">
+        window.addEvent('domready', function() {
+            var nSections = {{numSections}};
+            var bitDepth = Math.pow(2,{{ section.jp2BitDepth }})-1;
+
+            var setSagittalX = function(x) {
+                $('sagittal_pos').setStyle('left', x);
+            };
+
+            var sections = [];
+            var highlighted = undefined;
+            
+            var highlightSection = function(elem) {
+                if(highlighted) highlighted.setStyle('border-top','')
+                elem.setStyle('border-top','3px solid #FFFFFF');
+                highlighted = elem;
+            };
+
+            $('sagittal').addEvent('click', function(event) {
+                //y_pos = 5.762 - 0.067*(event.page.x-10);
+                var y_pos = event.client.x - $('sagittal').getCoordinates().left;
+                setSagittalX(y_pos+24);
+                highlightSection(sections[Math.round(y_pos/180 * sections.length)]);
+                //filmstrip.jump(y_pos);
+            });
+//            var showGallery = function(){
+//                var while_pictures = 0;
+//                while(while_pictures < nSections) {
+//                    var sectionParts = thumbNailIds[while_pictures].split('-');
+//                    var image_anchor = new Element('a', {
+//                        'href': "/seriesbrowser/viewer/"+sectionParts[0]+"/"+sectionParts[1]+"/",
+//                    } );
+//                    var new_image = new Element('img', {
+//                        'src': thumbNails[while_pictures],
+//                        'id': thumbNailIds[while_pictures],
+//                    });
+//                    new_image.injectInside(image_anchor);
+//                    image_anchor.inject($('gallery_inside'));
+//                    while_pictures++;
+//                }
+//            };
+//            showGallery();
+
+            $$('#gallery_inside img').each(function(elem, i) {
+                sections.push(elem);
+                elem.addEvent('mouseover', function(){
+                    setSagittalX(24 + Math.round(i / sections.length * 180));
+                    highlightSection(elem);
+                });
+            });
+
+            var vertical_moves = 0;
+            var rows = Math.ceil(nSections/7);
+            if(rows>10) {
+                $('up').addEvent('click', function(event){
+                    if(!$('up').hasClass('deactivated')) {
+                        vertical_moves--;
+                        $('down').erase('class');
+                        $('gallery_inside').tween('margin-top', '-'+ (400 * vertical_moves) +'px');
+                        if (vertical_moves==0) {
+                            $('up').set('class', 'deactivated');
+                        }
+                    }
+                });
+
+                $('down').addEvent('click', function(event){
+                    if(!$('down').hasClass('deactivated')) {
+                        vertical_moves++;
+                        $('up').erase('class');
+                        $('gallery_inside').tween('margin-top', '-'+ (400 *vertical_moves) +'px');
+                        if(vertical_moves*5>= (rows-14)) {
+                            $('down').set('class', 'deactivated');
+                        }
+                    }
+                });
+            } else {
+                $('up').set('class', 'deactivated');
+                $('down').set('class', 'deactivated');
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="sagittal_nav"><div id="sagittal_pos"></div><img id="sagittal" src="/static/img/blended_sag.png" /></td>
+        <td></td>
+    </tr>
+    <tr><td colspan="2">
+    <div id="gallery_container">
+    <div id="picture_section">
+        <div id="gallery_inside">
+            {% for section in sections %}
+                <a href="/seriesbrowser/viewer/{{ series.id }}/{{ section.id }}/"><img width="120" height="90" src="/static/slices/PMD35/PMD35_0002_thumbnail_smallest.png" /></a>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="controls_vert">
+        <div id="up" class="deactivated">Scroll Up</div>
+        <div id="down">Scroll Down</div>
+    </div>
+    </div>
+    </td></tr>
+    </table>
+{% endblock %}
