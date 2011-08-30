@@ -18,6 +18,7 @@ from reportlab.lib.units import inch
 from django.contrib.auth.forms import UserCreationForm
 from django.template import RequestContext
 from django.contrib.auth.models import User
+from itertools import chain
 
 from cStringIO import StringIO
 
@@ -97,9 +98,11 @@ def index(request):
         field = 'injection.z_coord'
         extra = ' '.join([',injection.x_coord',dir,',injection.y_coord',dir])
     elif sort == 'region':
-        field = 'region.code'
+        field = 'region.desc'
     elif sort == 'tracer':
         field = 'tracer.name'
+    elif sort == 'qc':
+        field = 'numQCSections'
     order = ' '.join([field, dir, extra])
     if where != '':
             sql = ' '.join([sql,' WHERE ',where])
@@ -108,7 +111,7 @@ def index(request):
     cursor = connection.cursor()
     cursor.execute(sql)
     rs = cursor.fetchall()
-    paginator = Paginator(rs, 25)
+    paginator = Paginator(rs, 20)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -163,37 +166,47 @@ def viewer(request, seriesId, sectionId=None):
         'nSections' : nSections
     })
 
-def gallery(request, seriesId):
+def gallery(request, seriesId, showNissl=0):
+    def sortkey(x):
+        return x.sectionOrder
+    
     try:
         series = Series.objects.get(pk=seriesId)
+        if series.isRestricted and not request.user.is_staff:
+            raise Http404
         sections = series.section_set.order_by('sectionOrder').all()
-        section = sections[0]
+        if showNissl:
+            seriesNissl = Series.objects.get(brain=series.brain,labelMethod=1)
+            if seriesNissl:
+                if not seriesNissl.isRestricted or request.user.is_staff:
+                    sectionsNissl = seriesNissl.section_set.order_by('sectionOrder').all()
+                    sections = list(chain(sections,sectionsNissl))
+                    sections.sort(key=sortkey)
+
         numSections = len(sections)
-        inj  = Injection.objects.filter(series=series)
-        region = ''         
-        screen = '0'
-        showNissl = '0'
-        for i in inj:
-           region  = Region.objects.get(pk=i.region.id)
-           break
-        ns = NearestSeries.objects.filter(series=series)
-        nslist = []
-        for n in ns:
-           s = Series.objects.get(pk=n.nearestSeriesId)
-           nslist.append(s)
-           if len(nslist) >= 5:
-              break
+ #       inj  = Injection.objects.filter(series=series)
+#        region = ''         
+#        screen = '0'
+#        showNissl = '0'
+#        for i in inj:
+#           region  = Region.objects.get(pk=i.region.id)
+#           break
+#        ns = NearestSeries.objects.filter(series=series)
+#        nslist = []
+#        for n in ns:
+#           s = Series.objects.get(pk=n.nearestSeriesId)
+#           nslist.append(s)
+#           if len(nslist) >= 5:
+#              break
     except ObjectDoesNotExist:
         raise Http404
     return render_to_response('seriesbrowser/gallery.html', {
         'sections' : sections,
-        'section': section,
         'series':series,
-        'nslist':nslist,
-        'region':region,
         'numSections':numSections,
-        'screen':screen,
-        'showNissl':showNissl
+#        'screen':screen,
+        'showNissl':showNissl,
+        'user':request.user
     })
 
 def section(request, id):
@@ -204,8 +217,20 @@ def section(request, id):
         if section.series.labelMethod.name != "Nissl":
             nissl = Series.objects.get(brain=section.series.brain,labelMethod=1)
             nisslID = nissl.id
+            nisslSections = Section.objects.filter(series=nisslID).extra(select={'diff' : 'abs(y_coord - %s)'},select_params=([str(section.y_coord)])).extra(order_by=['diff'])
+            nisslSections = nisslSections[0]
         else:
             nisslID = 0
+            nisslSections = None
+            inj = None
+
+        if inj:
+            inj = inj[0]
+
+        if nisslSections:
+            nisslSectionID = nisslSections.id
+        else:
+            nisslSectionID = None
 
         ns = NearestSeries.objects.filter(series=series)
         nslist = []
@@ -219,7 +244,7 @@ def section(request, id):
         nSections = series.section_set.filter(isVisible=1).count()
     except ObjectDoesNotExist:
         section = None
-    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'inj':inj[0], 'nisslID':nisslID, 'atlasID':atlasID,'nSections':nSections},context_instance=RequestContext(request))
+    return render_to_response('seriesbrowser/ajax/section.html',{'section':section,'series':series, 'nslist':nslist, 'inj':inj, 'nisslID':nisslID, 'atlasID':atlasID,'nSections':nSections,'nisslSectionID':nisslSectionID})
 
 def injections(request):
     # 'View 2' - show injection locations graphically in atlas context

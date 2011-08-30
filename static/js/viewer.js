@@ -74,7 +74,8 @@ var MBAViewer = {
                 while(sectionOrderVal.length < 4) {
                     sectionOrderVal  = "0" + sectionOrderVal;
                 }
-		var imageName = 'PMD/' + sectionOrderVal;
+		//var imageName = 'MouseBrain/' + sectionOrderVal;
+		var imageName = 'MouseBrain/' + parts[1];
                 iip.changeImage(imageName, parts[1]);
             });
         });

@@ -16,7 +16,8 @@
 window.addEvent('domready', function() {
     MBAViewer.init({
         server: 'http://mouse.brainarchitecture.org/webapps/adore-djatoka/resolver',
-        image: 'PMD/{{section.name}}',
+        //image: 'MouseBrain/{{section.name}}',
+        image: 'MouseBrain/{{section.id}}',
         nSections: {{ nSections }},
         bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1,
         sectionId: {{section.id}},

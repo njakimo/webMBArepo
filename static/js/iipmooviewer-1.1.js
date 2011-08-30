@@ -171,7 +171,10 @@ var IIP = new Class({
         this.crossSiteTest = options['crossSiteTest'] || false;
 
         this.bitDepth = options['bitDepth'];
-        this.colorRanges = [0,this.bitDepth,0,this.bitDepth,0,this.bitDepth];
+	if (this.bitDepth == 65535) {
+		this.colorRanges = [0,0,0,511,0,0];
+	}
+        else this.colorRanges = [0,this.bitDepth,0,this.bitDepth,0,this.bitDepth];
         this.gamma = 1.0;
         this.sectionId = options['sectionId'] || alert( 'No section ID given to IIP constructor' );
 
@@ -473,7 +476,7 @@ var IIP = new Class({
      */
     refresh: function(){
 
-        var unloaded = 0;
+       	var unloaded = 0;
 
         $('target').getChildren().each( function(el){
             // If our tile has not yet been loaded, give it a prod ;-)
@@ -490,6 +493,7 @@ var IIP = new Class({
             $clear( this.refresher );
             this.refresher = null;
         }
+
     },
 
     /* Allow us to navigate within the image via the keyboard arrow buttons
@@ -971,12 +975,12 @@ var IIP = new Class({
 
         // Update the loaded tiles number, grow the loadbar size
         var w = (this.nTilesLoaded / this.nTilesToLoad) * this.min_x;
-        if(w > this.min_x) w = this.min_x;
-        $('loadBar').setStyle( 'width', w );
+        if (w > this.min_x) w = this.min_x;
+	$('loadBar').setStyle( 'width', w );
 
         // Display the % in the progress bar
         //$('loadBar').set( 'html', 'loading&nbsp;:&nbsp;'+Math.round(this.nTilesLoaded/this.nTilesToLoad*100) + '%' );
-        $('loadBar').set( 'html', 'loading...' );
+	$('loadBar').set( 'html', 'loading...' );
 
         if( $('loadBarContainer').style.opacity != 0.85 ){
             $('loadBarContainer').setStyle( 'opacity', 0.85 );
@@ -1149,6 +1153,9 @@ var IIP = new Class({
 
     initColorSliders: function() {
         var bitDepth = this.bitDepth;
+        if (bitDepth == 65535) {
+                bitDepth = 4095;
+        }
         var colorRanges = this.colorRanges;
         var gamma = this.gamma;
 

@@ -4,11 +4,12 @@ from django.contrib.auth.models import User
 class DataResolver(models.Model):
     identifier = models.CharField(max_length=200)
     imageFile = models.CharField(max_length=500)
+    section = models.ForeignKey('Section')
     def __unicode__(self):
         return self.identifier
 
 class Brain(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
 
     def __unicode__(self):
         return self.name
@@ -63,13 +64,24 @@ class Series(models.Model):
     desc = models.CharField('description', max_length=200)
     brain = models.ForeignKey(Brain)
     lab = models.ForeignKey(Laboratory)
-    isRestricted = models.BooleanField(default=False)
+    isRestricted = models.BooleanField(default=True)
     sectionThickness = models.IntegerField()
-    sectionThicknessUnit = models.CharField(max_length=2) 
+    sectionThicknessUnit = models.CharField(max_length=2, default='um') 
     sectioningPlane = models.ForeignKey(SectioningPlane)
     pedagogicalUnit = models.ManyToManyField(PedagogicalUnit, blank=True, null=True)
-    numQCSections = models.IntegerField()
-    #indicate sample section
+    numQCSections = models.IntegerField(default=0)
+    isReviewed = models.BooleanField(default=False)
+
+    def admin_sample(self):
+        return u'<img src="%s" />' % (self.sampleSection.pngPathLow)
+    admin_sample.short_description = 'Sample'
+    admin_sample.allow_tags = True
+
+    def admin_sections(self):
+        return '<a href="%s%s"> Sections' % ('http://mouse.brainarchitecture.org/admin/seriesbrowser/section/?series__id__exact=', str(self.id))
+    admin_sections.short_description = 'SectionAdmin'
+    admin_sections.allow_tags = True
+
     def __unicode__(self):
         return self.desc
 
@@ -88,6 +100,17 @@ class Section(models.Model):
     jp2FileSize = models.BigIntegerField(null=True)
     jp2BitDepth = models.IntegerField(null=True)
     y_coord = models.FloatField(null=True)
+
+    def admin_thumbnail(self):
+        return u'<img src="%s" />' % (self.pngPathLow)
+    admin_thumbnail.short_description = 'Thumbnail'
+    admin_thumbnail.allow_tags = True
+
+    def admin_link(self):
+        return '<a href="%s/%s/%s/"> ViewerLink' % ('http://mouse.brainarchitecture.org/seriesbrowser/viewer', str(self.series.id), str(self.id))
+    admin_link.short_description = 'Link'
+    admin_link.allow_tags = True
+
     def __unicode__(self):
         return self.name
 
@@ -134,12 +157,16 @@ class Tracer(models.Model):
 class Injection(models.Model):
     series = models.ForeignKey(Series)
     region = models.ForeignKey(Region)
+    region_actual = models.ForeignKey(Region, null=True, related_name='+')
     tracer = models.ForeignKey(Tracer)
     volume = models.DecimalField(max_digits=5, decimal_places=2)
     volumeUnits = models.CharField(max_length=2)
     x_coord = models.DecimalField(max_digits=3, decimal_places=2)
     y_coord = models.DecimalField(max_digits=3, decimal_places=2)
     z_coord = models.DecimalField(max_digits=3, decimal_places=2)
+    x_coord_actual = models.DecimalField(max_digits=3, decimal_places=2, null=True)
+    y_coord_actual = models.DecimalField(max_digits=3, decimal_places=2, null=True)
+    z_coord_actual = models.DecimalField(max_digits=3, decimal_places=2, null=True)
     #other atlas and injection fields
 
     def __unicode__(self):
