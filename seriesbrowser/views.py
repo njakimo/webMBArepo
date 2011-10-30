@@ -30,6 +30,15 @@ class CommentFilterForm(forms.Form):
     section_filter = forms.ModelChoiceField(Section.objects.order_by('name').all())
     updater_filter = forms.ModelChoiceField(User.objects.order_by('username').all())
 
+def aux(request):
+    seriesList = Series.objects.filter(isAuxiliary=1)
+    if not request.user.is_staff:
+        seriesList = seriesList.filter(isRestricted=False)
+
+    return render_to_response('seriesbrowser/aux.html', {
+        'user'        : request.user,
+        'seriesList'  : seriesList})
+    
 def index(request):
     sql = '''
          SELECT
@@ -143,6 +152,8 @@ def tree(request):
 def viewer(request, seriesId, sectionId=None):
     try:
         series = Series.objects.get(pk=seriesId)
+        if (series.isRestricted and not request.user.is_staff):
+            raise Http404
         # preload the list of sections for generating filmstrip nav
         # TODO: this should order by y_coord descending
         sections = series.section_set.filter(isVisible=1).order_by('sectionOrder').all()

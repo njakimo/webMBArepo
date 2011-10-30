@@ -2,6 +2,7 @@ var MBAViewer = {
     init: function(options) {
         var image = options['image'];
         var nSections = options['nSections'];
+	var isAuxiliary = options['isAuxiliary'];
 
         var iip = new IIP("targetframe", {
             image: image,
@@ -25,31 +26,34 @@ var MBAViewer = {
         });
 
         if($('filmstrip')) {
-            this.initSectionNav(iip, image, nSections, options['sectionId']);
+            this.initSectionNav(iip, image, nSections, options['sectionId'],isAuxiliary);
         }
     },
 
-    initSectionNav: function(iip, image, nSections, sampleSection) {
+    initSectionNav: function(iip, image, nSections, sampleSection, isAuxiliary) {
         var filmstrip = new slideGallery($('filmstrip'), {
             steps: 4,
             mode: "line"
         });
 
-        var setSagittalX = function(x) {
-            $('sagittal_pos').setStyle('left', x);
-        };
-
         var highlightSection = function(elem) {
             elem.getSiblings().setStyle('border-top','');
             elem.setStyle('border-top','3px solid #FF4500');
         };
+
+	if (!isAuxiliary)
+        {
+	    // Leave these pieces out if there is no clickable sag view
+            var setSagittalX = function(x) {
+              $('sagittal_pos').setStyle('left', x);
+            };
         
-        $('sagittal').addEvent('click', function(event) {
-            setSagittalX(event.page.x);
-            //y_pos = 5.762 - 0.067*(event.page.x-10);
-            var y_pos = Math.ceil((event.page.x-10) / 180 * nSections);
-            filmstrip.jump(y_pos);
-        });
+            $('sagittal').addEvent('click', function(event) {
+              setSagittalX(event.page.x);
+              var y_pos = Math.ceil((event.page.x-10) / 180 * nSections);
+              filmstrip.jump(y_pos);
+            });
+        }
 
         var sections = [];
 	var sampleSectionIdx = 0;
@@ -61,7 +65,9 @@ var MBAViewer = {
 	    }
             elem.addEvent('click', function(){
                 highlightSection(sections[i]);
-                setSagittalX(10 + Math.round(i / nSections * 180));
+                if (!isAuxiliary) {
+		  setSagittalX(10 + Math.round(i / nSections * 180));
+                }
                 new Request.HTML({
                     url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
                     method: 'get',
@@ -92,8 +98,9 @@ var MBAViewer = {
 	// And make the filmstrip / sagittal section reflect initial section
         highlightSection(sections[sampleSectionIdx]);
 	filmstrip.jump(sampleSectionIdx);
-	setSagittalX(10 + Math.round(sampleSectionIdx / nSections * 180));
-
+	if (!isAuxiliary) {
+	  setSagittalX(10 + Math.round(sampleSectionIdx / nSections * 180));
+        }
     }
 };
 

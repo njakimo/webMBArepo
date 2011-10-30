@@ -26,10 +26,11 @@
 
             var nSections = {{numSections}};
 
+{% if not series.isAuxiliary %}
             var setSagittalX = function(x) {
                 $('sagittal_pos').setStyle('left', x);
             };
-
+{% endif %}
             var sections = [];
             var highlighted = undefined;
             
@@ -43,6 +44,8 @@
                 highlighted = elem;
             };
 
+{% if not series.isAuxiliary %}
+{% if series.labelMethod != 1 %}
 	    $('showNissl').addEvent('click', function(e) {
 	       if ($('showNissl').checked ) {
 	          url = 'http://mouse.brainarchitecture.org/seriesbrowser/gallery/{{series.id}}/1';
@@ -52,7 +55,7 @@
 	          url = 'http://mouse.brainarchitecture.org/seriesbrowser/gallery/{{series.id}}';
 		  self.location=url;
 	       }});
-
+{% endif %}
             $('sagittal').addEvent('click', function(event) {
                 var y_pos = event.client.x - $('sagittal').getCoordinates().left;
                 setSagittalX(y_pos);//+24);
@@ -72,12 +75,13 @@
                 else
 		   $('down').erase('class');
             });
-
+{% endif %}
 
             $$('#gallery_inside img').each(function(elem, i) {
                 sections.push(elem);
                 elem.addEvent('mouseover', function(){
-                    setSagittalX(Math.round(i / sections.length * 180));
+{% if not series.isAuxiliary %}
+                    setSagittalX(Math.round(i / sections.length * 180));{% endif %}
                     highlightSection(elem);
                 });
             });
@@ -126,8 +130,10 @@
 </td><td>Show Interleaved Nissl Series</td></tr></table></div>
 {% endif %}
 {% endif %}
-    <div id="sagittal_nav" style="position: relative; left: 60px;"><div id="sagittal_pos"></div><img id="sagittal" src="/static/img/blended_sag.png" /></div>
-
+{% if not series.isAuxiliary %}
+    <div id="sagittal_nav" style="position: relative; left: 60px;"><div id="sagittal_pos"></div><img id="sagittal" src="/static/img/blended_sag_white.png" /></div>
+{% else %}<br /><br />
+{% endif %}
     <div id="controls_vert">
         <div id="up" class="deactivated">Scroll Up</div>
         <div id="down">Scroll Down</div>

@@ -172,7 +172,7 @@ var IIP = new Class({
 
         this.bitDepth = options['bitDepth'];
 	if (this.bitDepth == 65535) {
-		this.colorRanges = [0,0,0,511,0,0];
+		this.colorRanges = [0,0,0,255,0,0];
 	}
         else this.colorRanges = [0,this.bitDepth,0,this.bitDepth,0,this.bitDepth];
         this.gamma = 1.0;

@@ -18,9 +18,9 @@ def make_restricted(modeladmin, request, queryset):
 make_restricted.short_description = "Restrict selected series"
 
 class SeriesAdmin(admin.ModelAdmin):
-    list_display = ('desc', 'lab', 'numQCSections', 'admin_sample','admin_sections','isRestricted','isReviewed')
+    list_display = ('desc', 'lab', 'numQCSections', 'admin_sample','admin_sections','isRestricted','isReviewed', 'isAuxiliary')
     list_filter = ('brain',)
-    fields = ('desc', 'lab','numQCSections', 'admin_sample', 'sampleSection', 'admin_sections','isRestricted','isReviewed', 'pedagogicalUnit')
+    fields = ('desc', 'lab','numQCSections', 'admin_sample', 'sampleSection', 'admin_sections','isRestricted','isReviewed', 'pedagogicalUnit', 'isAuxiliary')
     readonly_fields =('desc', 'lab', 'numQCSections', 'admin_sample','admin_sections')
     actions = [make_restricted, make_unrestricted]
 admin.site.register(Series, SeriesAdmin)
@@ -36,6 +36,7 @@ make_visible.short_description = "Display selected sections"
 class SectionAdmin(admin.ModelAdmin):
     list_display = ('name', 'series','y_coord', 'admin_thumbnail', 'admin_link','isVisible')
     list_filter = ('series',)
+    list_per_page = 1000
     fields = ('name', 'series','y_coord','admin_thumbnail', 'admin_link','isVisible')
     readonly_fields = ('name','series','y_coord','admin_thumbnail', 'admin_link')
     actions = [make_visible, make_invisible]

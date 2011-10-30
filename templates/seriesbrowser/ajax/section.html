@@ -33,25 +33,34 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 }
 }
 </script> 
+{% if not section.series.isAuxiliary %}
 <h3>{{ section.series.desc }} ({{nSections}} sections)</h3>
+{% else %}
+<h3>MBA Auxiliary Dataset ({{nSections}} sections)</h3>
+<br /><p>{{ section.series.desc }}<br>
+<strong>Sectioning plane</strong>: {{ section.series.sectioningPlane }}</p>
+{% endif %}
 <br/>
 <p><strong>Section:</strong>&nbsp;{{section.name}} <br />
 <!-- Provide the y coordinate if it is not null -->
-{% if section.y_coord %}(Bregma&nbsp;&#8764;
+{% if not section.series.isAuxiliary %}
+{% if section.y_coord %}(Bregma&nbsp;&#126;
 {% if section.y_coord > 0%}+{% endif %}{{section.y_coord|floatformat:2}}&nbsp;mm)
 {% if section.series.sectioningPlane.desc == "Coronal" %}
 <br />Approx. <a onclick ="javascript:window.open('http://mouse.brain-map.org/viewImage.do?imageId={{atlasID}}','_blank','toolbar=1');" href="#">Allen Reference Atlas section</a><br /><br />
-{% endif %}{% endif %}</p>
+{% endif %}{% endif %}{% endif %}</p>
 <p><strong>Section thickness:</strong>&nbsp; {{section.series.sectionThickness}} {{section.series.sectionThicknessUnit}}</p> 
 <p><strong>Imaging Method:</strong>&nbsp; {{section.series.imageMethod.name}}</p>
 {% if section.series.imageMethod.name != "Fluorescent" %}
 <p><strong>Label Method:</strong>&nbsp; {{section.series.labelMethod.name}}</p>
 {% endif %}
 <br/>
+{% if not section.series.isAuxiliary %}
 {% if inj.region %}
 <p><strong>Injection region:</strong>&nbsp;{{ inj.region.desc}} ({{inj.region.code}}) ({{inj.x_coord}} mm, {{inj.y_coord}} mm, {{inj.z_coord}} mm)</p>
 <p><strong>Tracer:</strong>&nbsp; {{inj.tracer.name}}</strong></p>
 <br/>
+{% if nslist %}
 <h4>Series with nearby injections:</h4>
 <div id = "button">
 <ul style="list-style-type:square; color:#fff;">
@@ -62,6 +71,7 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 {% endfor %}
 </ul>
 </div>
+{% endif %}
 <p>Search <a href="http://mbaimages.cshl.edu/?page_id=595" target="_blank">literature</a> for region {{inj.region.code}} (<a target="_blank" href="http://brainarchitecture.org:8080/neuro_nlp/index.jsp?query='{{inj.region.desc}}'&docsPerPage=5&category0=connectivity&sentsPerDoc=5&twoBrains=yes&sentsToSort=1000">Link</a>)
 </p>
 <br/>
@@ -70,7 +80,7 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 
 <p>View BAMS efferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conef.php?aidi={{inj.region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
 <p>View BAMS afferent projections (<a href="http://brancusi.usc.edu/bkms/brain/show-conaf.php?aidi={{inj.region.bamsRatId}}&publi=1" target="_blank">Link</a>)</p>
-{% endif %}
+{% endif %}{% endif %}
 
 <!-- This should list an educational unit URL if appropriate -->
 {% if series.pedagogicalUnit.url %}
@@ -81,7 +91,7 @@ alert ("You are approaching the limit of " + limitNum + " characters and have on
 <br/>
 {% if nisslID %}
 <div id = "showNissls" >
-<p><a onclick ="javascript:window.open('/seriesbrowser/viewer/{{nisslID}}/','_blank','toolbar=1');" href = "#"> Show Nissl series in new window</a></p>
+<p><a onclick ="javascript:window.open('/seriesbrowser/viewer/{{nisslID}}/{{nisslSectionID}}','_blank','toolbar=1');" href = "#"> Show Nissl series in new window</a></p>
 <br/>
 </div>
 {% endif %}
@@ -103,8 +113,13 @@ onKeyUp="limitText(this);"> </textarea>
 {% endif %}
    <p><a onclick ="javascript:window.open('/seriesbrowser/showComments/{{series.id}}/?section_filter={{section.id}}&updater_filter=','_blank','toolbar=1');"
    href = "#"> View section/series comments</a></p>
-
 </div>
+
+<p>
+<li>
+ <a href="http://groups.google.com/group/mba-portal-discussion?hl=en" target="_blank">MBA Discussion Group</a>
+</li>
+</p>
 
 
 

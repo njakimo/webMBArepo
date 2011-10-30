@@ -21,7 +21,8 @@ window.addEvent('domready', function() {
         nSections: {{ nSections }},
         bitDepth: Math.pow(2,{{ section.jp2BitDepth }})-1,
         sectionId: {{section.id}},
-        scale: Math.round(1000/{{section.series.pixelResolution}})
+        scale: Math.round(1000/{{section.series.pixelResolution}}),
+	isAuxiliary: {% if section.series.isAuxiliary %}1{% else %}0{% endif %}
     });
 });
 </script>
@@ -30,7 +31,8 @@ window.addEvent('domready', function() {
 <div id="viewer">
   <div id="targetframe"></div>
   <div id="nav">
-    <div id="sagittal"><div id="sagittal_pos"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div>
+    {% if not section.series.isAuxiliary %}
+    <div id="sagittal"><div id="sagittal_pos"></div><img src="/static/img/blended_sag.png" alt="sagittal" /></div> {% endif %}
     {% if sections %}
     <div id="filmstrip">
       <div class="holder">
