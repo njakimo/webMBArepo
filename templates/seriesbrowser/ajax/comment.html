@@ -1,0 +1,81 @@
+<script>
+function trim(s) 
+{ 
+    var l=0; var r=s.length -1; 
+    while(l < s.length && s[l] == ' ') 
+    {     l++; } 
+    while(r > l && s[r] == ' ') 
+    {     r-=1;     } 
+    return s.substring(l, r+1); 
+} 
+function submitCommentForm(){
+ var sectionComment = document.getElementById('sectionComment').value;
+ var sectionIdVal =  document.getElementById('sectionIdValue').value;
+ new Request.HTML({
+        url: '/seriesbrowser/ajax/section/' + sectionIdVal + '/'+ trim(sectionComment) + '/',
+        method: 'get',
+        onComplete: function(response) {
+           $('panel_content').empty().adopt(response);
+        }
+ }).send();
+}
+function limitText(limitField) {
+fldValue = limitField.value;
+var limitNum = 200;
+var chars = limitNum - fldValue.length;
+if (chars <= 0) {
+alert ("You are trying to enter more than the limit of " + limitNum + " characters! ");
+fldValue = fldValue.substring(0,limitNum-1)
+document.myform.limitedtextarea.value = fldValue;
+}
+if (chars == 10) {
+alert ("You are approaching the limit of " + limitNum + " characters and have only 10 characters left! ")
+}
+}
+</script> 
+
+<form action="/seriesbrowser/comment" method="post">
+<div>
+  <p>{{ series.desc }}</p>
+    <p>
+        <label for="series-injection">Injection location:</label>
+        <select id="series-injection" name="series-injection">
+            <option>The brain</option>
+        </select>
+    </p>
+  <p>
+    <label for="series-comment">Comments:</label><br/>
+    <textarea id="series-comment" name="series-comment" cols="40" rows="3"></textarea>
+  </p>
+</div>
+<p>&nbsp;</p>
+<div>
+    <p>{{ section.name }}</p>
+    <p>
+        <label for="section-injection">Has injection?</label>
+        <input type="checkbox" id="section-injection" />
+    </p>
+    <p>
+        <label for="section-injection-region">Labeled region:</label>
+        <select id="section-injection-region" name="section-injection-region">
+            <option>Neurons</option>
+        </select>
+    </p>
+    <p>
+        <label for="section-comment">Comments:</label><br/>
+        <textarea id="section-comment" name="section-comment" cols="40" rows="3"></textarea>
+    </p>
+    <input type="hidden" id = "sectionIdValue" name = "sectionIdValue" value="{{section.id}}"/>
+    <br/>
+    <input type="button" value="Submit"
+    style="margin-top:10px;"
+    onclick="javascript:submitCommentForm();" />
+</div>
+</form>
+   <p><a onclick ="javascript:window.open('/seriesbrowser/showComments/{{series.id}}/?section_filter={{section.id}}&updater_filter=','_blank','toolbar=1');"
+   href = "#"> View section/series comments</a></p>
+
+
+
+
+

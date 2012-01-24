@@ -50,10 +50,15 @@ window.addEvent('domready', function() {
   {% endif %}
   </div>
 </div>
-<div id="panel">
-  <div id="panel_content">{% if section %}{% include 'seriesbrowser/ajax/section.html' %}{% endif %}</div>
+<div id="info-panel" class="panel">
+  <div id="info-content" class="panel_content">{% if section %}{% include 'seriesbrowser/ajax/section.html' %}{% endif %}</div>
   <div style="clear:both;"></div>
 </div>
-<div><a id="trigger" class="trigger" href="#">Info</a></div>
+<div><a id="info-trigger" class="trigger" href="#">Info</a></div>
+<div id="comment-panel" class="panel">
+  <div id="comment-content" class="panel_content">{% if section %}{% include 'seriesbrowser/ajax/comment.html' %}{% endif %}</div>
+  <div style="clear:both;"></div>
+</div>
+<div><a id="comment-trigger" class="trigger" href="#">Notes</a></div>
 </body>
 </html>

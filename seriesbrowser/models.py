@@ -180,23 +180,43 @@ class Updater(models.Model):
         return self.name
 
 
-class SeriesNote(models.Model):
+class SeriesAnnotation(models.Model):
     series = models.ForeignKey(Series)
-    updater = models.ForeignKey(User)
-    score = models.IntegerField()
-    comment = models.CharField(max_length=200)
-    write_date = models.DateTimeField()
+    user = models.ForeignKey(User)
 
     def __unicode__(self):
-        return self.comment
+        return "%s (%s)" % (self.series.desc, self.user.get_full_name())
 
-class SectionNote(models.Model):
+class SectionAnnotation(models.Model):
     section = models.ForeignKey(Section)
-    updater = models.ForeignKey(User)
-    score = models.IntegerField()
-    comment = models.CharField(max_length=200)
-    write_date = models.DateTimeField()
+    user = models.ForeignKey(User)
+    isInjection = models.BooleanField(default=False)
+    isLabeled = models.BooleanField(default=False)
+    hemisphere = models.CharField(max_length=6, blank=True)
 
     def __unicode__(self):
-        return self.comment
+        return "%s (%s)" % (self.section.name, self.user.get_full_name())
+
+
+class CommentType(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return self.name
+
+class SectionComment(models.Model):
+    annotation = models.ForeignKey(SectionAnnotation)
+    type = models.ForeignKey(CommentType)
+    comment = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return "%s (%s) - %s" % (self.annotation.section.name, self.annotation.user.get_full_name(), self.type.name)
+
+class SeriesComment(models.Model):
+    annotation = models.ForeignKey(SeriesAnnotation)
+    type = models.ForeignKey(CommentType)
+    comment = models.TextField(blank=True)
+
+    def __unicode__(self):
+        return "%s (%s) - %s" % (self.annotation.series.desc, self.annotation.user.get_full_name(), self.type.name)
 

@@ -183,7 +183,7 @@ div#colors{font-size:50%;line-height:0;position:relative;background:#222;opacity
 	line-height: 21px;
 	padding: 5px 0 0;
 }
-#panel {
+.panel {
 position: fixed;
 top: 42px;
 left: 0;
@@ -259,6 +259,10 @@ border:1px solid #444444;
 display: block;
 z-index: 2;
 }
+#comment-trigger {
+    top: 145px;
+}
+
 a.helpTriggerGallery{
 position: fixed;
 text-decoration: none;
@@ -269,7 +273,7 @@ font-family: verdana, helvetica, arial, sans-serif;
 color:#fff;
 padding: 20px 40px 20px 15px;
 font-weight: 700;
-background:#333333 url(images/plus.png) 85% 55% no-repeat;
+background:#333333 85% 55% no-repeat;
 border:1px solid #444444;
 -moz-border-radius-topright: 20px;
 -webkit-border-top-right-radius: 20px;
@@ -290,7 +294,7 @@ font-family: verdana, helvetica, arial, sans-serif;
 color:#fff;
 padding: 20px 40px 20px 15px;
 font-weight: 700;
-background:#333333 url(images/plus.png) 85% 55% no-repeat;
+background:#333333 85% 55% no-repeat;
 border:1px solid #444444;
 -moz-border-radius-topright: 20px;
 -webkit-border-top-right-radius: 20px;

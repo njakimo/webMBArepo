@@ -17,14 +17,22 @@ var MBAViewer = {
             crossSiteTest: false
         });
 
-        var panel = new Fx.Slide('panel', {mode: 'horizontal'});
-        panel.hide();
-        $('panel').setStyle('z-index','1');
-        $('trigger').addEvent('click', function(event) {
+        var info_panel = new Fx.Slide('info-panel', {mode: 'horizontal'});
+        info_panel.hide();
+        $('info-panel').setStyle('z-index','1');
+        $('info-trigger').addEvent('click', function(event) {
             event.stop();
-            panel.toggle();
+            info_panel.toggle();
         });
 
+        var comment_panel = new Fx.Slide('comment-panel', {mode: 'horizontal'});
+        comment_panel.hide();
+        $('comment-panel').setStyle('z-index','1');
+        $('comment-trigger').addEvent('click', function(event) {
+            event.stop();
+            comment_panel.toggle();
+        });
+                
         if($('filmstrip')) {
             this.initSectionNav(iip, image, nSections, options['sectionId'],isAuxiliary);
         }
@@ -72,7 +80,14 @@ var MBAViewer = {
                     url: '/seriesbrowser/ajax/section/' + parts[1] + '/',
                     method: 'get',
                     onSuccess: function(response) {
-                        $('panel_content').empty().adopt(response);
+                        $('info-content').empty().adopt(response);
+                    }
+                }).send();
+                new Request.HTML({
+                    url: '/seriesbrowser/ajax/comment/' + parts[1] + '/',
+                    method: 'get',
+                    onSuccess: function(response) {
+                        $('comment-content').empty().adopt(response);
                     }
                 }).send();
                 var imageParts = image.split("/");
@@ -91,9 +106,16 @@ var MBAViewer = {
             url: '/seriesbrowser/ajax/section/' + sampleSection + '/',
                  method: 'get',
                  onSuccess: function(response) {
-                     $('panel_content').empty().adopt(response);
+                     $('info-content').empty().adopt(response);
                  }
             }).send();
+        new Request.HTML({
+            url: '/seriesbrowser/ajax/comment/' + sampleSection + '/',
+            method: 'get',
+            onSuccess: function(response) {
+                $('comment-content').empty().adopt(response);
+            }
+        }).send();
 
 	// And make the filmstrip / sagittal section reflect initial section
         highlightSection(sections[sampleSectionIdx]);
